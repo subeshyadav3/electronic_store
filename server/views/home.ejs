@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        /* Add your CSS styles here */
+        h1 {
+            color: blue;
+        }
+        
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .product-card {
+            width: 30%;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .title {
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .content {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: green;
+        }
+
+        .discounted-price {
+            text-decoration: line-through;
+            margin-left: 10px;
+            color: red;
+        }
+
+        .tags {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tags span {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Product Store</h1>
+    
+    <div class="product-container">
+        <% products.forEach(product => { %>
+            <div class="product-card">
+                <h2 class="title"><%= product.name %></h2>
+                <div class="content">
+                    <img src="<%= product.images[0] %>" alt="<%= product.name %>">
+                    <p><%= product.description %></p>
+                </div>
+                <div class="price-section">
+                    <p class="price">$<%= product.discountedPrice %></p>
+                    <% if (product.discount >= 0) { %>
+                        <p class="discounted-price">$<%= product.price %></p>
+                    <% } %>
+                </div>
+                <div class="tags">
+                    <% product.tags.forEach(tag => { %>
+                        <span><%= tag %></span>
+                    <% }) %>
+                </div>
+                <p><strong>Category:</strong> <%= product.category %></p>
+                <p><strong>Brand:</strong> <%= product.brands %></p>
+                <p><strong>Warranty:</strong> <%= product.warranty %></p>
+                <p><strong>Stock:</strong> <%= product.stock %> available</p>
+            </div>
+        <% }) %>
+    </div>
+</body>
+</html>

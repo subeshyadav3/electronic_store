@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-form div {
+            margin-bottom: 15px;
+        }
+
+        .login-form label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .login-form button:hover {
+            background-color: #45a049;
+        }
+
+        .login-form p {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <form action="/api/auth/login" method="POST" class="login-form" >
+        <h2>Login</h2>
+        
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <button type="submit">Login</button>
+
+        <p>Don't have an account? <a href="/signup">Sign up here</a></p>
+    </form>
+
+</body>
+</html>
