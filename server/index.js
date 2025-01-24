@@ -6,9 +6,9 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const productRouter = require('../routes/productRoute.js');
-const authRouter = require('../routes/auth.js');
-const { checkAuth } = require('../middlewares/checkAuth.js'); 
+const productRouter = require('./routes/productRoute.js');
+const authRouter = require('./routes/auth.js');
+const { checkAuth } = require('./middlewares/checkAuth.js'); 
 const multer=require('multer');
 const axios = require('axios'); 
 
