@@ -8,7 +8,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const productRouter = require('./routes/productRoute.js');
 const authRouter = require('./routes/auth.js');
-const { checkAuth } = require('./middlewares/checkAuth.js'); 
+const checkAuthAdmin=require('./middlewares/checkAdmin.js');
+const { checkAuth } = require('./middlewares/checkAuthCustomer.js'); 
 const multer=require('multer');
 const axios = require('axios'); 
 
@@ -84,7 +85,13 @@ app.get('/register', (req, res) => res.render('register'));
 
 app.use('/api/auth', authRouter);
 app.use('/api/product',checkAuth, productRouter);
+app.use('/api/cart',checkAuth, require('./routes/cartRoute.js'));
 
+
+
+
+
+app.get('/admin',checkAuth,checkAuthAdmin, (req, res) => res.send('admin'));
 // Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/Ecommerce")
     .then(() => {

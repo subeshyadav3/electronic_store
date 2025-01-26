@@ -38,22 +38,22 @@ const sendOTP = async (email, otp) => {
 
 // Register User
 const userRegister = async (req, res) => {
-    const { name, email, password, contact } = req.body;
+    const { name, email, password, contact,role='customer'} = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     try {
         const checkUserExist = await User.findOne({ email });
-        if (checkUserExist) return res.status(409).json({ message: "User Already Exists!" });
+        if (checkUserExist) return res.status(409).json({ message: "User Already Exists!", success: false });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPassword, contact });
+        const newUser = new User({ name, email, password: hashedPassword, contact,role });
         const savedUser = await newUser.save();
 
-        return res.status(201).json({ message: "User Created Successfully!", user: { email: savedUser.email, name: savedUser.name } });
+        return res.status(201).json({role: savedUser.role, message: "Account created successfully! Please login to continue.", success: true, user: { email: savedUser.email, name: savedUser.name } });
     } catch (err) {
         console.log("Error registering user:", err);
-        res.status(500).json({ message: "Server Error" });
+        res.status(500).json({ message: "There was an issue processing your request. Please try again later.", success: false });
     }
 };
 
@@ -65,13 +65,13 @@ const userLogin = async (req, res) => {
 
     try {
         const userExist = await User.findOne({ email });
-        if (!userExist) return res.status(401).json({ message: "Invalid Email or Password!" });
+        if (!userExist) return res.status(401).json({ message: "Invalid Email or Password!", success: false });
 
         const isMatch = await bcrypt.compare(password, userExist.password);
-        if (!isMatch) return res.status(401).json({ message: "Invalid Email or Password!" });
+        if (!isMatch) return res.status(401).json({ message: "Invalid Email or Password!", success: false });
 
         const accessToken = jwt.sign(
-            { userId: userExist._id, username: userExist.name,email:userExist.email },
+            { userId: userExist._id, username: userExist.name, email: userExist.email ,role:userExist.role},
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -84,15 +84,21 @@ const userLogin = async (req, res) => {
         
         await saveRefreshTokenToDB(userExist._id, refreshToken);
 
+        // Storing tokens in cookies
         res.cookie('token', accessToken, { httpOnly: true, secure: true, sameSite: "none" });
         res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'none' });
 
-        return res.status(200).json({ message: "Login Success" });
+        return res.status(200).json({
+            message: "Login successful! Welcome back.",
+            success: true,
+            user: { email: userExist.email, name: userExist.name ,role:userExist.role}
+        });
     } catch (err) {
         console.log("Login error:", err);
-        res.status(500).json({ message: "Server Error" });
+        res.status(500).json({ message: "There was an issue processing your request. Please try again later.", success: false });
     }
 };
+
 
 
 //password reset
@@ -106,11 +112,11 @@ const forgotPassword = async (req, res) => {
         console.log("here" ,String(email))
         await initiateOTP(email);
 
-        return res.status(200).json({ message: "OTP sent successfully" });
+        return res.status(200).json({success:true, message: "OTP sent successfully" });
     }
     catch (err) {
         console.log("Error sending OTP:", err);
-        res.status(500).json({ message: "Server Error" });
+        res.status(500).json({ success:false,message: "Server Error" });
     }   
 
 
@@ -133,10 +139,10 @@ const updateResetPassword = async (req, res) => {
         userExist.password = hashedPassword;
         await userExist.save();
 
-        return res.status(200).json({ message: "Password updated successfully" });
+        return res.status(200).json({ success:true,message: "Password updated successfully" });
     } catch (err) {
         console.log("Error updating password:", err);
-        res.status(500).json({ message: "Server Error" });
+        res.status(500).json({ success:false,message: "Server Error" });
     }
 }
 
@@ -161,11 +167,11 @@ const changePassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         userExist.password=hashedPassword;
         await userExist.save();
-        return res.status(200).json({message:"Password Changed Successfully"});
+        return res.status(200).json({success:true,message:"Password Changed Successfully"});
     }
     catch (err) {
         console.log("Error changing password:", err);
-        res.status(500).json({ message: "Server Error" });
+        res.status(500).json({success:false, message: "Server Error" });
     }
 
 }
@@ -180,10 +186,10 @@ const userLogout = async (req, res) => {
     try {
         await Blacklist.create({ token: refreshToken });
         await removeRefreshTokenFromDB(refreshToken);
-        return res.status(200).json({ message: "Logout successful" });
+        return res.status(200).json({success:true, message: "Logout successful" });
     } catch (err) {
         console.log("Logout error:", err);
-        res.status(500).json({ message: "Logout failed" });
+        res.status(500).json({ success:false,message: "Logout failed" });
     }
 };
 
@@ -267,3 +273,6 @@ module.exports = {
     forgotPassword,
     updateResetPassword
 };
+
+
+
