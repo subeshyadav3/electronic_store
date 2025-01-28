@@ -1,0 +1,126 @@
+import React, { useState } from 'react';
+import apiClient from '../helper/axios';
+import LoadingComponent from '../helper/loadingComponent';
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Email validation regex
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  const validateForm = () => {
+    let formErrors = {};
+    if (!email) {
+      formErrors.email = 'Email is required';
+    } else if (!emailRegex.test(email)) {
+      formErrors.email = 'Invalid email format';
+    }
+
+    // if (!password) {
+    //   formErrors.password = 'Password is required';
+    // }
+
+    setErrors(formErrors);
+    return Object.keys(formErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Sending POST request to login API
+      const res = await apiClient.post('/auth/login', {
+        email,
+        password,
+        
+      },{ withCredentials: true });
+
+      // Handle response after successful login
+      console.log('Login successful',res.data.message);
+
+      // console.log(document.cookie);
+      // Perform any actions on success, like redirecting the user
+      // e.g., navigate to dashboard or store user info in context
+
+    } catch (err) {
+      console.error('Error:  ', err.response?.data.message);
+      setErrors({ general: 'Invalid credentials or server error' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if(isLoading) return <LoadingComponent />;
+
+  return (
+    <div className="min-h-screen bg-red-400 text-pink-400 flex justify-center items-center">
+      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="email">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              }`}
+              placeholder="Enter your email"
+            />
+            {errors.email && <p className="mt-2 text-sm text-red-500">{errors.email}</p>}
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700" htmlFor="password">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                errors.password ? 'border-red-500' : 'border-gray-300'
+              }`}
+              placeholder="Enter your password"
+            />
+            {errors.password && <p className="mt-2 text-sm text-red-500">{errors.password}</p>}
+          </div>
+
+          {errors.general && <p className="text-sm text-red-500 text-center">{errors.general}</p>}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md focus:outline-none ${
+              isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+            }`}
+          >
+            {isLoading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+
+        <div className="mt-4 text-center text-sm text-gray-600">
+          <span>Don't have an account?</span>
+          <a href="/register" className="text-blue-600 hover:underline"> Register</a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

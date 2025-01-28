@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Loading Spinner */
+@keyframes spin-animation {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner-container {
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  overflow: hidden;
+  background: #ffffff; /* Replace with your background color */
+}
+
+.spinner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(1);
+  backface-visibility: hidden;
+}
+
+.spinner-circle {
+  position: absolute;
+  animation: spin-animation 1s linear infinite;
+  width: 60px;
+  height: 60px;
+  top: 20px; 
+  left: 20px; 
+  border-radius: 50%;
+  box-shadow: 0 5px 0 0 #e15b64; 
+  transform-origin: 32px 32px;
+}

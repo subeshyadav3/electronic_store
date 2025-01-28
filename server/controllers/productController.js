@@ -1,10 +1,41 @@
 const Product = require('../models/common/product');
 const User = require('../models/customers/user');
 
+
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
-    res.status(200).render('home', { products });
+    const { name, price, category, discount, tags, brands } = req.query;
+    const filter = {};
+    if (name) {
+      filter.name = { $regex: name, $options: 'i' };
+    }
+    if (price) {
+      const priceRange = price.split('-').map(Number)
+      
+      if (priceRange.length === 2) {
+        filter.price = { $gte: priceRange[0], $lte: priceRange[1] }
+      }
+
+      else {
+        filter.price = { $gte: priceRange[0]}
+      }
+    }
+
+    if (category) {
+      filter.category = category;
+    }
+    if (discount) {
+      filter.discount = { $gte: discount };
+    }
+    if (tags) {
+      filter.tags = { $in: tags.split(',') };
+    }
+    if (brands) {
+      filter.brands = brands;
+    }
+    const products = await Product.find(filter);
+
+    res.status(200).json(products);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });
   }
@@ -24,10 +55,22 @@ const getProductById = async (req, res) => {
 
 const addProduct = async (req, res) => {
   try {
+    const { name, description, price, category, discount, stock } = req.body;
+
+    if (!name || !description || !price || !category || !discount || !stock) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
     const newProduct = new Product({
-      ...req.body,
-      createdBy: req.user?.userId,
+      name,
+      description,
+      price,
+      category,
+      discount,
+      stock,
+      createdBy: req.user?.userId, // Associate product with the logged-in user
     });
+
 
     const savedProduct = await newProduct.save();
 
