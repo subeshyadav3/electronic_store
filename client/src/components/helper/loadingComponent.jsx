@@ -2,9 +2,9 @@
 
 function LoadingComponent() {
     return (
-        <div class="spinner-container">
-            <div class="spinner">
-                <div class="spinner-circle"></div>
+        <div className="spinner-container">
+            <div className="spinner">
+                <div className="spinner-circle"></div>
             </div>
         </div>
 

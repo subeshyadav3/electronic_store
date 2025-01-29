@@ -8,8 +8,14 @@
   50% { transform: rotate(180deg); }
   100% { transform: rotate(360deg); }
 }
+:root{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .spinner-container {
+  
   width: 100px;
   height: 100px;
   display: inline-block;
