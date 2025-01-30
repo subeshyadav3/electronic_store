@@ -1,63 +1,50 @@
-import React, { useEffect } from 'react';
-import {useProducts} from '../../context/productContext';
+import React, { useState } from 'react';
+import { useProducts } from '../../context/productContext';
 import ProductCard from './productCard';
+import SidebarComponent from './sideBarComponent';
 
 const Store = () => {
-  const { products, loading, error, setCategoryFilter, setPriceRangeFilter } = useProducts();
+  const { products, setFilter, setPriceRangeFilter } = useProducts();
 
-  // // Filter by category
-  // const handleCategoryChange = (category) => {
-  //   setCategoryFilter(category);
-  // };
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000000);
 
-  // // Filter by price range
-  // const handlePriceRangeChange = (min, max) => {
-  //   setPriceRangeFilter(min, max);
-  // };
-
-  // useEffect(() => {
-  //   // You can call the filter functions to apply default filters if needed
-  //   // handleCategoryChange('Electronics'); // Example to set default category
-  // }, []);
-
- 
+  const handlePriceRangeChange = (e) => {
+    const { value } = e.target;
+    if (e.target.name === 'min') {
+      setMinPrice(value);
+    }
+    if (e.target.name === 'max') {
+      setMaxPrice(value);
+    }
+    setPriceRangeFilter(`${minPrice}-${maxPrice}`);
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-semibold mb-4">Product List</h1>
-
-      {/* Filters */}
-      <div className="mb-4">
-        <label>
-          Category:
-          <select onChange={(e) => handleCategoryChange(e.target.value)}>
-            <option value="">All Categories</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Fashion">Fashion</option>
-            {/* Add more categories as needed */}
-          </select>
-        </label>
-
-        <label>
-          Price Range:
-          <input
-            type="number"
-            placeholder="Min Price"
-            onChange={(e) => handlePriceRangeChange(e.target.value, 1000)}
-          />
-          -
-          <input
-            type="number"
-            placeholder="Max Price"
-            onChange={(e) => handlePriceRangeChange(0, e.target.value)}
-          />
-        </label>
+    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-4">
+      
+      <div className="lg:w-[250px] bg-slate-100 p-4">
+        <SidebarComponent 
+          setFilter={setFilter} 
+          setPriceRangeFilter={setPriceRangeFilter} 
+          handlePriceRangeChange={handlePriceRangeChange} 
+          minPrice={minPrice} 
+          maxPrice={maxPrice} 
+        />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
+
+      <div className="flex flex-col items-center p-5">
+      <div>
+      <input type="text" name="title" placeholder="Search" className="p-2 mb-5 min-w-[300px] border border-gray-300 rounded-md " onChange={setFilter} />
+      <button name='search' value='search' onClick={setFilter} className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300">Search</button>
+      </div>
+        <div className="grid grid-cols-1 ml-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          
+          {products.map((product) => (
+            <ProductCard key={product._id} products={product} />
+          ))}
+        </div>
       </div>
     </div>
   );

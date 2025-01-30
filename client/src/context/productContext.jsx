@@ -1,38 +1,37 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import apiClient from '../components/helper/axios';
+import { set } from 'mongoose';
 
-// Create Context
 const ProductContext = createContext();
 
-// Custom Hook to Use Product Context
+
 export const useProducts = () => {
   return useContext(ProductContext);
 };
 
-// Product Provider Component
 const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
-    category: '',
-    priceRange: { min: 0, max: 1000 },
+    title:'',
+    price:'',
+    category:'',
+    discount:null,
+    tags:'',
+    brands:'',    
   });
 
-  // Fetch products based on filters
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        let query = '/product';
+       
+        console.log(filters);
+        const response = await apiClient.get('/product',{params:filters});
         
-        // Apply filters to the query
-        const { category, priceRange } = filters;
-        if (category) query += `?category=${category}`;
-        if (priceRange) query += `&minPrice=${priceRange.min}&maxPrice=${priceRange.max}`;
-
-        const response = await apiClient.get(query);
         setProducts(response.data);
+        
       } catch (err) {
         setError('Error fetching products');
       } finally {
@@ -41,19 +40,57 @@ const ProductProvider = ({ children }) => {
     };
 
     fetchProducts();
-  }, [filters]); // Re-run whenever filters change
+  }, [filters]); 
 
-  // Set category filter
-  const setCategoryFilter = (category) => {
-    setFilters((prev) => ({ ...prev, category }));
+  // const setCategoryFilter = (category) => {
+  //   setFilters({...filters,category:category});
+  // }
+
+  useEffect(() => {
+    // console.log("Product: ", products[5].title);
+    console.log(products)
+  }, [products,filters]);
+
+  const setPriceRangeFilter = (price) => {
+    
+    setFilters({...filters,price:price});
+  }
+
+  const [isSelected, setIsSelected] = useState([]);
+  
+  // const setSearchFilter = (name) => {
+  //   setFilters({...filters,name:name});
+  // }
+
+  // const setDiscountFilter = (discount) => {
+  //   setFilters({...filters,discount:discount});
+  // }
+
+  // const setBrandsFilter = (brands) => {
+  //   setFilters({...filters,brands:brands});
+  // }
+
+  // const setTagsFilter = (tags) => {
+  //   setFilters({...filters,tags:tags});
+  // }
+
+
+  const setFilter = (e) => {
+    const { name, value } = e.target;
+    //remove on double tap
+    if(isSelected.includes(value)){
+      setIsSelected(isSelected.filter((item)=> item!=value));
+      setFilters({...filters,[name]:''});
+      return;
+    }
+    else{
+      setIsSelected([...isSelected, value]);
+    }
+    console.log("Is selected value: ", isSelected);
+    setFilters({ ...filters, [name]: value });
   };
 
-  // Set price range filter
-  const setPriceRangeFilter = (min, max) => {
-    setFilters((prev) => ({ ...prev, priceRange: { min, max } }));
-  };
 
-  // Set product by ID filter
   const getProductById = async (id) => {
     try {
       const response = await apiClient.get(`/product/${id}`);
@@ -69,8 +106,13 @@ const ProductProvider = ({ children }) => {
         products,
         loading,
         error,
-        setCategoryFilter,
+        // setCategoryFilter,
         setPriceRangeFilter,
+        // setSearchFilter,
+        // setDiscountFilter,
+        // setBrandsFilter,
+        // setTagsFilter,
+        setFilter,
         getProductById,
       }}
     >

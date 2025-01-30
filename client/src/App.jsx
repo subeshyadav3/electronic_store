@@ -10,6 +10,7 @@ import { Navigate } from 'react-router-dom';
 import Error404 from './pages/Error404';
 import ProductProvider from './context/productContext';
 
+
 function App() {
   return (
     <AuthProvider>
@@ -24,6 +25,7 @@ function App() {
             {/* Protected route for Store */}
             <Route element={<ProtectedRoute />}>
               <Route path="/store" element={<Store />} />
+              
             </Route>
 
             {/* Catch-all route for 404 error */}

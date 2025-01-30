@@ -4,10 +4,10 @@ const User = require('../models/customers/user');
 
 const getProducts = async (req, res) => {
   try {
-    const { name, price, category, discount, tags, brands } = req.query;
+    const { title, price, category, discount, tags, brands } = req.query;
     const filter = {};
-    if (name) {
-      filter.name = { $regex: name, $options: 'i' };
+    if (title) {
+      filter.title = { $regex: title, $options: 'i' };
     }
     if (price) {
       const priceRange = price.split('-').map(Number)
@@ -31,7 +31,7 @@ const getProducts = async (req, res) => {
       filter.tags = { $in: tags.split(',') };
     }
     if (brands) {
-      filter.brands = brands;
+      filter.brand = brands;
     }
     const products = await Product.find(filter);
 

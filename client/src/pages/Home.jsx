@@ -50,27 +50,27 @@ const Home = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navigation Menu */}
-      <nav className="bg-white shadow-md p-4">
+      <nav className="bg-white shadow-md p-4 sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold text-blue-600">MyStore</h1>
           <ul className="flex space-x-6">
             <li>
-              <a href="#" className="text-gray-700 hover:text-blue-600">
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition duration-300">
                 Home
               </a>
             </li>
             <li>
-              <a href="#" className="text-gray-700 hover:text-blue-600">
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition duration-300">
                 Shop
               </a>
             </li>
             <li>
-              <a href="#" className="text-gray-700 hover:text-blue-600">
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition duration-300">
                 About
               </a>
             </li>
             <li>
-              <a href="#" className="text-gray-700 hover:text-blue-600">
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition duration-300">
                 Contact
               </a>
             </li>
@@ -83,7 +83,7 @@ const Home = () => {
         {sliderImages.map((image, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-opacity duration-700 ${
+            className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -98,13 +98,13 @@ const Home = () => {
         {/* Slider Controls */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 p-2 rounded-full shadow-md hover:bg-opacity-100"
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 p-2 rounded-full shadow-md hover:bg-opacity-100 transition duration-300"
         >
           &lt;
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 p-2 rounded-full shadow-md hover:bg-opacity-100"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 p-2 rounded-full shadow-md hover:bg-opacity-100 transition duration-300"
         >
           &gt;
         </button>
@@ -113,18 +113,18 @@ const Home = () => {
       {/* Product Showcase Section */}
       <div className="container mx-auto my-12 px-4">
         <h2 className="text-3xl font-bold text-center mb-8">Featured Products</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {products.map((product) => (
             <div
               key={product._id}
-              className="bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105"
+              className="bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-xl"
             >
               <img
                 src={product.image}
                 alt={product.name}
                 className="w-full h-48 object-cover"
               />
-              <div className="p-4">
+              <div className="p-6">
                 <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
                 <p className="text-gray-600 text-sm mb-4">
                   {product.description}
@@ -137,6 +137,9 @@ const Home = () => {
                     ${product.price}
                   </p>
                 </div>
+                <button className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                  Add to Cart
+                </button>
               </div>
             </div>
           ))}
@@ -151,9 +154,9 @@ const Home = () => {
             Made with ❤️ by{" "}
             <a
               href="https://example.com"
-              className="text-blue-400 hover:text-blue-300"
+              className="text-blue-400 hover:text-blue-300 transition duration-300"
             >
-              Your Name
+              Subesh Yadav
             </a>
           </p>
         </div>
