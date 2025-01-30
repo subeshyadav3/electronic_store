@@ -38,3 +38,22 @@
   box-shadow: 0 5px 0 0 #e15b64; 
   transform-origin: 32px 32px;
 }
+
+
+
+/* styling for active filtering product of product list */
+.active-filter-product {
+  position: relative; 
+  background-color: #46EDD5;
+}
+
+.active-filter-product::after {
+  content: '✅'; 
+  position: absolute;
+  top: -5px; 
+  right: 5px; 
+  width: 5px; 
+  height: 5px;
+  /* background-color: #FF0000; */
+  z-index: 1;
+}

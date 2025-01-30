@@ -1,16 +1,27 @@
+import { useRef, useState } from "react";
+
 const SidebarComponent = ({ setFilter, handlePriceRangeChange, minPrice, maxPrice }) => {
-    
+    const ref = useRef(null);
+    const [activeElement, setActiveElement] = useState(null);
   // buttonDesign
+  const give=(e)=>{
+    if(activeElement){
+        activeElement.classList.remove('active-filter-product');
+    }
+
+    e.target.classList.add('active-filter-product');
+    setActiveElement(e.target);
+    
+  }
   const buttonDesign = ' bg-slate-200 hover:bg-slate-300  text-gray-800 py-2 px-4 rounded-md';
 
     return (
-        <div className="md:w-[220px] z-10 lg:w-[260px] md:h-screen bg-slate-100 flex md:fixed items-top ">
+        <div className="md:w-[220px] z-10 lg:w-[260px] md:h-screen bg-slate-100 flex md:fixed items-top " onClick={give} >
 
             <div className="mb-4 pt-10 sm:pt-[40%] flex flex-col pl-5 space-y-5">
                 <label>
                     <h1 className='text-2xl'>Category:</h1>
-                    <div className='flex flex-wrap gap-2 flex-row w-full mt-5'>
-
+                    <div className='flex flex-wrap gap-2 flex-row w-full mt-5' ref={ref}>
                         <button name="category" className={`${buttonDesign}`} value="laptops" onClick={setFilter}>Laptops</button>
                         <button name="category" className={`${buttonDesign}`} value="mens-watches" onClick={setFilter}>Watches</button>
                         <button name="category" className={`${buttonDesign}`} value="smartphones" onClick={setFilter}>Smartphones</button>
@@ -19,7 +30,7 @@ const SidebarComponent = ({ setFilter, handlePriceRangeChange, minPrice, maxPric
                 </label>
 
                 <h1 className='text-2xl'>Brands:</h1>
-                <div className='flex flex-wrap gap-2 flex-row w-full mt-5'>
+                <div className='flex flex-wrap gap-2 flex-row w-full mt-5' ref={ref}>
                     <button name="brands" className={`${buttonDesign}`} value="Asus" onClick={setFilter}>Asus</button>
                     <button name="brands" className={`${buttonDesign}`} value="Huawei" onClick={setFilter}>Huawei</button>
                     <button name="brands" className={`${buttonDesign}`} value="Lenovo" onClick={setFilter}>Lenovo</button>

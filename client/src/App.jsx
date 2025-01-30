@@ -9,26 +9,28 @@ import { AuthProvider } from './context/authContext';
 import { Navigate } from 'react-router-dom';
 import Error404 from './pages/Error404';
 import ProductProvider from './context/productContext';
-
+import Layout from './Layout';
 
 function App() {
   return (
     <AuthProvider>
-      <ProductProvider> 
+      <ProductProvider>
         <Router>
           <Routes>
-            
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
 
-      
-            <Route element={<ProtectedRoute />}>
-              <Route path="/store" element={<Store />} />
-              
+            <Route path="/" element={<Layout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+
+
+              <Route element={<ProtectedRoute />}>
+                <Route path="/store" element={<Store />} />
+
+              </Route>
+
+              <Route path="*" element={<Error404 />} />
             </Route>
-
-            <Route path="*" element={<Error404 />} />
           </Routes>
         </Router>
       </ProductProvider>

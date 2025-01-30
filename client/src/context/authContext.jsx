@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
           const res = await apiClient.get('/auth/verifyme', { withCredentials: true });
-          // console.log(res)
+          
           if(res.data.success){
             setUser({
               name: res.data.user?.name,
@@ -49,8 +49,8 @@ export const AuthProvider = ({ children }) => {
 
 
 useEffect(() => {
-  console.log("Updated user state:", user);
-  console.log("Updated isAuthenticated state:", isAuthenticated);
+  // console.log("Updated user state:", user);
+  // console.log("Updated isAuthenticated state:", isAuthenticated);
 }, [user]);
 
 
@@ -68,7 +68,7 @@ useEffect(() => {
             setIsAuthenticated(false);
         }
      
-        console.log(user)
+        // console.log(user)
       return res
     }catch(err){
       console.error('Register error:', err);

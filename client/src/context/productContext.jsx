@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import apiClient from '../components/helper/axios';
-import { set } from 'mongoose';
+
 
 const ProductContext = createContext();
 
@@ -27,7 +27,7 @@ const ProductProvider = ({ children }) => {
       try {
         setLoading(true);
        
-        console.log(filters);
+        // console.log(filters);
         const response = await apiClient.get('/product',{params:filters});
         
         setProducts(response.data);
@@ -48,7 +48,7 @@ const ProductProvider = ({ children }) => {
 
   useEffect(() => {
     // console.log("Product: ", products[5].title);
-    console.log(products)
+    // console.log(products)
   }, [products,filters]);
 
   const setPriceRangeFilter = (price) => {
