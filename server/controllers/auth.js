@@ -43,8 +43,8 @@ const userRegister = async (req, res) => {
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     try {
-        const checkUserExist = await User.findOne({ email });
-        if (checkUserExist) return res.status(409).json({ message: "User Already Exists!", success: false });
+        // const checkUserExist = await User.findOne({ email });
+        // if (checkUserExist) return res.status(409).json({ message: "User Already Exists!", success: false });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ name, email, password: hashedPassword, contact,role });
@@ -71,7 +71,7 @@ const userLogin = async (req, res) => {
         if (!isMatch) return res.status(401).json({ message: "Invalid Email or Password!", success: false });
 
         const accessToken = jwt.sign(
-            { userId: userExist._id, username: userExist.name, email: userExist.email ,role:userExist.role},
+            { userId: userExist._id, name: userExist.name, email: userExist.email ,role:userExist.role},
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -85,9 +85,9 @@ const userLogin = async (req, res) => {
         await saveRefreshTokenToDB(userExist._id, refreshToken);
 
         // Storing tokens in cookies
-        res.cookie('token', accessToken, { httpOnly: true, secure: true, sameSite: "none" });
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'none' });
-
+        res.cookie('token', accessToken, { httpOnly: true, secure: false, sameSite: 'Lax' });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: false, sameSite: 'Lax' });
+        
         return res.status(200).json({
             message: "Login successful! Welcome back.",
             success: true,
@@ -175,8 +175,17 @@ const changePassword = async (req, res) => {
     }
 
 }
+const getrefreshToken = async (req, res) => {
+        const { refreshToken } = req.cookies;
+    if (!refreshToken) return res.status(401).json({ success: false, message: "Refresh token missing" });
 
+    jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, decoded) => {
+        if (err) return res.status(403).json({ success: false, message: "Invalid refresh token" });
 
+        const newAccessToken = jwt.sign({ id: decoded.id, email: decoded.email }, process.env.JWT_SECRET, { expiresIn: "15m" });
+        res.cookie("accessToken", newAccessToken, { httpOnly: true, secure: false, sameSite: "Lax" });
+        res.json({ success: true });
+    });}
 
 // Logout User
 const userLogout = async (req, res) => {
@@ -194,8 +203,8 @@ const userLogout = async (req, res) => {
 };
 
 // Send OTP
-const initiateOTP = async (email) => {
-    
+const initiateOTP = async (req,res) => {
+    const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
 
     try {
@@ -205,16 +214,16 @@ const initiateOTP = async (email) => {
         await newOTP.save();
 
         sendOTP(email, otp);
-        return true;
+        return res.status(200).json({ message: "OTP sent successfully" ,success:true});
     } catch (err) {
         console.log("Error sending OTP:", err);
-        return false;
+        return res.status(500).json({ message: "Server Error" });
     }
 };
 
 // Verify OTP
-const userVerifyOTP = async (email,otp) => {
-   
+const userVerifyOTP = async (req,res) => {
+    const { email, otp } = req.body;
     if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
 
     try {
@@ -222,10 +231,10 @@ const userVerifyOTP = async (email,otp) => {
         if(!getOPTFromDB) return res.status(400).json({message:"OTP not found"});
         if(getOPTFromDB.otp!==otp) return res.status(400).json({message:"Invalid OTP"});
         await OTP.findOneAndDelete({email});
-        return true;
+        return res.status(200).json({ message: "OTP verified successfully",success:true });
     } catch (err) {
         console.log("Error verifying OTP:", err);
-        return false;
+        return res.status(500).json({ message: "Server Error" });
     }
 };
 
@@ -266,6 +275,7 @@ module.exports = {
     userLogin,
     userLogout,
     initiateOTP,
+    getrefreshToken,
     userVerifyOTP,
     validateUser,
     validateLogin,

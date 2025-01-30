@@ -16,6 +16,7 @@ const { checkAuth } = require('./middlewares/checkAuthCustomer.js');
 // Middleware
 const corsOptions = {
     origin: 'http://localhost:5173', // Replace this with your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true, // Allow cookies to be sent
 };
 
@@ -49,7 +50,7 @@ app.use('/api/cart',checkAuth, require('./routes/cartRoute.js'));
 
 app.get('/admin',checkAuth,checkAuthAdmin, (req, res) => res.send('admin'));
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://subeshyadav3:iamnepali@subeshyadav.kcj8b0v.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=SubeshYadav")
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@subeshyadav.kcj8b0v.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=SubeshYadav`)
     .then(() => {
         console.log('MongoDB Connected');
         app.listen(process.env.PORT || 8000, () => {
