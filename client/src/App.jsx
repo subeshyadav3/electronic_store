@@ -14,21 +14,20 @@ import ProductProvider from './context/productContext';
 function App() {
   return (
     <AuthProvider>
-      <ProductProvider> {/* Wrapping the entire app with ProductProvider */}
+      <ProductProvider> 
         <Router>
           <Routes>
-            {/* Public routes */}
+            
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Protected route for Store */}
+      
             <Route element={<ProtectedRoute />}>
               <Route path="/store" element={<Store />} />
               
             </Route>
 
-            {/* Catch-all route for 404 error */}
             <Route path="*" element={<Error404 />} />
           </Routes>
         </Router>
