@@ -22,7 +22,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen  flex flex-col">
 
       <nav className="bg-white shadow-md p-4 sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center">
@@ -97,7 +97,7 @@ const Home = () => {
           <p className="mt-2">
             Made with ❤️ by{" "}
             <a
-              href="https://example.com"
+              href="https://subeshyadav.com.np"
               className="text-blue-400 hover:text-blue-300 transition duration-300"
             >
               Subesh Yadav

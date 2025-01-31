@@ -9,6 +9,14 @@
   100% { transform: rotate(360deg); }
 }
 
+:root{
+  width: 100%;
+  height: 100%;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+
+}
 
 .spinner-container {
   
@@ -16,7 +24,7 @@
   height: 100px;
   display: inline-block;
   overflow: hidden;
-  background: #ffffff; /* Replace with your background color */
+  background: #ffffff; 
 }
 
 .spinner {

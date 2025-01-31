@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import apiClient from '../components/helper/axios';
+import LoadingComponent from '../components/helper/loadingComponent';
 
 
 const ProductContext = createContext();
@@ -99,6 +100,8 @@ const ProductProvider = ({ children }) => {
       setError('Error fetching product by ID');
     }
   };
+
+  // if(loading) return <LoadingComponent />;
 
   return (
     <ProductContext.Provider
