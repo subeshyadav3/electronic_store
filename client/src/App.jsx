@@ -10,6 +10,7 @@ import { Navigate } from 'react-router-dom';
 import Error404 from './pages/Error404';
 import ProductProvider from './context/productContext';
 import Layout from './Layout';
+import ProductDetails from './components/products/productDetails';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
 
               <Route element={<ProtectedRoute />}>
                 <Route path="/store" element={<Store />} />
+                <Route path="/store/:id" element={<ProductDetails />} />
 
               </Route>
 

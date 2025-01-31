@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { useProducts } from '../../context/productContext';
 import ProductCard from './productCard';
 import SidebarComponent from './sideBarComponent';
@@ -10,15 +10,14 @@ const Store = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000000);
 
-  const handlePriceRangeChange = (e) => {
-    const { value } = e.target;
-    if (e.target.name === 'min') {
-      setMinPrice(value);
-    }
-    if (e.target.name === 'max') {
-      setMaxPrice(value);
-    }
+  useEffect(() => {
     setPriceRangeFilter(`${minPrice}-${maxPrice}`);
+  }, [minPrice, maxPrice]);
+
+  const handlePriceRangeChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'min') setMinPrice(value);
+    if (name === 'max') setMaxPrice(value);
   };
 
   return (

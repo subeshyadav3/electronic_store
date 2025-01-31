@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ products }) => {
   const truncateDescription = (description, wordLimit = 15) => {
@@ -8,10 +9,18 @@ const ProductCard = ({ products }) => {
     }
     return description;
   };
+  const navigate = useNavigate();
 
+
+  const handleProductClick = () => {
+    // getProductById(products._id);
+    // console.log(e.target.key)
+    navigate(`/store/${products._id}`);
+  };
   return (
     <div
       key={products._id}
+      onClick={handleProductClick}
       className="bg-white shadow-lg w-fit mb-5 rounded-xl transform transition-transform duration-300 hover:scale-105"
     >
  
