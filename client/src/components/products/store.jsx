@@ -20,6 +20,10 @@ const Store = () => {
     if (name === 'max') setMaxPrice(value);
   };
 
+  if(!products ) {
+    return <LoadingComponent />
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-4">
       
@@ -43,9 +47,13 @@ const Store = () => {
           <LoadingComponent />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {products.map((product) => (
-              <ProductCard key={product._id} products={product} />
-            ))}
+            {!products || products.length === 0 ? (
+              <h1 className="text-2xl text-red-500 ">No products found</h1>
+            ) : (
+              products.map((product) => (
+                <ProductCard key={product._id} products={product} />
+              ))
+            )}
           </div>
         )}
       </div>

@@ -10,7 +10,7 @@ import { Navigate } from 'react-router-dom';
 import Error404 from './pages/Error404';
 import ProductProvider from './context/productContext';
 import Layout from './Layout';
-import ProductDetails from './components/products/productDetails';
+import ProductDetails from './components/products/productDetailsIndividual/productDetails';
 
 function App() {
   return (
@@ -25,11 +25,11 @@ function App() {
               <Route path="/register" element={<Register />} />
 
 
-              <Route element={<ProtectedRoute />}>
+              {/* <Route element={<ProtectedRoute />}> */}
                 <Route path="/store" element={<Store />} />
                 <Route path="/store/:id" element={<ProductDetails />} />
 
-              </Route>
+              {/* </Route> */}
 
               <Route path="*" element={<Error404 />} />
             </Route>

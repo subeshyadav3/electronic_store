@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import AddToCartButton from './productDetailsIndividual/AddToCartButton';
 
 const ProductCard = ({ products }) => {
   const truncateDescription = (description, wordLimit = 15) => {
@@ -45,9 +46,10 @@ const ProductCard = ({ products }) => {
         </div>
 
     
-        <button className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300">
+          <AddToCartButton product={products} />
+        {/* <button className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300">
           Add to Cart
-        </button>
+        </button> */}
       </div>
     </div>
   );
