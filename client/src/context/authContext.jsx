@@ -4,7 +4,6 @@ const AuthContext = createContext();
 
 
 
-// AuthProvider component to wrap your application
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({
     userId: '',
@@ -15,9 +14,8 @@ export const AuthProvider = ({ children }) => {
     iat: '',
 
   }); // Store user details
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication status
-  const [isLoading, setIsLoading] = useState(true); // Track initial loading state
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false); 
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const checkAuth = async () => {

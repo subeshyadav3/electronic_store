@@ -1,24 +1,59 @@
 import { useState } from "react"
+import { ShoppingCart, Plus, Minus } from "lucide-react"
+import apiClient from "../../helper/axios"
 
-const AddToCartButton = ({ productId }) => {
+const AddToCartButton = ({ productId, onAddToCart }) => {
   const [isAdding, setIsAdding] = useState(false)
+  const [quantity, setQuantity] = useState(1)
+
+  const incrementQuantity = () => setQuantity((prev) => Math.min(prev + 1, 99))
+  const decrementQuantity = () => setQuantity((prev) => Math.max(prev - 1, 1))
 
   const handleAddToCart = async () => {
     setIsAdding(true)
-    // Simulate adding to cart
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setIsAdding(false)
-    alert("Product added to cart!")
+    try {
+     console.log("productId",productId)
+      const response=await apiClient.post('/cart',{productId, quantity})
+      console.log(response.data)
+      alert(response.data.message)
+    } catch (error) {
+      console.error(error)
+      alert("Failed to add product to cart. Please try again.")
+    } finally {
+      setIsAdding(false)
+    }
   }
 
   return (
-    <button
-      onClick={handleAddToCart}
-      disabled={isAdding}
-      className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-300 disabled:bg-blue-300"
-    >
-      {isAdding ? "Adding to Cart..." : "Add to Cart"}
-    </button>
+    <div className="flex items-center space-x-2">
+      <div className="flex items-center border border-gray-300 rounded-l-full overflow-hidden">
+        <button
+          className="p-2 hover:bg-gray-100 transition-colors disabled:opacity-50"
+          onClick={decrementQuantity}
+          disabled={isAdding}
+        >
+          <Minus className="h-4 w-4" />
+          <span className="sr-only">Decrease quantity</span>
+        </button>
+        <span className="w-10 text-center font-medium">{quantity}</span>
+        <button
+          className="p-2 hover:bg-gray-100 transition-colors disabled:opacity-50"
+          onClick={incrementQuantity}
+          disabled={isAdding}
+        >
+          <Plus className="h-4 w-4" />
+          <span className="sr-only">Increase quantity</span>
+        </button>
+      </div>
+      <button
+        className="flex items-center  justify-center md:text-sm text-base  rounded-r-full px-6 h-10 bg-blue-600 hover:bg-blue-700 text-white transition-colors disabled:opacity-50"
+        onClick={handleAddToCart}
+        disabled={isAdding}
+      >
+        <ShoppingCart className="h-4 w-4 mr-2 "  />
+        {isAdding ? "Adding..." : "Add to Cart"}
+      </button>
+    </div>
   )
 }
 

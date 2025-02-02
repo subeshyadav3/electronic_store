@@ -1,22 +1,43 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const SidebarComponent = ({ setFilter, handlePriceRangeChange, minPrice, maxPrice }) => {
     const ref = useRef(null);
     const [activeElement, setActiveElement] = useState(null);
-  // buttonDesign
-  const give=(e)=>{
-    if(activeElement){
-        activeElement.classList.remove('active-filter-product');
-    }
+    const [isFixed, setIsFixed] = useState(true);
 
-    e.target.classList.add('active-filter-product');
-    setActiveElement(e.target);
-    
-  }
-  const buttonDesign = ' bg-slate-200 hover:bg-slate-300  text-gray-800 py-2 px-4 rounded-md';
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollHeight = document.documentElement.scrollHeight;
+            const scrollPosition = window.innerHeight + window.scrollY;
+            const footerThreshold = scrollHeight - 400;
+            
+            if (scrollPosition >= footerThreshold) {
+                setIsFixed(false);
+            } else {
+                setIsFixed(true);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // buttonDesign
+    const give = (e) => {
+        if (activeElement) {
+            activeElement.classList.remove('active-filter-product');
+        }
+
+        e.target.classList.add('active-filter-product');
+        setActiveElement(e.target);
+        return activeElement.classList.remove('active-filter-product');
+
+    }
+    const buttonDesign = ' bg-slate-200 hover:bg-slate-300   text-gray-800 py-2 px-4 rounded-md';
 
     return (
-        <div className="md:w-[220px] z-10 lg:w-[260px] md:h-screen bg-slate-100 flex md:fixed items-top " onClick={give} >
+        <div className={`md:w-[220px]  lg:w-[260px] bg-slate-100 flex items-top ${isFixed ? "top-0 h-screen mt-[50px] md:fixed " : " md:relative"
+            }`} onClick={give} >
 
             <div className="mb-4 pt-10 sm:pt-[40%] flex flex-col pl-5 space-y-5">
                 <label>

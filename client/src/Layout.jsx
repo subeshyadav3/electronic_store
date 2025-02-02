@@ -1,5 +1,8 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import Nav from './pages/nav';
+import Footer from './pages/footer';
+import { Store } from 'lucide-react';
 
 const Layout = () => {
   return (
@@ -12,8 +15,10 @@ const Layout = () => {
           <li><Link to="/store">Store</Link></li>
         </ul>
       </nav> */}
-
+        <Nav />
+        {/* <Store /> */}
       <Outlet />
+      <Footer />
     </div>
   );
 };

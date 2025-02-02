@@ -24,35 +24,6 @@ const Home = () => {
   return (
     <div className="min-h-screen  flex flex-col">
 
-      <nav className="bg-white shadow-md p-4 sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600">MyStore</h1>
-          <ul className="flex space-x-6">
-            <li>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition duration-300">
-                Home
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition duration-300">
-                Shop
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition duration-300">
-                About
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition duration-300">
-                Contact
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-
-
       <div className="relative w-full h-96 overflow-hidden">
         {sliderImages.map((image, index) => (
           <div
@@ -91,20 +62,6 @@ const Home = () => {
         })}
       </div>
 
-      <footer className="bg-gray-800 text-white py-8 mt-auto">
-        <div className="container mx-auto text-center">
-          <p>&copy; 2023 MyStore. All rights reserved.</p>
-          <p className="mt-2">
-            Made with ❤️ by{" "}
-            <a
-              href="https://subeshyadav.com.np"
-              className="text-blue-400 hover:text-blue-300 transition duration-300"
-            >
-              Subesh Yadav
-            </a>
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };

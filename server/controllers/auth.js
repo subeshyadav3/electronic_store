@@ -176,16 +176,22 @@ const changePassword = async (req, res) => {
 
 }
 const getrefreshToken = async (req, res) => {
-        const { refreshToken } = req.cookies;
+    const { refreshToken } = req.cookies;
     if (!refreshToken) return res.status(401).json({ success: false, message: "Refresh token missing" });
 
-    jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, decoded) => {
+    const storedToken = await Token.findOne({ token: refreshToken });
+    if (!storedToken) return res.status(403).json({ success: false, message: "Refresh token invalid or expired" });
+
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, async (err, decoded) => {
         if (err) return res.status(403).json({ success: false, message: "Invalid refresh token" });
 
-        const newAccessToken = jwt.sign({ id: decoded.id, email: decoded.email }, process.env.JWT_SECRET, { expiresIn: "15m" });
-        res.cookie("accessToken", newAccessToken, { httpOnly: true, secure: false, sameSite: "Lax" });
-        res.json({ success: true });
-    });}
+        const newAccessToken = jwt.sign({ userId: decoded.userId, email: decoded.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        res.cookie("token", newAccessToken, { httpOnly: true, secure: false, sameSite: "Lax" });
+        res.json({ success: true, accessToken: newAccessToken });
+    });
+};
+
 
 // Logout User
 const userLogout = async (req, res) => {

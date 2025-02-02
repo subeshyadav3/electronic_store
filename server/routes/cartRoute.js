@@ -8,7 +8,7 @@ const {addItemToCart,
 
 router.post('/', addItemToCart);
 router.get('/', getAllCartItems);
-router.put('/:id', updateCartItem);
+// router.put('/', updateCartItem);
 router.delete('/:id',deleteCartItem);
 router.get('/:id', getCartItemById);
 

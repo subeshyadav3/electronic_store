@@ -31,14 +31,14 @@
 //       <img src={product.thumbnail} alt={product.title} className="w-full h-96 object-cover rounded-md" />
 //       <h1 className="text-3xl font-bold mt-4">{product.title}</h1>
 //       <p className="text-gray-600 mt-2">{product.description}</p>
-      
+
 //       <div className="flex items-center gap-2 mt-4">
 //         <p className="text-gray-400 line-through text-sm">${product.price}</p>
 //         <p className="text-xl font-bold text-green-600">
 //           ${((1 - 0.01 * product.discountPercentage) * product.price).toFixed(2)}
 //         </p>
 //       </div>
-      
+
 //       <button className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300">
 //         Add to Cart
 //       </button>
@@ -63,7 +63,7 @@ import { useProducts } from '../../../context/productContext';
 const ProductDetails = () => {
   const [product, setProduct] = useState(null)
   const { id } = useParams()
-  const { getProductById,loading } = useProducts()
+  const { getProductById, loading } = useProducts()
   const [products, setProducts] = useState(null);
 
   // useEffect(() => {
@@ -147,28 +147,12 @@ const ProductDetails = () => {
   const discountedPrice = (product.price * (1 - product.discountPercentage / 100)).toFixed(2)
 
   return (
-    <div className="container mx-auto px-4 py-8  ">
-      <div className="grid grid-cols-1 md:grid-cols-2 ">
-        <div>
+    <div className=" px-4 ">
+      <div className=" px-2 grid grid-cols-1 md:grid-cols-2 shadow-lg border-2 border-slate-200 mb-5 ">
+        <div className="flex flex-col items-center justify-center">
           <ImageGallery images={product.images} />
-        </div>
-        <div className="mt-10 max-w-[500px]">
-          <h1 className="text-2xl font-bold mb-4">{product.title}</h1>
-          <p className="text-gray-600 mb-4">{product.description}</p>
-          <div className="flex items-center gap-2 mb-4">
-            <p className="text-gray-400 line-through text-lg">${product.price}</p>
-            <p className="text-xl font-bold text-green-600">${discountedPrice}</p>
-            <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-              {product.discountPercentage}% OFF
-            </span>
-          </div>
-          <p className="text-gray-600 mb-2">Brand: {product.brand}</p>
-          <p className="text-gray-600 mb-2">SKU: {product.sku}</p>
-          <p className="text-gray-600 mb-2">Availability: {product.availabilityStatus}</p>
-          <p className="text-gray-600 mb-4">Ships in: {product.shippingInformation}</p>
-          <AddToCartButton productId={product.id} />
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-2">Product Details</h2>
+          <div className="w-full flex  justify-center items-center flex-col mb-5">
+            <h2 className="text-xl font-semibold mb-3 ">Product Details</h2>
             <ul className="list-disc list-inside text-gray-600">
               <li>Weight: {product.weight} kg</li>
               <li>
@@ -179,10 +163,32 @@ const ProductDetails = () => {
             </ul>
           </div>
         </div>
+        <div className="mt-10 min-w-[200px] max-w-[500px] w-full">
+          <h1 className="md:text-2xl text-xl font-bold mb-4">{product.title}</h1>
+          <p className="text-gray-600 mb-4">{product.description}</p>
+          <div className="flex items-center gap-2 mb-4">
+            <p className="text-gray-400 line-through ">${product.price}</p>
+            <p className="font-bold text-green-600">${discountedPrice}</p>
+            <span className="bg-green-100 text-green-800  font-semibold px-2.5 py-0.5 rounded">
+              {product.discountPercentage}% OFF
+            </span>
+          </div>
+          <p className="text-gray-600 mb-2">Brand: {product.brand}</p>
+          <p className="text-gray-600 mb-2">SKU: {product.sku}</p>
+          <p className="text-gray-600 mb-2">Availability: {product.availabilityStatus}</p>
+          <p className="text-gray-600 mb-4">Ships in: {product.shippingInformation}</p>
+          <AddToCartButton productId={product.id} />
+
+        </div>
       </div>
-      <div className="mt-12">
-        <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
-        <ReviewList reviews={product.reviews} />
+
+
+      <div className="mt-12 w-full border-none sm:max-w-[400px] sm:ml-10 border-2 shadow-lg border-slate-200 p-2">
+        <div> <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
+        <ReviewList reviews={product.reviews} /></div>
+        <div>
+          
+        </div>
       </div>
     </div>
   )

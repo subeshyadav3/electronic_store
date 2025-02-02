@@ -19,34 +19,39 @@ const addItemToCart = async (req, res) => {
 
         if (!getUser) return res.status(400).json({ message: "Login/Register first" });
 
-        const checkProductInCartAlready = await User.findOne({ email: req.user.email, "cart.productId": productId });
+        const checkProductInCartAlready = getUser.cart.find(item => item.productId.toString() === productId);
 
+        let updatedUser;
         if (checkProductInCartAlready) {
-            await User.findOneAndUpdate(
+           
+            updatedUser = await User.findOneAndUpdate(
                 { _id: getUser._id, "cart.productId": productId },
-                { $inc: { 'cart.$.quantity': 1 } }
+                { $inc: { 'cart.$.quantity': quantity ? quantity : 1 } },
+                { new: true }  
             );
         } else {
-            await User.findOneAndUpdate(
-                { _id: getUser._id, "cart.productId": productId },
-                { $push: { cart: { productId, quantity } } }
+            
+            updatedUser = await User.findOneAndUpdate(
+                { _id: getUser._id },
+                { $push: { cart: { productId, quantity } } }, 
+                { new: true }  
             );
         }
-        console.log("sucess")
-        
-        return res.status(200).json({ message: "Added to Cart Successfully!!" });
+
+        return res.status(200).json({ message: "Added to Cart Successfully!!", user: updatedUser });
 
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err });
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
+
 
 // Get all cart items
 const getAllCartItems = async (req, res) => {
     try {
         const getUser = await User.findOne({ email: req.user.email });
         const getAllCartItems = getUser.cart;
-        console.log(getAllCartItems)
+        // console.log(getAllCartItems)
         return res.status(200).json({ message: "Retrieved Cart Successfully!", getAllCartItems });
     } catch (err) {
         res.status(500).json({ message: "Server Error", error: err });
@@ -56,8 +61,9 @@ const getAllCartItems = async (req, res) => {
 // Update item quantity in cart
 const updateCartItem = async (req, res) => {
     try {
-        const productId=req.params.id;
-
+        // const productId=req.params.id;
+        const {productId,quantity}=req.body;
+        console.log(productId,quantity)
         if (!productId) {
             return res.status(400).json({ message: "Product Id required" });
         }
@@ -96,7 +102,10 @@ const deleteCartItem = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const deletedProduct = await User.updateOne({ _id: getUser._id }, { $pull: { cart: { productId: productId } } });
+        const deletedProduct = await User.updateOne(
+            { _id: getUser._id },
+            { $pull: { cart: { productId: productId } } }
+        );
 
         if (deletedProduct.nModified === 0) {
             return res.status(400).json({ message: "Product not found in cart" });

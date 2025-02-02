@@ -4,27 +4,27 @@ const ImageGallery = ({ images }) => {
   const [selectedImage, setSelectedImage] = useState(0)
 
   return (
-    <div className="flex justify-center flex-col md:flex-row items-center">
-       <div className="flex gap-2 w-[200px]  md:flex-col">
+    <div className="flex  flex-col md:flex-row  items-center h-auto mt-2">
+       <div className="flex gap-2  w-full md:flex-col">
         {images.map((image, index) => (
           <button
             key={index}
             onClick={() => setSelectedImage(index)}
-            className={`flex-shrink-0 ${selectedImage === index ? "ring-2 ring-blue-500" : ""}`}
+            className={`flex-shrink-0 ${selectedImage === index ? "ring-2 ring-blue-300 w-fit" : ""}`}
           >
             <img
               src={image || "/placeholder.svg"}
               alt={`Product thumbnail ${index + 1}`}
-              className=" w-12 h-12  sm:w-15 md:h-15 object-cover rounded-md"
+              className=" w-12 h-12  sm:w-12 md:h-15 object-cover rounded-md"
             />
           </button>
         ))}
       </div>
-      <div className="m-4">
+      <div className="">
         <img
-          src={images[selectedImage] || "/placeholder.svg"}
+          src={images[selectedImage] || "/example.svg"}
           alt="Product"
-          className=" w-fit object-cover rounded-lg"
+          className=" min-w-[300px]  max-w-[500px] w-full object-cover rounded-lg"
         /> 
       </div>
      

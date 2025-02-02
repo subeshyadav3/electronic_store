@@ -11,26 +11,32 @@ import Error404 from './pages/Error404';
 import ProductProvider from './context/productContext';
 import Layout from './Layout';
 import ProductDetails from './components/products/productDetailsIndividual/productDetails';
+import CartPage from './components/products/productDetailsIndividual/CartPage';
+import CheckoutPage from './components/products/productDetailsIndividual/checkoutpage';
+
+import ContactForm from './pages/contact';
 
 function App() {
   return (
     <AuthProvider>
       <ProductProvider>
         <Router>
+        
           <Routes>
 
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/contact" element={<ContactForm />} />
               <Route path="/register" element={<Register />} />
-
+              <Route path="/checkout" element={<CheckoutPage />} />
 
               {/* <Route element={<ProtectedRoute />}> */}
                 <Route path="/store" element={<Store />} />
                 <Route path="/store/:id" element={<ProductDetails />} />
-
+                <Route path='/cart' element={<CartPage />} />
               {/* </Route> */}
-
+              
               <Route path="*" element={<Error404 />} />
             </Route>
           </Routes>

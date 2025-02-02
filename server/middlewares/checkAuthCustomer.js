@@ -23,7 +23,7 @@ const checkAuth = async (req, res, next) => {
 
         next();
     } catch (error) {
-        res.status(400).json({ message: "Auth Failed", status: "failed", error: error.message });
+        res.status(401).json({ message: "Auth Failed", status: "failed", error: error.message });
     }
 };
 

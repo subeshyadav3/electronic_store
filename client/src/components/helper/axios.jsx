@@ -17,7 +17,7 @@ apiClient.interceptors.response.use(
       if (error.response.status === 401) {
           try {
               await axios.get("http://localhost:3000/api/auth/refresh", { withCredentials: true });
-              return apiClient(error.config); // Retry the failed request
+              return apiClient(error.config); 
           } catch (refreshError) {
               return Promise.reject(refreshError);
           }

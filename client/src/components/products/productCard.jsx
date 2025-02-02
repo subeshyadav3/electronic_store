@@ -46,7 +46,9 @@ const ProductCard = ({ products }) => {
         </div>
 
     
-          <AddToCartButton product={products} />
+          <div onClick={(e)=> e.stopPropagation()}>
+          <AddToCartButton productId={products._id}  />
+          </div>
         {/* <button className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300">
           Add to Cart
         </button> */}

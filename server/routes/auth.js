@@ -20,7 +20,7 @@ authRouter.post('/register',validateUser,userRegister)
 authRouter.post('/login',validateLogin,userLogin)
 authRouter.post('/logout',userLogout)
 authRouter.post('/otp',initiateOTP)
-authRouter.post('/refresh',getrefreshToken)
+authRouter.get('/refresh',getrefreshToken)
 authRouter.post('/verifyotp',userVerifyOTP)
 authRouter.post('/forgot-password', forgotPassword);
 authRouter.post('/reset-password', updateResetPassword);
