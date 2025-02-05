@@ -3,10 +3,12 @@ import { NavLink } from 'react-router-dom';
 import { Link } from 'react-scroll';
 import { GiHamburgerMenu, GiCrossedBones } from 'react-icons/gi';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/authContext';
 
 export default function Nav() {
     const [mobileNav, setMobileNav] = useState(false);
     const [navOpen, setNavOpen] = useState(false);
+    const {isAuthenticated} = useAuth();
 
     useEffect(() => {
         const toggleNav = () => {
@@ -14,7 +16,7 @@ export default function Nav() {
         };
         window.addEventListener('resize', toggleNav);
         toggleNav();
-
+        console.log(isAuthenticated);
         return () => {
             window.removeEventListener('resize', toggleNav);
         };
@@ -65,9 +67,17 @@ export default function Nav() {
                         </div>
                         <div className="flex gap-5">
                             <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                                <NavLink to="login"  duration={500} className={navClas}>
+                                {!isAuthenticated ? (<NavLink to="login"  duration={500} className={navClas}>
                                     Login
+                                </NavLink>)
+                                :(
+                                    <NavLink to="/admin"  duration={500} className={navClas}>
+                                    Dashboard
                                 </NavLink>
+                                )
+                                    
+                                    }
+
                             </motion.div>
                             <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
                                 <NavLink to="contact"  duration={500} className={navClas}>

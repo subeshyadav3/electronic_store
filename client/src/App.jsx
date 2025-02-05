@@ -15,13 +15,17 @@ import CartPage from './components/products/productDetailsIndividual/CartPage';
 import CheckoutPage from './components/products/productDetailsIndividual/checkoutpage';
 
 import ContactForm from './pages/contact';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminDashboard from './pages/admin/adminDashboard';
+import ManageProducts from './pages/admin/manageProducts';
+import ManageUsers from './pages/admin/manageUsers';
 
 function App() {
   return (
     <AuthProvider>
       <ProductProvider>
         <Router>
-        
+
           <Routes>
 
             <Route path="/" element={<Layout />}>
@@ -31,12 +35,23 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/checkout" element={<CheckoutPage />} />
 
+              <Route element={<ProtectedRoute />}>
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="products" element={<ManageProducts />} />
+                  <Route path='users' element={<ManageUsers />} />
+                </Route>
+              </Route>
+
+
               {/* <Route element={<ProtectedRoute />}> */}
-                <Route path="/store" element={<Store />} />
-                <Route path="/store/:id" element={<ProductDetails />} />
-                <Route path='/cart' element={<CartPage />} />
+              <Route path="/store" element={<Store />} />
+              <Route path="/store/:id" element={<ProductDetails />} />
+              <Route path='/cart' element={<CartPage />} />
               {/* </Route> */}
-              
+
+
+
               <Route path="*" element={<Error404 />} />
             </Route>
           </Routes>

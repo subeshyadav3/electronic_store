@@ -30,7 +30,7 @@ const ProductProvider = ({ children }) => {
        
         // console.log(filters);
         const response = await apiClient.get('/product',{params:filters});
-        
+        setAdminProducts(response.data);
         setProducts(response.data);
         
       } catch (err) {
@@ -101,6 +101,35 @@ const ProductProvider = ({ children }) => {
     }
   };
 
+  //for admin products manage
+  const [adminProducts, setAdminProducts] = useState([]);
+  const getAdminAllProducts = async () => {
+    try {
+      const response = await apiClient.get('/product');
+      
+      setAdminProducts(response.data);
+      
+    } catch (err) {
+      setError('Error fetching products');
+    }
+  }
+
+  const adminProductDelete = async (id) => {
+      try{
+        const response = await apiClient.delete(`/product/${id}`);
+        // console.log(response);
+        // getAdminAllProducts();  //testing
+
+        return alert("Product deleted successfully"); //testing
+      }
+      catch(err){
+        setError('Error deleting product');
+      }
+
+  }
+
+  
+
   // if(loading) return <LoadingComponent />;
 
   return (
@@ -115,6 +144,9 @@ const ProductProvider = ({ children }) => {
         // setDiscountFilter,
         // setBrandsFilter,
         // setTagsFilter,
+        getAdminAllProducts,
+        adminProducts,
+        adminProductDelete,
         setFilter,
         getProductById,
       }}

@@ -1,28 +1,30 @@
 const jwt = require('jsonwebtoken');
-const Blacklist=require('../models/common/blacklist')
-
-
+const Blacklist = require('../models/common/blacklist');
+const User = require('../models/customers/user');
 
 const checkAuthAdmin = async (req, res, next) => {
     try {
+        const token = req.cookies.token;
 
-        const token = req.cookies.token
-       
-          if(token){
-              const decoded = jwt.verify(token, process.env.JWT_SECRET)
-              req.user = decoded
-          }
-        const blacklisted = await Blacklist.findOne({ token });
-       
-        if (blacklisted) {
-            return res.status(401).json({ message: "Access denied, token blacklisted" });
+        if (!token) {
+            return res.status(401).json({ message: "No token provided" });
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
 
-        if(req.user.role !== "admin"){
-            return res.status(401).json({ message: "Access denied, only admin allowed" });
+        const blacklisted = await Blacklist.findOne({ token });
+        if (blacklisted) {
+            return res.status(401).json({ message: "Access denied, token blacklisted" });
+        }
+
+        const user = await User.findById(req.user.userId);
+        if (!user) {
+            return res.status(401).json({ message: "Access denied, user not found" });
+        }
+
+        if (user.role !== 'admin') {
+            return res.status(401).json({ message: "Access denied, user not admin" });
         }
 
         next();
@@ -31,4 +33,4 @@ const checkAuthAdmin = async (req, res, next) => {
     }
 };
 
-module.exports = checkAuthAdmin
+module.exports = checkAuthAdmin;
