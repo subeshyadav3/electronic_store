@@ -9,9 +9,9 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth(); // Use the login function from AuthContext
+  const { login } = useAuth(); 
   const navigate = useNavigate();
-  // Email validation regex
+  
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const validateForm = () => {
@@ -37,9 +37,7 @@ const Login = () => {
 
     setIsLoading(true);
     try {
-      // Call the login function from AuthContext
       const response = await login(email, password);
-      // console.log(response.data.success
       if(response.data.success){
         console.log("Login successful")
         navigate('/store');
@@ -47,8 +45,10 @@ const Login = () => {
       
       
     } catch (err) {
-      console.log(err)
-      setErrors({ general: 'Invalid credentials or server error' });
+
+      // console.log(err.response.data.message)
+      setErrors({ general: err.response.data.message });
+      
     } finally {
       setIsLoading(false);
     }

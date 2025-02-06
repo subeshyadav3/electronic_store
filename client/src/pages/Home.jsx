@@ -7,9 +7,9 @@ const Home = () => {
   const { products } = useProducts();
   // Dummy data for hero slider
   const sliderImages = [
-    "/public/banner/img3.jpg",
-    "/public/banner/img4.jpg",
-    "/public/banner/img5.webp",
+    "/banner/img3.jpg",
+    "/banner/img4.jpg",
+    "/banner/img5.webp",
   ];
 
   // Function to handle slider navigation

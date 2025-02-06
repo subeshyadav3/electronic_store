@@ -52,8 +52,9 @@ const Register = () => {
             }
 
         } catch (err) {
-            console.error('Error: ', err.response?.data.message);
-            setErrors({ general: 'Registration failed. Please try again.' });
+            console.error('Error: ', err.response.data.errors.msg);
+            //since its error contains array of objects
+            err.response.data.errors.forEach((error)=>{setErrors({general:error.msg})})
         } finally {
             setIsLoading(false);
         }
@@ -89,7 +90,7 @@ const Register = () => {
         
         } catch (err) {
             console.error('Error: ', err.response?.data.message);
-            setErrors({ general: 'Invalid OTP. Please try again.' });
+            setErrors({ general:  err.response?.data.message });
         } finally {
             setIsLoading(false);
         }

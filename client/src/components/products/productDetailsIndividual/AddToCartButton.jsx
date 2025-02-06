@@ -18,7 +18,10 @@ const AddToCartButton = ({ productId, onAddToCart }) => {
       alert(response.data.message)
     } catch (error) {
       console.error(error)
-      alert("Failed to add product to cart. Please try again.")
+      if(error.response.status===401)  return alert("Please Login First!!!")
+       return  alert("An error occurred while adding to cart")
+
+      
     } finally {
       setIsAdding(false)
     }

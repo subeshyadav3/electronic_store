@@ -32,7 +32,7 @@ function AdminLayout() {
   }, []);
 
   return (
-    <div className="grid grid-cols-[auto,1fr] ">
+    <div className="grid grid-cols-[auto,1fr] h-screen">
       <div
         className={`text-black p-5 border-r-2 transition-all duration-300 ${
           isSidebarOpen ? "w-64" : "w-16"
@@ -59,7 +59,7 @@ function AdminLayout() {
           
           <li>
             <NavLink
-              to="/admin"
+              to="/dashboard/admin"
               end
               className={({ isActive }) => (isActive ? "text-blue-500" : "text-black")}
             >
@@ -72,7 +72,7 @@ function AdminLayout() {
           </li>
           <li>
             <NavLink
-              to="/admin/products"
+              to="/dashboard/admin/products"
               className={({ isActive }) => (isActive ? "text-blue-500" : "text-black")}
             >
               {!isSidebarOpen ? (
@@ -84,7 +84,7 @@ function AdminLayout() {
           </li>
           <li>
             <NavLink
-              to="/admin/users"
+              to="/dashboard/admin/users"
               className={({ isActive }) => (isActive ? "text-blue-500" : "text-black")}
             >
               {!isSidebarOpen ? (
@@ -96,7 +96,7 @@ function AdminLayout() {
           </li>
           <li>
             <NavLink
-              to="/admin/orders"
+              to="/dashboard/admin/orders"
               className={({ isActive }) => (isActive ? "text-blue-500" : "text-black")}
             >
               {!isSidebarOpen ? (

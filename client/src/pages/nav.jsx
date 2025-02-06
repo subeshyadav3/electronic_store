@@ -71,7 +71,7 @@ export default function Nav() {
                                     Login
                                 </NavLink>)
                                 :(
-                                    <NavLink to="/admin"  duration={500} className={navClas}>
+                                    <NavLink to="/dashboard"  duration={500} className={navClas}>
                                     Dashboard
                                 </NavLink>
                                 )
