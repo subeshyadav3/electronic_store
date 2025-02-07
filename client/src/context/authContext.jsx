@@ -134,8 +134,44 @@ useEffect(() => {
     }
   };
 
+
+  const getAdminAllUsers = async () => {
+    try {
+      const res = await apiClient.get('/admin/users', { withCredentials: true });
+      // console.log("Get all users", res.data.users)
+      return res.data.users;
+    } catch (err) {
+      console.error('Get all users error:', err);
+      throw err;
+    }
+  };
+
+  const getAdminUsersById =async(id)=>{
+    try{
+        const res=await apiClient.get(`/admin/users/${id}`,{withCredentials:true});
+        console.log("Get user by id", res.data)
+        return res.data
+    }
+    catch(err){
+      console.error('Get user by id error:', err);
+      throw err;
+  }
+  }
+
+  const adminUserUpdate=async(id,user)=>{
+    try{
+        const res=await apiClient.put(`/admin/users/${id}`,user,{withCredentials:true});
+        console.log("Update user by id", res.data)
+        return res.data
+    }
+    catch(err){
+      console.error('Update user by id error:', err);
+      throw err;
+  }
+  } 
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login,register, logout,getOtp,otpVerify }}>
+    <AuthContext.Provider value={{ user, isAuthenticated,getAdminAllUsers,adminUserUpdate, getAdminUsersById,isLoading, login,register, logout,getOtp,otpVerify }}>
       {children}
     </AuthContext.Provider>
   );

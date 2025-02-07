@@ -59,6 +59,8 @@ import AddToCartButton from "./AddToCartButton"
 import ReviewList from "./ReviewList"
 
 import { useProducts } from '../../../context/productContext';
+import Breadcrumb from "../../helper/breadcrumbs"
+
 
 const ProductDetails = () => {
   const [product, setProduct] = useState(null)
@@ -147,8 +149,10 @@ const ProductDetails = () => {
   const discountedPrice = (product.price * (1 - product.discountPercentage / 100)).toFixed(2)
 
   return (
-    <div className=" px-4 ">
+    <div className=" px-4 relative">
+      <Breadcrumb className='absolute' />
       <div className=" px-2 grid grid-cols-1 md:grid-cols-2 shadow-lg border-2 border-slate-200 mb-5 ">
+        
         <div className="flex flex-col items-center justify-center">
           <ImageGallery images={product.images} />
           <div className="w-full flex  justify-center items-center flex-col mb-5">

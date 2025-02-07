@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useProducts } from "../../context/productContext";
 import LoadingComponent from "../../components/helper/loadingComponent";
 import { Target } from "lucide-react";
-import e from "cors";
+import { useNavigate } from "react-router-dom";
+
 
 function ManageProducts() {
-  const { getAdminAllProducts, loading, error, adminProducts, setFilter ,adminProductDelete} = useProducts();
+  const { getAdminAllProducts, loading, error, adminProducts, setFilter ,adminProductDelete,adminProductUpdate,getProductById} = useProducts();
   const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
     const [timer, setTimer] = useState(null);
+  const navigate=useNavigate();
 
   useEffect(() => {
     getAdminAllProducts();
@@ -35,7 +37,7 @@ function ManageProducts() {
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
   const handleProductEdit = (id) => {
-   
+    navigate(`/dashboard/admin/products/${id}`);
     console.log(id)
   };
  
@@ -56,7 +58,7 @@ function ManageProducts() {
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-gray-100 ">
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>

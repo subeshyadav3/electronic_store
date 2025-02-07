@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddToCartButton from './productDetailsIndividual/AddToCartButton';
+import Breadcrumb from '../helper/breadcrumbs';
 
 const ProductCard = ({ products }) => {
   const truncateDescription = (description, wordLimit = 15) => {
@@ -24,7 +25,7 @@ const ProductCard = ({ products }) => {
       onClick={handleProductClick}
       className="bg-white shadow-lg w-fit mb-5 rounded-xl transform transition-transform duration-300 hover:scale-105"
     >
- 
+      
       <img
         src={products.thumbnail}
         alt={products.title}

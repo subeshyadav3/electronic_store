@@ -103,6 +103,7 @@ const ProductProvider = ({ children }) => {
 
   //for admin products manage
   const [adminProducts, setAdminProducts] = useState([]);
+
   const getAdminAllProducts = async () => {
     try {
       const response = await apiClient.get('/product');
@@ -111,6 +112,17 @@ const ProductProvider = ({ children }) => {
       
     } catch (err) {
       setError('Error fetching products');
+    }
+  }
+  
+  const adminProductUpdate= async (id, data) => {
+    try{
+        const response=await apiClient.put(`/product/${id}`,data);
+        console.log(response);
+
+    }
+    catch(err){
+      setError('Error updating product');
     }
   }
 
@@ -148,6 +160,7 @@ const ProductProvider = ({ children }) => {
         getAdminAllProducts,
         adminProducts,
         adminProductDelete,
+        adminProductUpdate,
         setFilter,
         getProductById,
       }}

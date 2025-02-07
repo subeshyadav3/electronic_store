@@ -44,11 +44,12 @@ app.use('/api/auth', authRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart',checkAuth, require('./routes/cartRoute.js'));
 
+app.use('/api/admin',checkAuth,checkAuthAdmin, require('./routes/admin.js'));
 
 
 
 
-app.get('/admin',checkAuth,checkAuthAdmin, (req, res) => res.send('admin'));
+
 // Connect to MongoDB
 mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@subeshyadav.kcj8b0v.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=SubeshYadav`)
     .then(() => {

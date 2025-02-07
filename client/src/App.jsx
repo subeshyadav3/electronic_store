@@ -18,6 +18,8 @@ import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/adminDashboard';
 import ManageProducts from './pages/admin/manageProducts';
 import ManageUsers from './pages/admin/manageUsers';
+import ManageProductIndividual from './pages/admin/manageProductIndividual';
+import ManageUserIndividual from './pages/admin/manageUsersIndividual';
 
 function App() {
   return (
@@ -46,10 +48,10 @@ function App() {
                 <Route path="/dashboard/admin" element={<AdminLayout />}>
                   <Route index element={<AdminDashboard />} />
                   <Route path="products" element={<ManageProducts />} />
-                  <Route path="products/:id" element={<ManageProducts />} />
+                  <Route path="products/:id" element={<ManageProductIndividual />} />
 
                   <Route path="users" element={<ManageUsers />} />
-                  <Route path="users/:id" element={<ManageUsers />} />
+                  <Route path="users/:id" element={<ManageUserIndividual />} />
 
                 </Route>
                 <Route path="/dashboard/customer" element={<h2>Customer Dashboard</h2>} />
