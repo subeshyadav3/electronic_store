@@ -3,6 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { FaUsersCog } from "react-icons/fa";
 import { MdDashboardCustomize } from "react-icons/md";
+import Breadcrumb from "../../components/helper/breadcrumbs";
 
 function AdminLayout() {
   const [isFixed, setIsFixed] = useState(true);
@@ -32,7 +33,8 @@ function AdminLayout() {
   }, []);
 
   return (
-    <div className="grid grid-cols-[auto,1fr] h-screen">
+    <div className="grid grid-cols-[auto,1fr] ">
+      {/* <Breadcrumb /> */}
       <div
         className={`text-black p-5 border-r-2 transition-all duration-300 ${
           isSidebarOpen ? "w-64" : "w-16"
@@ -112,6 +114,7 @@ function AdminLayout() {
       <div
         className={`p-5 transition-all duration-300 ${isSidebarOpen ? "ml-[250px]" : "ml-[80px]"}`}
       >
+        <Breadcrumb />
         <Outlet />
       </div>
     </div>

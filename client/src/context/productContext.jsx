@@ -117,6 +117,7 @@ const ProductProvider = ({ children }) => {
   const adminProductDelete = async (id) => {
       try{
         const response = await apiClient.delete(`/product/${id}`);
+        // setAdminProducts(prev => prev.filter(product => product._id !== id));
         // console.log(response);
         // getAdminAllProducts();  //testing
 

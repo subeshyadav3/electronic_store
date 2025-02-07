@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useProducts } from "../../context/productContext";
 import LoadingComponent from "../../components/helper/loadingComponent";
 import { Target } from "lucide-react";
+import e from "cors";
 
 function ManageProducts() {
   const { getAdminAllProducts, loading, error, adminProducts, setFilter ,adminProductDelete} = useProducts();
@@ -25,7 +26,7 @@ function ManageProducts() {
         setDebouncedSearchTerm(e.target.value);
         if(debouncedSearchTerm){
             setFilter({Target:{ name:'title' ,value:debouncedSearchTerm}});        }
-      }, 1000)
+      }, 500)
     );
   }
 
@@ -33,6 +34,10 @@ function ManageProducts() {
   if (loading) return <LoadingComponent />;
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
+  const handleProductEdit = (id) => {
+   
+    console.log(id)
+  };
  
 
   return (
@@ -67,7 +72,7 @@ function ManageProducts() {
                 product.title.toLowerCase().includes(searchTerm.toLowerCase())
               )
               .map((product) => (
-                <tr key={product.id}>
+                <tr key={product._id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <img
                       src={product.thumbnail || "/placeholder.svg"}
@@ -85,7 +90,7 @@ function ManageProducts() {
                     <div className="text-sm text-gray-500">{product.stock}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
+                    <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={()=> handleProductEdit(product._id)}>Edit</button>
                     <button className="text-red-600 hover:text-red-900" onClick={()=> {
                         if (product && product._id) {
                             adminProductDelete(product._id);
