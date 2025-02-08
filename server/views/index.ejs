@@ -66,33 +66,8 @@
     </style>
 </head>
 <body>
-    <h1>Welcome to the Product Store</h1>
+    <h1>Welcome to the backend</h1>
+   
     
-    <div class="product-container">
-        <% products.forEach(product => { %>
-            <div class="product-card">
-                <h2 class="title"><%= product.name %></h2>
-                <div class="content">
-                    <img src="<%= product.images[0] %>" alt="<%= product.name %>">
-                    <p><%= product.description %></p>
-                </div>
-                <div class="price-section">
-                    <p class="price">$<%= product.discountedPrice %></p>
-                    <% if (product.discount >= 0) { %>
-                        <p class="discounted-price">$<%= product.price %></p>
-                    <% } %>
-                </div>
-                <div class="tags">
-                    <% product.tags.forEach(tag => { %>
-                        <span><%= tag %></span>
-                    <% }) %>
-                </div>
-                <p><strong>Category:</strong> <%= product.category %></p>
-                <p><strong>Brand:</strong> <%= product.brands %></p>
-                <p><strong>Warranty:</strong> <%= product.warranty %></p>
-                <p><strong>Stock:</strong> <%= product.stock %> available</p>
-            </div>
-        <% }) %>
-    </div>
 </body>
 </html>

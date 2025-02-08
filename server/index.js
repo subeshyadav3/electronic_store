@@ -35,7 +35,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Routes
 app.get('/', async(req, res) => {
-  res.send("Hello")
+  res.render('index');
 });
 app.get('/login', (req, res) => res.render('login'));
 app.get('/register', (req, res) => res.render('register'));
