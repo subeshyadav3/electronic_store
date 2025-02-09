@@ -25,7 +25,7 @@ const Store = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-4 min-h-screen">
       
       <div className="lg:w-[250px] bg-slate-100 p-4">
         <SidebarComponent 
@@ -41,7 +41,7 @@ const Store = () => {
       <div className="flex flex-col items-center p-5 ">
       <div>
       <input type="text" name="title" placeholder="Search" className="p-2 mb-5 min-w-[300px] border border-gray-300 rounded-md " onChange={setFilter} />
-      <button name='search' value='search' onClick={setFilter} className="ml-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300">Search</button>
+      <button name='search' value='search' onClick={setFilter} className="ml-2 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300">Search</button>
       </div>
         {loading ? (
           <LoadingComponent />

@@ -65,6 +65,7 @@ function App() {
 
               <Route element={<ProtectedRoute allowedRoles={['admin', 'customer']} />}>
                 <Route path='/cart' element={<CartPage />} />
+                <Route path='/checkout' element={<CheckoutPage />} />
               </Route>
 
 

@@ -38,7 +38,7 @@ function AdminLayout() {
       <div
         className={`text-black p-5 border-r-2 transition-all duration-300 ${
           isSidebarOpen ? "w-64" : "w-16"
-        } ${isFixed ? "fixed" : ""}`}
+        } ${isFixed ? "fixed" : "absolute"}`}
       >
         <button
           className="flex justify-end w-full mb-5"

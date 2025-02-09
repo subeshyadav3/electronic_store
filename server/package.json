@@ -1,7 +1,7 @@
 {
-  "name": "backendblogapp",
+  "name": "server",
   "version": "1.0.0",
-  "description": "to learn about mongodb and authentication in detailed!!",
+  "description": "backend for store!!",
   "main": "index.js",
   "scripts": {
     "test": "nodemon ./index.js",

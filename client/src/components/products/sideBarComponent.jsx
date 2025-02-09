@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 
 const SidebarComponent = ({ setFilter, handlePriceRangeChange, minPrice, maxPrice }) => {
     const ref = useRef(null);
-    const [activeElement, setActiveElement] = useState(null);
+    const [activeElement, setActiveElement] = useState({ brands: null, brands_event: "", category: null, category_event: "" });
     const [isFixed, setIsFixed] = useState(true);
 
     useEffect(() => {
@@ -10,7 +10,7 @@ const SidebarComponent = ({ setFilter, handlePriceRangeChange, minPrice, maxPric
             const scrollHeight = document.documentElement.scrollHeight;
             const scrollPosition = window.innerHeight + window.scrollY;
             const footerThreshold = scrollHeight - 400;
-            
+
             if (scrollPosition >= footerThreshold) {
                 setIsFixed(false);
             } else {
@@ -24,22 +24,38 @@ const SidebarComponent = ({ setFilter, handlePriceRangeChange, minPrice, maxPric
 
     // buttonDesign
     const give = (e) => {
-        if (activeElement) {
-            activeElement.classList.remove('active-filter-product');
-        }
+        const name = e.target.name;
+        const value = e.target.value;
+       
+        if (name === 'category') {
+            if (activeElement.category === value) {
+                e.target.classList.remove('active-filter-product');
+                setActiveElement({ ...activeElement, category: null, category_event: "" });
+            } else {
+                if (activeElement.category_event) activeElement.category_event.classList.remove('active-filter-product');
+                e.target.classList.add('active-filter-product');
+                setActiveElement({ ...activeElement, category: value, category_event: e.target });
+            }
+        } else if (name === 'brands') {
+            if (activeElement.brands === value) {
 
-        e.target.classList.add('active-filter-product');
-        setActiveElement(e.target);
-        return activeElement.classList.remove('active-filter-product');
+                e.target.classList.remove('active-filter-product');
+                setActiveElement({ ...activeElement, brands: null, brands_event: "" });
+            } else {
+                if (activeElement.brands_event) activeElement.brands_event.classList.remove('active-filter-product');
+                e.target.classList.add('active-filter-product');
+                setActiveElement({ ...activeElement, brands: value, brands_event: e.target });
+            }
+        }
 
     }
     const buttonDesign = ' bg-slate-200 hover:bg-slate-300   text-gray-800 py-2 px-4 rounded-md';
 
     return (
-        <div className={`md:w-[220px]  lg:w-[260px] bg-slate-100 flex items-top ${isFixed ? "top-0 h-screen mt-[50px] md:fixed " : " md:relative"
-            }`} onClick={give} >
+        <div className={`md:w-[220px]  lg:w-[260px] bg-slate-100 flex items-top  ${isFixed ? "top-0 md:h-screen md:mt-[50px] md:fixed " : " md:relative"
+            }`} >
 
-            <div className="mb-4 pt-10 sm:pt-[40%] flex flex-col pl-5 space-y-5">
+            <div className="mb-4  md:pt-[40%] flex flex-col pl-5 space-y-5" onClick={give} >
                 <label>
                     <h1 className='text-2xl'>Category:</h1>
                     <div className='flex flex-wrap gap-2 flex-row w-full mt-5' ref={ref}>
@@ -50,7 +66,7 @@ const SidebarComponent = ({ setFilter, handlePriceRangeChange, minPrice, maxPric
                     </div>
                 </label>
 
-                <h1 className='text-2xl'>Brands:</h1>
+                <h1 className='text-2xl' onClick={give} >Brands:</h1>
                 <div className='flex flex-wrap gap-2 flex-row w-full mt-5' ref={ref}>
                     <button name="brands" className={`${buttonDesign}`} value="Asus" onClick={setFilter}>Asus</button>
                     <button name="brands" className={`${buttonDesign}`} value="Huawei" onClick={setFilter}>Huawei</button>
