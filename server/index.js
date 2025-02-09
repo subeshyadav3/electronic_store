@@ -51,7 +51,7 @@ app.use('/api/admin',checkAuth,checkAuthAdmin, require('./routes/admin.js'));
 
 
 // Connect to MongoDB
-mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@subeshyadav.kcj8b0v.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=SubeshYadav`)
+mongoose.connect(process.env.MONGO_URL)
     .then(() => {
         console.log('MongoDB Connected');
         app.listen(process.env.PORT || 8000, () => {
