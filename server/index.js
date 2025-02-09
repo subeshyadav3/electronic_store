@@ -15,11 +15,12 @@ const { checkAuth } = require('./middlewares/checkAuthCustomer.js');
 
 // Middleware
 const corsOptions = {
-    // origin:'http://localhost:5173',
-    origin:  'https://frontendstore-five.vercel.app/', // Replace this with your frontend URL
+    // origin:'http://localhost:5173', // Uncomment this when testing locally
+    origin: 'https://frontendstore-five.vercel.app', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true, // Allow cookies to be sent
+    credentials: true, 
 };
+
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
