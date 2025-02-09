@@ -17,7 +17,7 @@ apiClient.interceptors.response.use(
   async (error) => {
       if (error.response.status === 401){
           try {
-              await axios.get("http://localhost:3000/api/auth/refresh", { withCredentials: true });
+              await axios.get("https://store-one-henna.vercel.app/api/auth/refresh", { withCredentials: true });
               return apiClient(error.config); 
           } catch (refreshError) {
               return Promise.reject(refreshError);
