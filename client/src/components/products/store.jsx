@@ -20,9 +20,7 @@ const Store = () => {
     if (name === 'max') setMaxPrice(value);
   };
 
-  if(!products ) {
-    return <LoadingComponent />
-  }
+
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-4 min-h-screen">
@@ -42,9 +40,11 @@ const Store = () => {
       <div>
       <input type="text" name="title" placeholder="Search" className="p-2 mb-5 min-w-[300px] border border-gray-300 rounded-md " onChange={setFilter} />
       <button name='search' value='search' onClick={setFilter} className="ml-2 mb-5 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300">Search</button>
-      </div>
+      </div >
         {loading ? (
+       
           <LoadingComponent />
+          
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {!products || products.length === 0 ? (

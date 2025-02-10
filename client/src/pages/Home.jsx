@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useProducts } from "../context/productContext";
 import ProductCard from "../components/products/productCard";
+import LoadingComponent from "../components/helper/loadingComponent";
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { products } = useProducts();
+  const { products ,loading,error,homeFilterProduct} = useProducts();
+ 
   // Dummy data for hero slider
   const sliderImages = [
     "/banner/img3.jpg",
@@ -21,8 +23,9 @@ const Home = () => {
     setCurrentSlide((prev) => (prev === 0 ? sliderImages.length - 1 : prev - 1));
   };
 
+
   return (
-    <div className="min-h-screen  flex flex-col">
+    <div className="min-h-screen  flex flex-col overflow-hidden">
 
       <div className="relative w-full h-96 overflow-hidden">
         {sliderImages.map((image, index) => (
@@ -53,8 +56,9 @@ const Home = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 ml-10 my-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"> 
-        {products.map((product, index) => {
+      <div className={loading || error?"flex justify-center items-center mt-12":"  grid  grid-cols-1  sm:m-10 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2"}> 
+        {error && "Some Error Occured!"}
+        {loading? <LoadingComponent />:  products.map((product, index) => {
           if (index <= 3) {
             return <ProductCard key={product._id} products={product} />;
           }

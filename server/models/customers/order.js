@@ -7,14 +7,14 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
     products: [{
-        productId: { 
-            type: mongoose.Schema.Types.ObjectId, 
+        productId: {
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'Product',
             required: true
         },
-        quantity: { 
-            type: Number, 
-            default: 1 
+        quantity: {
+            type: Number,
+            default: 1
         }
     }],
     totalAmount: {
@@ -25,7 +25,7 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    priceAtPurchase: { // Record the price at the time of order
+    priceAtPurchase: { // price record because it may change
         type: Number,
         required: true
     },
@@ -35,26 +35,40 @@ const orderSchema = new mongoose.Schema({
         default: 'pending'
     },
     shippingAddress: {
-        street: String,
-        city: String,
+        street: {
+            type: String,
+            required: true
+        },
+        city: {
+            type: String,
+            required: true
+        },
         state: String,
         postalCode: String,
-        country: String
+        country: {
+            type: String,
+            default: 'Nepal'
+
+        }
+
     },
     orderDate: {
         type: Date,
         default: Date.now
     },
     shippedDate: {
-        type: Date
+        type: Date,
+        default: null
+
     },
     deliveryDate: {
-        type: Date
+        type: Date,
+        required: true
     }
 }, { timestamps: true });
 
 //creating compound index on userId and status
-orderSchema.index({ userId: 1, status: 1 }); 
+orderSchema.index({ userId: 1, status: 1 });
 
 const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;

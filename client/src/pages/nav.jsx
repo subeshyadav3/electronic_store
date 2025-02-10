@@ -27,11 +27,11 @@ export default function Nav() {
     };
 
     const navLinkVariants = {
-        hidden: { opacity: 0, x: -50, scale: 0.6 },
-        visible: { opacity: 1, x: 0, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } },
+        hidden: { opacity: 0, y: -50, scale: 0.6 },
+        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } },
     };
 
-    const navClas = "nav-animation transition-all duration-300 hover:text-pink-400 -translate-x-2 hover:translate-x-0";
+    const navClas = "nav-animation transition-all duration-300 hover:text-pink-400 -translate-x-2 hover:translate-x-0 transparent";
 
     return (
         <>
@@ -39,7 +39,7 @@ export default function Nav() {
             {!mobileNav ? (
                 <motion.div
 
-                    className="flex flex-row justify-between sm:px-10 h-[50px] items-center mb-5 border-b-2 bg-slate-100 border-gray-200 sticky top-0 z-10"
+                    className="flex flex-row justify-between sm:px-10 h-[50px] items-center mb-5 border-b-2 bg-slate-100 border-gray-200 sticky top-0 z-10  "
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5 }}
@@ -60,9 +60,12 @@ export default function Nav() {
                                 </NavLink>
                             </motion.div>
                             <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                                <NavLink to="cart"  duration={500} className={navClas}>
-                                    Cart
-                                </NavLink>
+                               {isAuthenticated && (
+                                 <NavLink to="/cart"  duration={500} className={navClas}>
+                                 Cart
+                             </NavLink>
+                             
+                               )}
                             </motion.div>
                         </div>
                         <div className="flex gap-5">

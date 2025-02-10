@@ -37,7 +37,7 @@ export default function Footer() {
 
 
     return (
-        <div className="min-h-[500px] relative lg:min-h-[400px] flex flex-col justify-between bg-slate-900 text-white p-8 md:p-12">
+        <div className="min-h-[500px]  relative lg:min-h-[400px] flex flex-col justify-between bg-slate-900 text-white p-8 md:p-12">
             <div className="space-y-8">
                 <div className="text-center space-y-4">
                     <p className="text-gray-400">Get Latest Updates</p>

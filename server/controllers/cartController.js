@@ -26,7 +26,7 @@ const addItemToCart = async (req, res) => {
            
             updatedUser = await User.findOneAndUpdate(
                 { _id: getUser._id, "cart.productId": productId },
-                { $inc: { 'cart.$.quantity': quantity ? quantity : 1 } },
+                { $set: { 'cart.$.quantity': quantity } },
                 { new: true }  
             );
         } else {

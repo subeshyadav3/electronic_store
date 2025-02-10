@@ -20,6 +20,8 @@ import ManageProducts from './pages/admin/manageProducts';
 import ManageUsers from './pages/admin/manageUsers';
 import ManageProductIndividual from './pages/admin/manageProductIndividual';
 import ManageUserIndividual from './pages/admin/manageUsersIndividual';
+import ManageOrder from './pages/admin/manageOrder';
+import ManageOrderUpdate from './pages/admin/manageOrderUpdate';
 
 function App() {
   return (
@@ -52,8 +54,11 @@ function App() {
 
                   <Route path="users" element={<ManageUsers />} />
                   <Route path="users/:id" element={<ManageUserIndividual />} />
+                  <Route path="orders" element={<ManageOrder />} />
+                  <Route path="orders/:id" element={<ManageOrderUpdate />} />
 
                 </Route>
+
                 <Route path="/dashboard/customer" element={<h2>Customer Dashboard</h2>} />
               </Route>
 

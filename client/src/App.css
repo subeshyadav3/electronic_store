@@ -26,7 +26,7 @@
   height: 100px;
   display: inline-block;
   overflow: hidden;
-  background: #ffffff; 
+  /* background: #ffffff;  */
 }
 
 .spinner {
@@ -102,6 +102,8 @@
 .nav-animation {
   position: relative;
   display: inline-block;
+  /* background: transparent; */
+
 }
 
 .nav-animation::before {

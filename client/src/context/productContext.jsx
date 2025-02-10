@@ -75,6 +75,26 @@ const ProductProvider = ({ children }) => {
   //   setFilters({...filters,tags:tags});
   // }
 
+  // filtering to show products in home
+
+  const homeFilterProduct=async(productType)=>{
+    try {
+        setFilter({
+          title:'',
+          price:'',
+          category:productType,
+          discount:null,
+          tags:'',
+          brands:'',    
+        })
+        return products
+    }
+     catch (error) {
+      setError(`Error: ${error}`)
+    }
+  
+  }
+
 
   const setFilter = (e) => {
     const { name, value } = e.target;
@@ -157,6 +177,7 @@ const ProductProvider = ({ children }) => {
         // setDiscountFilter,
         // setBrandsFilter,
         // setTagsFilter,
+        homeFilterProduct,
         getAdminAllProducts,
         adminProducts,
         adminProductDelete,

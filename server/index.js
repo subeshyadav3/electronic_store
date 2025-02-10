@@ -10,13 +10,13 @@ const productRouter = require('./routes/productRoute.js');
 const authRouter = require('./routes/auth.js');
 const checkAuthAdmin=require('./middlewares/checkAdmin.js');
 const { checkAuth } = require('./middlewares/checkAuthCustomer.js'); 
-
+const orderRouter=require('./routes/order.js');
 
 
 // Middleware
 const corsOptions = {
-    // origin:'http://localhost:5173', // Uncomment this when testing locally
-    origin: 'https://frontendstore-five.vercel.app', 
+    origin:'http://localhost:5173', // Uncomment this when testing locally
+    // origin: 'https://frontendstore-five.vercel.app', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true, 
 };
@@ -47,7 +47,7 @@ app.use('/api/product', productRouter);
 app.use('/api/cart',checkAuth, require('./routes/cartRoute.js'));
 
 app.use('/api/admin',checkAuth,checkAuthAdmin, require('./routes/admin.js'));
-
+app.use('/api/order',checkAuth, require('./routes/order.js'));
 
 
 

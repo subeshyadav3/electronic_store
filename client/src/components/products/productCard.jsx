@@ -23,7 +23,7 @@ const ProductCard = ({ products }) => {
     <div
       key={products._id}
       onClick={handleProductClick}
-      className="bg-white shadow-lg w-fit mb-5 rounded-xl transform transition-transform duration-300 hover:scale-105"
+      className="bg-white shadow-lg w-[400px] mt-5 md:w-full mr-5 mb-5 rounded-xl transform transition-transform duration-300 hover:scale-105"
     >
       
       <img

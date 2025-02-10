@@ -67,15 +67,17 @@ const CartPage = () => {
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  if (loading) return <LoadingComponent />;
+  
 
   return (
-    <div className="container  mx-auto px-4 py-8">
-      <div className="bg-white shadow-lg rounded-md p-6">
+    <div className="container  mx-auto px-4 py-8 h-screen">
+      
+      <div className="bg-white shadow-lg  rounded-md p-6">
         <div className="flex items-center text-2xl font-bold ">
           <ShoppingCart className="mr-2" /> Your Cart
         </div>
-        <div className="mt-6 ">
+        <div className="m-10">
+          {loading && <LoadingComponent />}
           {cartItems.length === 0 ? (
             <p className="text-center text-gray-500">Your cart is empty.</p>
           ) : (

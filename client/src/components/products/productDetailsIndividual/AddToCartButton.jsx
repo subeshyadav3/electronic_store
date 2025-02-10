@@ -54,7 +54,7 @@ const AddToCartButton = ({ productId, onAddToCart }) => {
         disabled={isAdding}
       >
         <ShoppingCart className="h-4 w-4 mr-2 "  />
-        {isAdding ? "Adding..." : "Add to Cart"}
+        {isAdding ? "Adding..." : "Add"}
       </button>
     </div>
   )
