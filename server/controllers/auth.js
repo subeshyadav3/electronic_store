@@ -85,12 +85,12 @@ const userLogin = async (req, res) => {
         await saveRefreshTokenToDB(userExist._id, refreshToken);
 
         // Storing tokens in cookies
-        // res.cookie('token', accessToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'Lax' : 'None' });
-        // res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'Lax' : 'None' });
+        res.cookie('token', accessToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'None' : 'Lax' });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'None' : 'Lax' });
 
 
-        res.cookie('token', accessToken, { httpOnly: true, secure: true, sameSite:  'Lax' });
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite:  'Lax' });
+        // res.cookie('token', accessToken, { httpOnly: true, secure: true, sameSite:  'None' });
+        // res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite:  'None' });
 
 
         return res.status(200).json({
@@ -192,9 +192,9 @@ const getrefreshToken = async (req, res) => {
 
         const newAccessToken = jwt.sign({ userId: decoded.userId, email: decoded.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        // res.cookie("token", newAccessToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'Lax' : 'None' });
+        res.cookie("token", newAccessToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'None' : 'Lax' });
 
-        res.cookie('token',newAccessToken, { httpOnly: true, secure: true, sameSite:  'Lax' });
+        // res.cookie('token',newAccessToken, { httpOnly: true, secure: true, sameSite:  'Lax' });
 
         res.json({ success: true, accessToken: newAccessToken });
     });

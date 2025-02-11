@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
           const res = await apiClient.get('/auth/verifyme', { withCredentials: true });
-          
+          console.log("Verify me", res)
           if(res.data.success){
             setUser({
               name: res.data.user?.name,
