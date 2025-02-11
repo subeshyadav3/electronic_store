@@ -7,14 +7,14 @@ const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { products ,loading,error,homeFilterProduct} = useProducts();
  
-  // Dummy data for hero slider
+
   const sliderImages = [
     "/banner/img3.jpg",
     "/banner/img4.jpg",
     "/banner/img5.webp",
   ];
 
-  // Function to handle slider navigation
+
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === sliderImages.length - 1 ? 0 : prev + 1));
   };

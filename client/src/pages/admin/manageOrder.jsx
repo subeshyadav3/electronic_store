@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import apiClient from "../../components/helper/axios";
+import {useNavigate} from "react-router-dom";
 
 const ManageOrder = () => {
   const [orders, setOrders] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate=useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -31,11 +33,17 @@ const ManageOrder = () => {
     }
   };
 
+  const handleProductEdit = async (orderId) => {
+    if(orderId){
+      navigate(`/dashboard/admin/orders/${orderId}`);
+    }
+  }
+
   if (loading) return <div className="text-center text-gray-500">Loading orders...</div>;
   if (error) return <div className="text-center text-red-500">Error: {error}</div>;
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 min-h-screen">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Manage Orders</h1>
       {orders && orders.length === 0 ? (
         <p className="text-center text-gray-500">No orders found.</p>
@@ -60,6 +68,7 @@ const ManageOrder = () => {
                   <td className="py-3 px-4 text-gray-600">${order.discount.toFixed(2)}</td>
                   <td className="py-3 px-4 text-gray-600">{order.status}</td>
                   <td className="py-3 px-4 text-gray-600">{order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.country}</td>
+                 
                   <td className="py-3 px-4 text-center">
                     <button
                       className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none"
@@ -74,6 +83,9 @@ const ManageOrder = () => {
                       Mark as Delivered
                     </button>
                   </td>
+                  <td className="py-3 px-4 text-gray-600">
+                        <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={()=>handleProductEdit(order._id)}>Edit</button>
+                    </td>
                 </tr>
               ))}
             </tbody>

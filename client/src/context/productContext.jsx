@@ -113,7 +113,7 @@ const ProductProvider = ({ children }) => {
 
   const addComment = async (id, comment,user) => {
     try {
-      const response = await apiClient.post(`/product/${id}/comment`, {id, comment,user });
+      const response = await apiClient.post(`/product/comment/${id}`, { comment,user });
       console.log(response);  
     } catch (err) {
       setError('Error adding comment');

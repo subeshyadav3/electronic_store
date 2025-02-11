@@ -4,11 +4,17 @@ import { Link } from 'react-scroll';
 import { GiHamburgerMenu, GiCrossedBones } from 'react-icons/gi';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/authContext';
+import { useLocation } from 'react-router-dom';
 
 export default function Nav() {
     const [mobileNav, setMobileNav] = useState(false);
     const [navOpen, setNavOpen] = useState(false);
     const {isAuthenticated} = useAuth();
+    const location=useLocation();
+    //nav close
+    useEffect(() => {
+        setNavOpen(false);
+    }, [location]);
 
     useEffect(() => {
         const toggleNav = () => {
@@ -24,6 +30,7 @@ export default function Nav() {
 
     const handleNavBar = () => {
         setNavOpen((prev) => !prev);
+        
     };
 
     const navLinkVariants = {
@@ -113,14 +120,23 @@ export default function Nav() {
 
                     </motion.div>
                     <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                        < NavLink to="cart" duration={500} className={navClas}>
+                        {isAuthenticated && (
+                            < NavLink to="cart" duration={500} className={navClas}>
                             Cart
                         </NavLink>
+                        )}
                     </motion.div>
                     <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                        <NavLink to="login"  duration={500} className={navClas}>
+                        {!isAuthenticated ? (<NavLink to="login" duration={500} className={navClas}>
                             Login
+                        </NavLink>)
+                        :(
+                            <NavLink to="/dashboard" duration={500} className={navClas}>
+                            Dashboard
                         </NavLink>
+                        )
+                            
+                            }
                     </motion.div>
                     <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
                         <NavLink to="contact" duration={500} className={navClas}>
