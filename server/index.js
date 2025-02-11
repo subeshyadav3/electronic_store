@@ -15,12 +15,11 @@ const orderRouter=require('./routes/order.js');
 
 // Middleware
 const corsOptions = {
-    // origin:'http://localhost:5173', // Uncomment this when testing locally
-    origin: 'https://frontendstore-five.vercel.app', 
+    origin:process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true, 
 };
-
+// console.log(process.env.FRONTEND_URL);
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());

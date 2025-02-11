@@ -114,4 +114,22 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = { getProducts, getProductById, addProduct, updateProduct, deleteProduct };
+const addComment = async (req, res) => {
+  try {
+
+    const { comment, user,id } = req.body;
+    const product = await Product.findById({_id:id});
+    console.log(product)
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    product.comments.push({ comment, user });
+    await product.save();
+    res.status(201).json(product);
+  } catch (err) {
+    res.status(500).json({ message: 'Error adding comment', error: err });
+  }
+}
+
+
+module.exports = { getProducts, getProductById, addProduct, updateProduct, deleteProduct,addComment };

@@ -111,6 +111,15 @@ const ProductProvider = ({ children }) => {
     setFilters({ ...filters, [name]: value });
   };
 
+  const addComment = async (id, comment,user) => {
+    try {
+      const response = await apiClient.post(`/product/${id}/comment`, {id, comment,user });
+      console.log(response);  
+    } catch (err) {
+      setError('Error adding comment');
+    }
+  };
+
 
   const getProductById = async (id) => {
     try {
@@ -177,6 +186,7 @@ const ProductProvider = ({ children }) => {
         // setDiscountFilter,
         // setBrandsFilter,
         // setTagsFilter,
+        addComment,
         homeFilterProduct,
         getAdminAllProducts,
         adminProducts,
