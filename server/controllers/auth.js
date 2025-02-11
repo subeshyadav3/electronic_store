@@ -85,8 +85,13 @@ const userLogin = async (req, res) => {
         await saveRefreshTokenToDB(userExist._id, refreshToken);
 
         // Storing tokens in cookies
-        res.cookie('token', accessToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'Lax' : 'None' });
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'Lax' : 'None' });
+        // res.cookie('token', accessToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'Lax' : 'None' });
+        // res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'Lax' : 'None' });
+
+
+        res.cookie('token', accessToken, { httpOnly: true, secure: true, sameSite:  'Lax' });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite:  'Lax' });
+
 
         return res.status(200).json({
             message: "Login successful! Welcome back.",
@@ -187,7 +192,10 @@ const getrefreshToken = async (req, res) => {
 
         const newAccessToken = jwt.sign({ userId: decoded.userId, email: decoded.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        res.cookie("token", newAccessToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'Lax' : 'None' });
+        // res.cookie("token", newAccessToken, { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'Lax' : 'None' });
+
+        res.cookie('token',newAccessToken, { httpOnly: true, secure: true, sameSite:  'Lax' });
+
         res.json({ success: true, accessToken: newAccessToken });
     });
 };
