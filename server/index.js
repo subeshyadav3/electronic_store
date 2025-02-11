@@ -15,7 +15,7 @@ const orderRouter=require('./routes/order.js');
 
 // Middleware
 const corsOptions = {
-    origin:process.env.FRONTEND_URL,
+    origin:'https://store-one-henna.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true, 
 };
