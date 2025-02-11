@@ -7,12 +7,12 @@ const commentSchema = new mongoose.Schema({
     },
     product: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product', // Reference to the Blog model
+        ref: 'Product', 
         required: true,
     },
     commenter: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Reference to the User model
+        ref: 'User', 
         required: true,
     },
 }, { timestamps: true }); 

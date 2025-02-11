@@ -63,6 +63,22 @@ const productSchema = new mongoose.Schema({
       
         
     },
+
+    comments:[
+        {
+            user:{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+            }
+            ,
+            comment:{
+                type: String,
+                required: false,
+            }
+
+        }
+    ],
+
     createdAt: {
         type: Date,
         default: Date.now,
