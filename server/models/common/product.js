@@ -67,14 +67,26 @@ const productSchema = new mongoose.Schema({
     comments:[
         {
             user:{
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'User',
+                type:String,
+                required: true,
             }
             ,
             comment:{
                 type: String,
                 required: false,
-            }
+            },
+            reply:[
+                {
+                    user:{
+                        type:String,
+                        required: true,
+                    },
+                    comment:{
+                        type: String,
+                        required: false,
+                    }
+                }
+            ]
 
         }
     ],

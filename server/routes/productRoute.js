@@ -8,5 +8,5 @@ router.get('/:id', getProductById);
 router.post('/',checkAdmin, addProduct);
 router.put('/:id', checkAdmin, updateProduct);
 router.delete('/:id', checkAdmin, deleteProduct);
-router.post('/:id/comment', addComment);
+router.post('/comment/:id', addComment);
 module.exports = router;

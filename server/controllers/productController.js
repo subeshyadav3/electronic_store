@@ -14,7 +14,7 @@ const getProducts = async (req, res) => {
       
       if (priceRange.length === 2) {
         filter.price = { $gte: priceRange[0], $lte: priceRange[1] }
-      }
+      } 
 
       else {
         filter.price = { $gte: priceRange[0]}
@@ -68,7 +68,7 @@ const addProduct = async (req, res) => {
       category,
       discount,
       stock,
-      createdBy: req.user?.userId, // Associate product with the logged-in user
+      createdBy: req.user?.userId, 
     });
 
 
@@ -113,34 +113,38 @@ const deleteProduct = async (req, res) => {
     res.status(500).json({ message: 'Error deleting product', error: err });
   }
 };
-
 const addComment = async (req, res) => {
   try {
-    const { comment, user, id } = req.body;
+    const { id } = req.params;
+    const { comment, user } = req.body;
+
+   
+
     const product = await Product.findById(id);
-    console.log(product);
-    
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
+    const newComment = {
+      user: user,
+      comment: comment,
+    };
  
-    const newComment = new Comment({
-      comment,
-      product: id,
-      commenter: user
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $push: { comments: newComment } },
+      { new: true }
+    );
+
+    res.status(201).json({ 
+      message: 'Comment added successfully', 
+      updatedProduct, 
+      success: true 
     });
 
-
-    await newComment.save();
-
-  
-    product.comments.push(newComment._id);
-    await product.save();
-
-    res.status(201).json({ message: 'Comment added successfully', comment: newComment,succes:true });
   } catch (err) {
-    res.status(500).json({ message: 'Error adding comment', error: err });
+    console.error(err);
+    res.status(500).json({ message: 'Error adding comment', error: err.message });
   }
 };
 
