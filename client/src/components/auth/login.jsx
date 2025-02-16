@@ -3,7 +3,6 @@ import LoadingComponent from '../helper/loadingComponent';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router-dom';
 
-
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,7 +47,7 @@ const Login = () => {
       
     } catch (err) {
 
-      // console.log(err.response.data.message)
+
       setErrors({ general: err.response.data.message });
       
     } finally {
