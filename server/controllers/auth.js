@@ -61,14 +61,16 @@ const userRegister = async (req, res) => {
 const userLogin = async (req, res) => {
     const { email, password } = req.body;
     const errors = validationResult(req);
+    
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     try {
         const userExist = await User.findOne({ email });
-        if (!userExist) return res.status(401).json({ message: "Invalid Email or Password!", success: false });
-
+        if (!userExist) return res.status(403).json({ message: "Invalid Email or Password!", success: false });
+        
         const isMatch = await bcrypt.compare(password, userExist.password);
-        if (!isMatch) return res.status(401).json({ message: "Invalid Email or Password!", success: false });
+        // console.log(isMatch)
+        if (!isMatch) return res.status(403).json({ message: "Invalid Email or Password!", success: false });
 
         const accessToken = jwt.sign(
             { userId: userExist._id, name: userExist.name, email: userExist.email, role: userExist.role },
@@ -201,7 +203,7 @@ const getrefreshToken = async (req, res) => {
 };
 
 
-// Logout User
+
 const userLogout = async (req, res) => {
     const { refreshToken } = req.body;
     if (!refreshToken) return res.status(400).json({ message: "Refresh token required" });
@@ -216,7 +218,6 @@ const userLogout = async (req, res) => {
     }
 };
 
-// Send OTP
 const initiateOTP = async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
@@ -235,7 +236,6 @@ const initiateOTP = async (req, res) => {
     }
 };
 
-// Verify OTP
 const userVerifyOTP = async (req, res) => {
     const { email, otp } = req.body;
     if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
@@ -252,7 +252,7 @@ const userVerifyOTP = async (req, res) => {
     }
 };
 
-// Helper DB Functions
+
 const saveRefreshTokenToDB = async (userId, refreshToken) => {
     try {
         await Token.create({ token: refreshToken, user: userId });
@@ -270,7 +270,7 @@ const removeRefreshTokenFromDB = async (refreshToken) => {
 };
 
 
-// Middleware: Validation for user registration/login
+
 const validateUser = [
     body('email').isEmail().withMessage("Invalid email format"),
     body('password').isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
@@ -278,7 +278,7 @@ const validateUser = [
     body('contact').isMobilePhone().withMessage("Invalid contact number"),
 ];
 
-// Middleware: Login validation
+
 const validateLogin = [
     body('email').isEmail().withMessage("Invalid email format"),
     body('password').notEmpty().withMessage("Password is required"),

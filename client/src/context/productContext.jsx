@@ -14,13 +14,17 @@ const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const limit = 10;
   const [filters, setFilters] = useState({
     title:'',
     price:'',
     category:'',
     discount:null,
     tags:'',
-    brands:'',    
+    brands:'',
+    page,
+    limit,    
   });
 
   useEffect(() => {
@@ -95,9 +99,21 @@ const ProductProvider = ({ children }) => {
   
   }
 
+  const getHomeProducts = async (category) => {
+    try {
+      const response=await apiClient.get('/product',{params:{category}});
+
+      return response.data;
+    } catch (err) {
+      setError('Error fetching products by category');
+    }
+  }
 
   const setFilter = (e) => {
+   
     const { name, value } = e.target;
+    console.log("Name: ", e.target.name);
+    console.log("Value: ", value);
     //remove on double tap
     if(isSelected.includes(value)){
       setIsSelected(isSelected.filter((item)=> item!=value));
@@ -180,6 +196,7 @@ const ProductProvider = ({ children }) => {
         products,
         loading,
         error,
+        setLoading,
         // setCategoryFilter,
         setPriceRangeFilter,
         // setSearchFilter,
@@ -194,6 +211,7 @@ const ProductProvider = ({ children }) => {
         adminProductUpdate,
         setFilter,
         getProductById,
+        getHomeProducts
       }}
     >
       {children}

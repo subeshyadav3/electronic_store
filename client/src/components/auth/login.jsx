@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import LoadingComponent from '../helper/loadingComponent';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router-dom';
+import { set } from 'mongoose';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -35,9 +36,10 @@ const Login = () => {
       return;
     }
 
-    setIsLoading(true);
+    // setIsLoading(true);
     try {
       const response = await login(email, password);
+      console.log(response)
       if(response.data.success){
         console.log("Login successful")
         navigate('/store');

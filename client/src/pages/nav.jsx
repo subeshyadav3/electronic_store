@@ -1,157 +1,182 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Link } from 'react-scroll';
-import { GiHamburgerMenu, GiCrossedBones } from 'react-icons/gi';
-import { motion } from 'framer-motion';
 import { useAuth } from '../context/authContext';
 import { useLocation } from 'react-router-dom';
+import { Menu, X, ShoppingCart, User } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Nav() {
-    const [mobileNav, setMobileNav] = useState(false);
-    const [navOpen, setNavOpen] = useState(false);
-    const {isAuthenticated} = useAuth();
-    const location=useLocation();
-    //nav close
-    useEffect(() => {
-        setNavOpen(false);
-    }, [location]);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { isAuthenticated } = useAuth();
+    const location = useLocation();
 
     useEffect(() => {
-        const toggleNav = () => {
-            setMobileNav(window.innerWidth < 700);
-        };
-        window.addEventListener('resize', toggleNav);
-        toggleNav();
-        console.log(isAuthenticated);
-        return () => {
-            window.removeEventListener('resize', toggleNav);
-        };
+        setIsMobileMenuOpen(false);
     }, []);
 
-    const handleNavBar = () => {
-        setNavOpen((prev) => !prev);
-        
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
     };
+
+    const navItems = [
+        { name: 'Home', path: '/' },
+        { name: 'Store', path: '/store' },
+        { name: 'Contact', path: '/contact' },
+    ];
+
+    if (isAuthenticated) {
+        navItems.push({ name: 'Cart', path: '/cart' });
+    }
+
+    const navClass = "text-gray-700 hover:text-purple-600 transition-colors duration-300 transform -translate-x-2 hover:translate-x-0";
 
     const navLinkVariants = {
-        hidden: { opacity: 0, y: -50, scale: 0.6 },
-        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } },
+        hidden: { opacity: 0, y: -20 },
+        visible: { 
+            opacity: 1, 
+            y: 0,
+            transition: { duration: 0.5, ease: 'easeOut' }
+        },
     };
 
-    const navClas = "nav-animation transition-all duration-300 hover:text-pink-400 -translate-x-2 hover:translate-x-0 transparent";
+    const mobileMenuVariants = {
+        closed: { opacity: 0, x: "-100%" },
+        open: { opacity: 1, x: 0 }
+    };
 
     return (
-        <>
-            {/* Navigation */}
-            {!mobileNav ? (
-                <motion.div
-
-                    className="flex flex-row justify-between sm:px-10 h-[50px] items-center mb-5 border-b-2 bg-slate-100 border-gray-200 sticky top-0 z-10  "
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <div>
-                        {/* <img src={logo} alt="Logo" className="w-[90px] h-[80px] p-2" /> */}
+        <motion.nav 
+            className="bg-white shadow-md sticky top-0 z-50"
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between h-16">
+                    <div className="flex items-center">
+                        <NavLink to="/" className="flex-shrink-0 flex items-center">
+                            <motion.span 
+                                className="text-2xl font-bold text-purple-600"
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.5 }}
+                            >
+                                TechStore
+                            </motion.span>
+                        </NavLink>
                     </div>
-                    <div className="flex flex-row w-full z-10 justify-between gap-5">
-                        <div className="flex gap-5" >
-                            <motion.div variants={navLinkVariants} initial="hidden" animate="visible" >
-                                <NavLink to="/" className={navClas}>
-                                    Home
+                    <div className="hidden sm:flex sm:items-center sm:ml-6">
+                        {navItems.map((item, index) => (
+                            <motion.div
+                                key={item.name}
+                                variants={navLinkVariants}
+                                initial="hidden"
+                                animate="visible"
+                                transition={{ delay: index * 0.1 }}
+                            >
+                                <NavLink
+                                    to={item.path}
+                                    className={({ isActive }) => 
+                                        `${navClass}  ${isActive ? 'text-purple-600' : ''} mx-3`
+                                    }
+                                >
+                                    {item.name}
                                 </NavLink>
                             </motion.div>
-                            <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                                <NavLink to="/store"  duration={500} className={navClas}>
-                                    Store
-                                </NavLink>
-                            </motion.div>
-                            <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                               {isAuthenticated && (
-                                 <NavLink to="/cart"  duration={500} className={navClas}>
-                                 Cart
-                             </NavLink>
-                             
-                               )}
-                            </motion.div>
-                        </div>
-                        <div className="flex gap-5">
-                            <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                                {!isAuthenticated ? (<NavLink to="login"  duration={500} className={navClas}>
-                                    Login
-                                </NavLink>)
-                                :(
-                                    <NavLink to="/dashboard"  duration={500} className={navClas}>
+                        ))}
+                        <motion.div
+                            variants={navLinkVariants}
+                            initial="hidden"
+                            animate="visible"
+                            transition={{ delay: navItems.length * 0.1 }}
+                        >
+                            {isAuthenticated ? (
+                                <NavLink to="/dashboard" className={navClass + " flex items-center mx-3"}>
+                                    <User className="w-5 h-5 mr-1" />
                                     Dashboard
                                 </NavLink>
-                                )
-                                    
-                                    }
-
-                            </motion.div>
-                            <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                                <NavLink to="contact"  duration={500} className={navClas}>
-                                    Contact
+                            ) : (
+                                <NavLink to="/login" className={navClass + " flex items-center mx-3"}>
+                                    <User className="w-5 h-5 mr-1" />
+                                    Login
                                 </NavLink>
+                            )}
+                        </motion.div>
+                    </div>
+                    <div className="flex items-center sm:hidden">
+                        <motion.button
+                            onClick={toggleMobileMenu}
+                            className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-purple-600 focus:outline-none"
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            {isMobileMenuOpen ? (
+                                <X className="block h-6 w-6" aria-hidden="true" />
+                            ) : (
+                                <Menu className="block h-6 w-6" aria-hidden="true" />
+                            )}
+                        </motion.button>
+                    </div>
+                </div>
+            </div>
+
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div 
+                        className="sm:hidden"
+                        initial="closed"
+                        animate="open"
+                        exit="closed"
+                        variants={mobileMenuVariants}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    >
+                        <div className="pt-2 pb-3 space-y-1">
+                            {navItems.map((item, index) => (
+                                <motion.div
+                                    key={item.name}
+                                    variants={navLinkVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    transition={{ delay: index * 0.1 }}
+                                >
+                                    <NavLink
+                                        to={item.path}
+                                        className={({ isActive }) => 
+                                            `${navClass} ${isActive ? 'text-purple-600' : ''} block px-3 py-2 text-base font-medium`
+                                        }
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        {item.name}
+                                    </NavLink>
+                                </motion.div>
+                            ))}
+                            <motion.div
+                                variants={navLinkVariants}
+                                initial="hidden"
+                                animate="visible"
+                                transition={{ delay: navItems.length * 0.1 }}
+                            >
+                                {isAuthenticated ? (
+                                    <NavLink 
+                                        to="/dashboard" 
+                                        className={`${navClass} block px-3 py-2 text-base font-medium`}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Dashboard
+                                    </NavLink>
+                                ) : (
+                                    <NavLink 
+                                        to="/login" 
+                                        className={`${navClass} block px-3 py-2 text-base font-medium`}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Login
+                                    </NavLink>
+                                )}
                             </motion.div>
                         </div>
-                    </div>
-                </motion.div>
-            ) : navOpen ? (
-                <motion.div
-                onClick={handleNavBar}
-                    id="nav"
-                    className="relative flex flex-col h-screen gap-5 items-center justify-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <GiCrossedBones className="absolute top-5 right-7 w-7 h-7 cursor-pointer" aria-label="Close menu" onClick={handleNavBar} />
-                    <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                        <NavLink to="/" className={navClas}>
-                            Home
-                        </NavLink>
                     </motion.div>
-                    <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-
-                        <NavLink to="/store" duration={500} className={navClas}>
-                            Store
-                        </NavLink>
-
-                    </motion.div>
-                    <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                        {isAuthenticated && (
-                            < NavLink to="cart" duration={500} className={navClas}>
-                            Cart
-                        </NavLink>
-                        )}
-                    </motion.div>
-                    <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                        {!isAuthenticated ? (<NavLink to="login" duration={500} className={navClas}>
-                            Login
-                        </NavLink>)
-                        :(
-                            <NavLink to="/dashboard" duration={500} className={navClas}>
-                            Dashboard
-                        </NavLink>
-                        )
-                            
-                            }
-                    </motion.div>
-                    <motion.div variants={navLinkVariants} initial="hidden" animate="visible">
-                        <NavLink to="contact" duration={500} className={navClas}>
-                            Contact
-                        </NavLink>
-                    </motion.div>
-                </motion.div>
-            ) : (
-                <div className="flex justify-between pr-5 items-center hero-image-nav" id="nav">
-                    <div>
-                        {/* <img src={logo} alt="Logo" className="w-15 h-[60px] ml-10" /> */}
-                    </div>
-                    <GiHamburgerMenu className="h-[60px] w-7 cursor-pointer" onClick={handleNavBar} />
-                </div>
-            )}
-        </>
+                )}
+            </AnimatePresence>
+        </motion.nav>
     );
 }

@@ -101,7 +101,7 @@ useEffect(() => {
         { email, password },
         { withCredentials: true }
       );
-
+      console.log(res)
       if(res.data.success){
         setUser({
           name: res.data.user?.name,
@@ -114,6 +114,7 @@ useEffect(() => {
       });
       setIsAuthenticated(true);
       }
+     
 
         return res;
 

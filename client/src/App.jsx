@@ -22,9 +22,11 @@ import ManageProductIndividual from './pages/admin/manageProductIndividual';
 import ManageUserIndividual from './pages/admin/manageUsersIndividual';
 import ManageOrder from './pages/admin/manageOrder';
 import ManageOrderUpdate from './pages/admin/manageOrderUpdate';
+import { ToastProvider } from './context/toastContext';
 
 function App() {
   return (
+    <ToastProvider>
     <AuthProvider>
       <ProductProvider>
         <Router>
@@ -80,6 +82,7 @@ function App() {
         </Router>
       </ProductProvider>
     </AuthProvider>
+    </ToastProvider>
   );
 }
 
