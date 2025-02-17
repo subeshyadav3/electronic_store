@@ -71,57 +71,31 @@
 
 
 
-/* global text responsive  */
-/* @layer base {
-  h1 {
-    @apply text-xl sm:text-2xl md:text-3xl lg:text-3xl font-bold;
-  }
+/* animation for notification */
+
+.notification{
+  position:relative;
+  overflow: hidden;
   
-  h2 {
-    @apply text-lg sm:text-sm md:text-xl lg:text-2xl font-semibold;
-  }
-  
-  p {
-    @apply text-sm sm:text-base md:text-lg lg:text-xl ;
-  }
-  ul {
-    @apply list-disc list-inside text-sm sm:text-base md:text-lg lg:text-xl;
-  }
-  
-  li {
-    @apply mb-2;
-  }
-} */
-
-
-
-/* nav animation */
-
-
-
-.nav-animation {
-  position: relative;
-  display: inline-block;
-  /* background: transparent; */
-
 }
 
-.nav-animation::before {
+.notification::before{
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0%;
-  height: 1px;
-  background-color: blueviolet;
-  transition: width 0.3s ease-in-out;
+bottom: 0;
+left: 0;
+
+height: 5px;
+
+background-color: #6B7280;
+  animation: notification-animation 3s ease-out;
 }
 
-.nav-animation:hover::before {
-  width: 100%;
+@keyframes notification-animation {
+  0%{
+    width: 100%;
+  }
+  100%{
+    width: 0%;
+  }
 }
-
-
-
-
-/* cart css */

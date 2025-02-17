@@ -1,30 +1,13 @@
 import React from "react"
 import { Facebook, Github, Linkedin, Phone, Mail } from "lucide-react"
-// import useNotification from "./components/notification"
+import { useToast } from "../context/toastContext"
+
 import { Link } from "react-scroll"
 
 export default function Footer() {
     const [email, setEmail] = React.useState("")
-    //   const { addNotification } = useNotification()
+    const {showToast}=useToast()
 
-    //   const isValidEmail = (email) => {
-    //     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    //     return emailRegex.test(email)
-    //   }
-
-    //   const handleSubscribe = () => {
-    //     try {
-    //       if (!isValidEmail(email) || email.length < 8) {
-    //         addNotification("Invalid email")
-    //         return
-    //       }
-
-    //       addNotification("Subscribed successfully")
-    //       setEmail("")
-    //     } catch (error) {
-    //       console.log(error)
-    //     }
-    //   }
 
     const goToTop = () => {
         window.scrollTo(
@@ -35,6 +18,15 @@ export default function Footer() {
         )
     }
 
+    const handleSubscribe = () => {
+        let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        if( !email || !emailRegex.test(email)){
+            return showToast("Invalid Email", "error")
+        }
+        
+        showToast(`Subscribed with ${email}`, "success")
+        setEmail("")
+    }
 
     return (
         <div className="min-h-[500px]  relative lg:min-h-[400px] flex flex-col justify-between bg-slate-900 text-white p-8 md:p-12">
@@ -54,7 +46,7 @@ export default function Footer() {
                         required
                     />
                     <button
-                        // onClick={handleSubscribe}
+                        onClick={handleSubscribe}
                         className="px-6 py-2 bg-white text-slate-900 rounded-md hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-900"
                     >
                         Subscribe Now

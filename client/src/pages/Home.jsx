@@ -1,7 +1,7 @@
 import { useProducts } from "../context/productContext"
 import ProductCard from "../components/products/productCard"
 import LoadingComponent from "../components/helper/loadingComponent"
-import { useToast } from "../context/toastContext"
+
 import { ShoppingBag, Zap, Truck } from "lucide-react"
 import { useEffect, useState } from "react"
 import apiClient from "../components/helper/axios"
@@ -9,7 +9,8 @@ import { Link } from "react-router-dom"
 
 const Home = () => {
   const { products, getHomeProducts, loading, setLoading, error,setFilter } = useProducts()
-  const { showToast } = useToast()
+
+
   const [allCategories, setAllCategories] = useState({
     smartphones: [],
     laptops: [],

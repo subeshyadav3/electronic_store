@@ -41,7 +41,7 @@ export default function Nav() {
 
     const mobileMenuVariants = {
         closed: { opacity: 0, x: "-100%" },
-        open: { opacity: 1, x: 0 }
+        open: { opacity: 1, x: "40%" }
     };
 
     return (
@@ -77,7 +77,7 @@ export default function Nav() {
                                 <NavLink
                                     to={item.path}
                                     className={({ isActive }) => 
-                                        `${navClass}  ${isActive ? 'text-purple-600' : ''} mx-3`
+                                        `${navClass}  ${isActive ? 'text-purple-600' : ''}  mx-3`
                                     }
                                 >
                                     {item.name}
@@ -140,8 +140,9 @@ export default function Nav() {
                                 >
                                     <NavLink
                                         to={item.path}
+                                        
                                         className={({ isActive }) => 
-                                            `${navClass} ${isActive ? 'text-purple-600' : ''} block px-3 py-2 text-base font-medium`
+                                            `${navClass} ${isActive ? 'text-purple-600' : ''} -translate-x-2 hover:-translate-x-0 block px-3 py-2 text-base font-medium`
                                         }
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
@@ -158,7 +159,7 @@ export default function Nav() {
                                 {isAuthenticated ? (
                                     <NavLink 
                                         to="/dashboard" 
-                                        className={`${navClass} block px-3 py-2 text-base font-medium`}
+                                        className={`${navClass} -translate-x-2 hover:-translate-x-0 block px-3 py-2 text-base font-medium`}
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Dashboard
@@ -166,7 +167,7 @@ export default function Nav() {
                                 ) : (
                                     <NavLink 
                                         to="/login" 
-                                        className={`${navClass} block px-3 py-2 text-base font-medium`}
+                                        className={`${navClass} -translate-x-2 hover:-translate-x-0 block px-3 py-2 text-base font-medium`}
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Login

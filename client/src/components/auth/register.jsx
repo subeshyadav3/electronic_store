@@ -3,6 +3,7 @@ import apiClient from '../helper/axios';
 import LoadingComponent from '../helper/loadingComponent';
 import { FaUser, FaEnvelope, FaLock, FaPhone, FaKey } from 'react-icons/fa';
 import { useAuth } from '../../context/authContext';
+import { useToast } from '../../context/toastContext';
 
 const Register = () => {
     const [step, setStep] = useState(1);
@@ -14,7 +15,7 @@ const Register = () => {
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const {register,getOtp,otpVerify,user}=useAuth();
-
+    const { showToast } = useToast();
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
    
@@ -47,6 +48,7 @@ const Register = () => {
 
             console.log('Registration successful', res.data.success);
             if(res.data.success){
+                showToast(res.data.message, 'success');
                 getOtp(email);
                 setStep(2);
             }

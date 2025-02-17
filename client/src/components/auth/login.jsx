@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import LoadingComponent from '../helper/loadingComponent';
 import { useAuth } from '../../context/authContext';
 import { useNavigate } from 'react-router-dom';
+import {useToast} from '../../context/toastContext'
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToast();
+
 
   const { login } = useAuth(); 
   const navigate = useNavigate();
@@ -40,13 +43,12 @@ const Login = () => {
       const response = await login(email, password);
       console.log(response)
       if(response.data.success){
-        console.log("Login successful")
+        showToast(response.data.message, 'success');
         navigate('/store');
       }
       
       
     } catch (err) {
-
 
       setErrors({ general: err.response.data.message });
       

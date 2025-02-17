@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Facebook, Github, Linkedin } from "lucide-react";
 import { motion } from "framer-motion";
+import { useToast } from "../context/toastContext";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ export default function ContactForm() {
     subject: "",
     comment: "",
   });
+  const { showToast } = useToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,7 +23,13 @@ export default function ContactForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Message sent successfully");
+    if(!formData.name || !formData.email || !formData.phone || !formData.subject || !formData.comment){
+      return showToast("Please fill all the fields", "error");
+    }
+    
+
+    showToast("Message sent successfully", "success");
+    // alert("Message sent successfully");
   };
 
   return (

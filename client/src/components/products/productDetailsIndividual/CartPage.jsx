@@ -3,12 +3,15 @@ import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import apiClient from "../../helper/axios";
 import LoadingComponent from "../../helper/loadingComponent";
 import { useProducts } from "../../../context/productContext";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { getProductById } = useProducts();
-    
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
@@ -28,6 +31,7 @@ const CartPage = () => {
         );
         setCartItems(cartItemsData);
       } catch (error) {
+        setError("Error fetching cart items");
         console.error("Error fetching cart items:", error);
       } finally {
         setLoading(false);
@@ -67,10 +71,13 @@ const CartPage = () => {
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  const handleCheckout = () => {
+    navigate('/checkout')
+  }
   
 
   return (
-    <div className="container  mx-auto px-4 py-8 h-screen">
+    <div className="container  mx-auto px-4 py-8 min-h-screen">
       
       <div className="bg-white shadow-lg  rounded-md p-6">
         <div className="flex items-center text-2xl font-bold ">
@@ -78,8 +85,9 @@ const CartPage = () => {
         </div>
         <div className="m-10">
           {loading && <LoadingComponent />}
+          {error && <p className="text-red-500 text-center">{error}</p>}
           {cartItems.length === 0 ? (
-            <p className="text-center text-gray-500">Your cart is empty.</p>
+            <p className="text-center text-gray-500">Loading Your Cart..</p>
           ) : (
             <ul className="divide-y divide-gray-200">
               {cartItems.map((item) => (
@@ -123,7 +131,9 @@ const CartPage = () => {
         {cartItems.length > 0 && (
           <div className="flex justify-between items-center mt-6">
             <div className="text-xl font-bold">Total: ${totalPrice.toFixed(2)}</div>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-md">Proceed to Checkout</button>
+            <button
+            onClick={handleCheckout}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md">Proceed to Checkout</button>
           </div>
         )}
       </div>

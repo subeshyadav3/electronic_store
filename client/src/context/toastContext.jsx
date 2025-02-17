@@ -17,7 +17,7 @@ export const ToastProvider = ({ children }) => {
     console.log(notifications);
     setTimeout(() => {
       removeNotification(id);
-    },5000); 
+    },3000); 
   };
 
   const removeNotification = (id) => {
