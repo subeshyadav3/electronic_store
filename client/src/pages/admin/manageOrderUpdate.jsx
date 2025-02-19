@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import apiClient from "../../components/helper/axios";
 import { useNavigate, useParams } from "react-router-dom";
+import LoadingComponent from "../../components/helper/loadingComponent";
 
 const ManageOrderUpdate = () => {
   const {id} = useParams(); 
@@ -94,7 +95,7 @@ const ManageOrderUpdate = () => {
     }
   };
 
-  if (loading) return <div>Loading order details...</div>;
+  if (loading) return <LoadingComponent />;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -192,7 +193,7 @@ const ManageOrderUpdate = () => {
           </button>
           <button
             type="button"
-            onClick={() => navigate("/admin/orders")}
+            onClick={() => navigate("/dashboard/admin/orders")}
             className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 focus:outline-none"
           >
             Cancel

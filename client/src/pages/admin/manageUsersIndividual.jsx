@@ -1,24 +1,24 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../../context/authContext'
+import LoadingComponent from '../../components/helper/loadingComponent'
 
 function ManageUserIndividual() {
   const { id } = useParams()
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const { getAdminUsersById,adminUserUpdate } = useAuth()
 
+  const { getAdminUsersById,adminUserUpdate } = useAuth()
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
     const fetchUser = async () => {
       try {
         
         const response = await getAdminUsersById(id)
         setUser(response.users)
+        setLoading(false)
       } catch (error) {
         console.error('Error fetching user:', error)
-      } finally {
-        setLoading(false)
-      }
+      } 
     }
     fetchUser()
   }, [id])
@@ -42,11 +42,11 @@ function ManageUserIndividual() {
     }
   }
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <LoadingComponent />
   if (!user) return <div>User not found</div>
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6 min-h-screen">
       <h1 className="text-2xl font-semibold mb-6">Manage User: {user.name}</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>

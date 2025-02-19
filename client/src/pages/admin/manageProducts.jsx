@@ -10,8 +10,9 @@ function ManageProducts() {
   const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
     const [timer, setTimer] = useState(null);
+    
   const navigate=useNavigate();
-
+  
   useEffect(() => {
     getAdminAllProducts();
   
@@ -58,7 +59,7 @@ function ManageProducts() {
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
-            <tr className="bg-gray-100 ">
+            <tr className="bg-gray-100">
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
@@ -68,7 +69,7 @@ function ManageProducts() {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 ">
             {adminProducts
               .filter((product) =>
                 product.title.toLowerCase().includes(searchTerm.toLowerCase())

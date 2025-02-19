@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import apiClient from '../components/helper/axios';
-import LoadingComponent from '../components/helper/loadingComponent';
 
 
 const ProductContext = createContext();
@@ -47,13 +46,8 @@ const ProductProvider = ({ children }) => {
     fetchProducts();
   }, [filters]); 
 
-  // const setCategoryFilter = (category) => {
-  //   setFilters({...filters,category:category});
-  // }
-
   useEffect(() => {
-    // console.log("Product: ", products[5].title);
-    // console.log(products)
+
   }, [products,filters]);
 
   const setPriceRangeFilter = (price) => {
@@ -63,24 +57,6 @@ const ProductProvider = ({ children }) => {
 
   const [isSelected, setIsSelected] = useState([]);
   
-  // const setSearchFilter = (name) => {
-  //   setFilters({...filters,name:name});
-  // }
-
-  // const setDiscountFilter = (discount) => {
-  //   setFilters({...filters,discount:discount});
-  // }
-
-  // const setBrandsFilter = (brands) => {
-  //   setFilters({...filters,brands:brands});
-  // }
-
-  // const setTagsFilter = (tags) => {
-  //   setFilters({...filters,tags:tags});
-  // }
-
-  // filtering to show products in home
-
   const homeFilterProduct=async(productType)=>{
     try {
         setFilter({
@@ -174,10 +150,6 @@ const ProductProvider = ({ children }) => {
   const adminProductDelete = async (id) => {
       try{
         const response = await apiClient.delete(`/product/${id}`);
-        // setAdminProducts(prev => prev.filter(product => product._id !== id));
-        // console.log(response);
-        // getAdminAllProducts();  //testing
-
         return alert("Product deleted successfully"); //testing
       }
       catch(err){
@@ -186,9 +158,6 @@ const ProductProvider = ({ children }) => {
 
   }
 
-  
-
-  // if(loading) return <LoadingComponent />;
 
   return (
     <ProductContext.Provider

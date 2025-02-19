@@ -33,7 +33,7 @@ function AdminLayout() {
   }, []);
 
   return (
-    <div className="grid grid-cols-[auto,1fr] ">
+    <div className="grid grid-cols-[auto,1fr] min-h-screen">
      
       <div
         className={`text-black p-5 border-r-2 transition-all duration-300 ${

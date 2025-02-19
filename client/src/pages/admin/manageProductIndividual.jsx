@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useProducts } from "../../context/productContext"
+import LoadingComponent from "../../components/helper/loadingComponent"
 
 function ManageProductIndividual() {
   const { id } = useParams()
@@ -37,7 +38,7 @@ function ManageProductIndividual() {
     }
   }
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <LoadingComponent />
   if (!product) return <div>Product not found</div>
 
   return (
