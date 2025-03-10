@@ -23,6 +23,7 @@ import ManageUserIndividual from './pages/admin/manageUsersIndividual';
 import ManageOrder from './pages/admin/manageOrder';
 import ManageOrderUpdate from './pages/admin/manageOrderUpdate';
 import { ToastProvider } from './context/toastContext';
+import Logout from './components/auth/logout';
 
 function App() {
   return (
@@ -71,6 +72,8 @@ function App() {
               <Route path="/store/:id" element={<ProductDetails />} />
 
               <Route element={<ProtectedRoute allowedRoles={['admin', 'customer']} />}>
+                 <Route path="/logout" element={<Logout />} />
+
                 <Route path='/cart' element={<CartPage />} />
                 <Route path='/checkout' element={<CheckoutPage />} />
               </Route>

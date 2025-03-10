@@ -37,7 +37,7 @@ const Login = () => {
     if (!validateForm()) {
       return;
     }
-
+    setIsLoading(true);
     // setIsLoading(true);
     try {
       const response = await login(email, password);
@@ -57,7 +57,7 @@ const Login = () => {
     }
   };
 
-  if (isLoading) return <LoadingComponent />;
+  // if (isLoading) return <LoadingComponent />;
 
   return (
     <div className="min-h-screen flex justify-center items-center">

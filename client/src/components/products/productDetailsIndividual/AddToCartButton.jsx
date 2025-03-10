@@ -14,6 +14,7 @@ const AddToCartButton = ({ productId, onAddToCart }) => {
   const handleAddToCart = async () => {
     setIsAdding(true)
     try {
+      
      console.log("productId",productId)
       const response=await apiClient.post('/cart',{productId, quantity})
       console.log(response.data)

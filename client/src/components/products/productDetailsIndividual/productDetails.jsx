@@ -73,7 +73,7 @@ const ProductDetails = () => {
           <p className="text-gray-600 mb-2">SKU: {product.sku}</p>
           <p className="text-gray-600 mb-2">Availability: {product.availabilityStatus}</p>
           <p className="text-gray-600 mb-4">Ships in: {product.shippingInformation}</p>
-          <AddToCartButton productId={product.id} />
+          <AddToCartButton productId={product._id} />
         </div>
       </div>
 

@@ -205,10 +205,13 @@ const getrefreshToken = async (req, res) => {
 
 
 const userLogout = async (req, res) => {
-    const { refreshToken } = req.body;
+    const { refreshToken } = req.cookies;
+    // console.log(refreshToken)
     if (!refreshToken) return res.status(400).json({ message: "Refresh token required" });
 
     try {
+        res.clearCookie('token');
+        res.clearCookie('refreshToken');
         await Blacklist.create({ token: refreshToken });
         await removeRefreshTokenFromDB(refreshToken);
         return res.status(200).json({ success: true, message: "Logout successful" });

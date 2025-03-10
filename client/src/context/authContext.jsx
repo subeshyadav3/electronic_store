@@ -127,7 +127,7 @@ useEffect(() => {
   // Logout function
   const logout = async () => {
     try {
-      await apiClient.post('/auth/logout', {}, { withCredentials: true });
+      await apiClient.post('/auth/logout', { withCredentials: true });
       setUser(null);
       setIsAuthenticated(false);
     } catch (err) {

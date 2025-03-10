@@ -12,10 +12,13 @@ export default function Nav() {
 
     useEffect(() => {
         setIsMobileMenuOpen(false);
+
+
     }, []);
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
+        
     };
 
     const navItems = [
@@ -24,9 +27,18 @@ export default function Nav() {
         { name: 'Contact', path: '/contact' },
     ];
 
+   
+
     if (isAuthenticated) {
         navItems.push({ name: 'Cart', path: '/cart' });
     }
+    
+    if(location.pathname.includes("/dashboard")){
+        console.log("here")
+
+        navItems.push({ name: 'Logout', path: '/logout' });
+    }
+    
 
     const navClass = "text-gray-700 hover:text-purple-600 transition-colors duration-300 transform -translate-x-2 hover:translate-x-0";
 
