@@ -210,6 +210,7 @@ const userLogout = async (req, res) => {
     if (!refreshToken) return res.status(400).json({ message: "Refresh token required" });
 
     try {
+        
         res.clearCookie('token');
         res.clearCookie('refreshToken');
         await Blacklist.create({ token: refreshToken });
