@@ -5,7 +5,7 @@ const User = require('../models/customers/user');
 const getProducts = async (req, res) => {
   try {
     const { title, price, category, discount, tags, brands ,page, limit} = req.query;
-    const limitPerPage = limit ? parseInt(limit) : 10;
+    const limitPerPage = limit ? parseInt(limit) : 100;
     const pageNumber = page ? parseInt(page) : 1;
     const skip = (pageNumber - 1) * limitPerPage;
 
@@ -58,37 +58,71 @@ const getProductById = async (req, res) => {
   }
 };
 
+
 const addProduct = async (req, res) => {
   try {
-    const { name, description, price, category, discount, stock } = req.body;
+      const {
+          title,
+          description,
+          price,
+          category,
+          discountPercentage,
+          stock,
+          brand,
+          sku,
+          weight,
+          dimensions,
+          tags,
+          warrantyInformation,
+          returnPolicy,
+          shippingInformation,
+          availabilityStatus,
+          minimumOrderQuantity,
+          meta,
+          images,
+          thumbnail,
+      } = req.body;
 
-    if (!name || !description || !price || !category || !discount || !stock) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
+      if (!title || !description || !price || !category || stock === undefined) {
+          return res.status(400).json({ message: "All required fields must be provided" });
+      }
 
-    const newProduct = new Product({
-      name,
-      description,
-      price,
-      category,
-      discount,
-      stock,
-      createdBy: req.user?.userId, 
-    });
+      const newProduct = new Product({
+          title,
+          description,
+          price,
+          category,
+          discount: discountPercentage || 0,
+          stock,
+          brand: brand || "Others",
+          sku,
+          weight,
+          dimensions,
+          tags: tags || [],
+          warrantyInformation: warrantyInformation || "No Warranty",
+          returnPolicy: returnPolicy || "No Returns",
+          shippingInformation: shippingInformation || "Ships in 1 week",
+          availabilityStatus: availabilityStatus || "In Stock",
+          minimumOrderQuantity: minimumOrderQuantity || 1,
+          meta,
+          images: images || [],
+          thumbnail,
+      });
 
+      const savedProduct = await newProduct.save();
 
-    const savedProduct = await newProduct.save();
+      await User.findByIdAndUpdate(req.user.userId, {
+          $push: { productsCreated: savedProduct._id },
+      });
 
-    await User.findByIdAndUpdate(
-      req.user.userId,
-      { $push: { productsCreated: savedProduct._id } }
-    );
-
-    res.status(201).json(savedProduct);
+      res.status(201).json({ message: 'Product Created Successfully!', product: savedProduct, success: true });
   } catch (err) {
-    res.status(400).json({ message: 'Error creating product', error: err });
+      res.status(400).json({ message: "Error creating product", error: err });
   }
 };
+
+module.exports = { Product, addProduct };
+
 
 const updateProduct = async (req, res) => {
   try {

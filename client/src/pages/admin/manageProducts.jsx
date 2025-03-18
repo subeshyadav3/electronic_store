@@ -8,16 +8,16 @@ import { useNavigate } from "react-router-dom";
 function ManageProducts() {
   const { getAdminAllProducts, loading, error, adminProducts, setFilter ,adminProductDelete,adminProductUpdate,getProductById} = useProducts();
   const [searchTerm, setSearchTerm] = useState("");
-    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-    const [timer, setTimer] = useState(null);
-    
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [timer, setTimer] = useState(null);
   const navigate=useNavigate();
   
+
   useEffect(() => {
     getAdminAllProducts();
-  
+    
   }, [adminProducts]);
-
+  
 
   const handleSearchTerm=(e)=>{
     setSearchTerm(e.target.value);
@@ -32,7 +32,10 @@ function ManageProducts() {
       }, 500)
     );
   }
-
+  const handleCreateProduct=()=>{
+    navigate('/dashboard/admin/products/create');
+  
+  }
 
   if (loading) return <LoadingComponent />;
   if (error) return <div className="text-red-500">Error: {error}</div>;
@@ -45,7 +48,10 @@ function ManageProducts() {
 
   return (
     <div className="container mx-auto p-6 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Manage Products</h1>
+       <div className="flex flex-row justify-between mr-20">
+      <h1 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6">Manage Products</h1>
+      <button className="rounded-lg bg-slate-300 p-2 w-fit h-10 hover:bg-slate-400" onClick={handleCreateProduct}>Create</button>
+      </div>
       <div className="mb-4">
         <input
           type="text"

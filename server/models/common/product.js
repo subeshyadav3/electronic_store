@@ -1,29 +1,24 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-    name: {
+    title: {
         type: String,
         required: true,
         trim: true,
-    },
-    images: {
-        type: [String],
-        // type: String,
-        default: [],
     },
     description: {
         type: String,
         required: true,
         trim: true,
     },
+    category: {
+        type: String,
+        required: true,
+    },
     price: {
         type: Number,
         required: true,
         min: 0,
-    },
-    category: {
-        type: String,
-        required: true,
     },
     discount: {
         type: Number,
@@ -45,52 +40,71 @@ const productSchema = new mongoose.Schema({
         type: [String],
         default: [],
     },
-    brands: {
+    brand: {
         type: String,
         default: 'Others',
     },
-    warranty: {
+    sku: {
+        type: String,
+    },
+    weight: {
+        type: Number,
+    },
+    dimensions: {
+        type: Object,
+    },
+    warrantyInformation: {
         type: String,
         default: 'No Warranty',
     },
-    isFeatured: {
-        type: Boolean,
-        default: false,
+    shippingInformation: {
+        type: String,
+        default: '',
     },
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      
-        
+    availabilityStatus: {
+        type: String,
+        default: 'In Stock',
     },
-
-    comments:[
+    returnPolicy: {
+        type: String,
+        default: 'No Returns',
+    },
+    minimumOrderQuantity: {
+        type: Number,
+        default: 1,
+    },
+    meta: {
+        type: Object,
+    },
+    images: {
+        type: [String],
+        default: [],
+    },
+    thumbnail: {
+        type: String,
+    },
+    comments: [
         {
-            user:{
-                type:String,
-                required: true,
-            }
-            ,
-            comment:{
+            user: {
                 type: String,
-                required: false,
+                required: true,
             },
-            reply:[
+            comment: {
+                type: String,
+            },
+            reply: [
                 {
-                    user:{
-                        type:String,
+                    user: {
+                        type: String,
                         required: true,
                     },
-                    comment:{
+                    comment: {
                         type: String,
-                        required: false,
                     }
                 }
             ]
-
         }
     ],
-
     createdAt: {
         type: Date,
         default: Date.now,
@@ -101,15 +115,14 @@ const productSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-productSchema.pre('save',function(next){
+productSchema.pre('save', function (next) {
     if (this.discount > 0) {
         this.discountedPrice = this.price * (1 - this.discount / 100);
-      } else {
+    } else {
         this.discountedPrice = this.price;
-      }
-
+    }
     next();
-})
+});
 
 const Product = mongoose.model('Product', productSchema);
 

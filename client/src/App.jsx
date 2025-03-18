@@ -24,6 +24,7 @@ import ManageOrder from './pages/admin/manageOrder';
 import ManageOrderUpdate from './pages/admin/manageOrderUpdate';
 import { ToastProvider } from './context/toastContext';
 import Logout from './components/auth/logout';
+import CreateProductForm from './pages/admin/createProducts';
 
 function App() {
   return (
@@ -54,7 +55,7 @@ function App() {
                   <Route index element={<AdminDashboard />} />
                   <Route path="products" element={<ManageProducts />} />
                   <Route path="products/:id" element={<ManageProductIndividual />} />
-
+                  <Route path='products/create' element={<CreateProductForm />} />
                   <Route path="users" element={<ManageUsers />} />
                   <Route path="users/:id" element={<ManageUserIndividual />} />
                   <Route path="orders" element={<ManageOrder />} />

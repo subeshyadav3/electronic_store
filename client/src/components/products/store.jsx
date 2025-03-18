@@ -5,7 +5,7 @@ import SidebarComponent from './sideBarComponent';
 import LoadingComponent from '../helper/loadingComponent';
 
 const Store = () => {
-  const { products, setFilter, setPriceRangeFilter, loading, page, setPage } = useProducts();
+  const { products, setFilter, setPriceRangeFilter, loading, page, setPage, totalPages } = useProducts();
 
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000000);
@@ -21,7 +21,9 @@ const Store = () => {
   };
 
   const handlePageChange = (newPage) => {
-    setPage(newPage);
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
   };
 
   return (
@@ -36,7 +38,7 @@ const Store = () => {
         />
       </div>
 
-      <div className="flex flex-col  items-center p-5">
+      <div className="flex flex-col items-center p-5">
         <div className="mb-5 w-full max-w-[500px] flex-col flex gap-2 sm:flex-row">
           <input
             type="text"
@@ -49,7 +51,7 @@ const Store = () => {
             name="search"
             value="search"
             onClick={setFilter}
-            className="w-fit bg-blue-500 text-white  px-4 py-2 h-fit rounded-md hover:bg-blue-600 transition-colors duration-300"
+            className="w-fit bg-blue-500 text-white px-4 py-2 h-fit rounded-md hover:bg-blue-600 transition-colors duration-300"
           >
             Search
           </button>
@@ -69,21 +71,23 @@ const Store = () => {
           </div>
         )}
 
+        {/* Pagination Controls */}
         <div className="mt-6 flex justify-center space-x-4">
-          {/* <button
+          <button
             onClick={() => handlePageChange(page - 1)}
             disabled={page === 1}
             className="px-4 py-2 bg-gray-300 text-gray-600 rounded-md hover:bg-gray-400 disabled:opacity-50"
           >
             Prev
           </button>
-          <span className="text-lg">{page}</span>
+          <span className="text-lg font-bold">{page} / {totalPages}</span>
           <button
             onClick={() => handlePageChange(page + 1)}
-            className="px-4 py-2 bg-gray-300 text-gray-600 rounded-md hover:bg-gray-400"
+            disabled={page === totalPages}
+            className="px-4 py-2 bg-gray-300 text-gray-600 rounded-md hover:bg-gray-400 disabled:opacity-50"
           >
             Next
-          </button> */}
+          </button>
         </div>
       </div>
     </div>
