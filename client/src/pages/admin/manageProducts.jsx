@@ -52,22 +52,29 @@ function ManageProducts() {
  
 
   return (
-    <div className="container mx-auto p-6 min-h-screen">
-       <div className="flex flex-row justify-between mr-20">
-      <h1 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6">Manage Products</h1>
-      <button className="rounded-lg bg-slate-300 p-2 w-fit h-10 hover:bg-slate-400" onClick={handleCreateProduct}>Create</button>
+    <div className="container mx-auto p-4 md:p-6 min-h-screen">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center md:mr-20">
+        <h1 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6">Manage Products</h1>
+        <button
+          className="rounded-lg bg-slate-300 p-2 w-fit h-10 hover:bg-slate-400 mb-4 md:mb-0"
+          onClick={handleCreateProduct}
+        >
+          Create
+        </button>
       </div>
+  
       <div className="mb-4">
         <input
           type="text"
           name="title"
           placeholder="Search products..."
-          
           onChange={handleSearchTerm}
           className="w-full max-w-sm px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <div className="overflow-x-auto">
+  
+
+      <div className="overflow-x-auto hidden md:block">
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
@@ -75,12 +82,10 @@ function ManageProducts() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 ">
+          <tbody className="divide-y divide-gray-200">
             {adminProducts
               .filter((product) =>
                 product.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -104,22 +109,70 @@ function ManageProducts() {
                     <div className="text-sm text-gray-500">{product.stock}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={()=> handleProductEdit(product._id)}>Edit</button>
-                    <button className="text-red-600 hover:text-red-900" onClick={()=> {
-                        if (product && product._id) {
-                            adminProductDelete(product._id);
-                          } else {
-                            console.error("Product ID is missing");
-                          }
-                    }} >Delete</button>
+                    <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={() => handleProductEdit(product._id)}>Edit</button>
+                    <button className="text-red-600 hover:text-red-900" onClick={() => {
+                      if (product && product._id) {
+                        adminProductDelete(product._id);
+                      } else {
+                        console.error("Product ID is missing");
+                      }
+                    }}>Delete</button>
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
       </div>
+  
+
+      <div className=" lg:hidden space-y-4">
+        {adminProducts
+          .filter((product) =>
+            product.title.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((product) => (
+            <div
+              key={product._id}
+              className="bg-white border border-gray-300 rounded-lg p-4 shadow-sm"
+            >
+              <div className="flex items-center space-x-4">
+                <img
+                  src={product.thumbnail || "/placeholder.svg"}
+                  alt={product.title}
+                  className="w-16 h-16 object-cover rounded"
+                />
+                <div className="flex-1">
+                  <h2 className="text-base font-semibold text-gray-800">{product.title}</h2>
+                  <p className="text-sm text-gray-600">${product.price.toFixed(2)}</p>
+                  <p className="text-sm text-gray-500">Stock: {product.stock}</p>
+                </div>
+              </div>
+              <div className="flex justify-end mt-4 space-x-4">
+                <button
+                  className="text-indigo-600 hover:text-indigo-900 text-sm"
+                  onClick={() => handleProductEdit(product._id)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="text-red-600 hover:text-red-900 text-sm"
+                  onClick={() => {
+                    if (product && product._id) {
+                      adminProductDelete(product._id);
+                    } else {
+                      console.error("Product ID is missing");
+                    }
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+      </div>
     </div>
   );
+  
 }
 
 export default ManageProducts;
