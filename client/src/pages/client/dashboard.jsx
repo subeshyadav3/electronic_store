@@ -1,53 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/authContext';
 import apiClient from '../../components/helper/axios';
+import LoadingComponent from '../../components/helper/loadingComponent';
 
 export default function CustomerDashboard() {
     const { user } = useAuth();
+    const [customerData, setCustomerData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [updatedData, setUpdatedData] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
-    });
+    const [updatedData, setUpdatedData] = useState({});
 
     useEffect(() => {
-        if (user) {
-            setUpdatedData({
-                name: user.name || '',
-                email: user.email || '',
-                // phone: user.phone || '',
-                // address: user.address || '',
-            });
+        const fetchCustomerData = async () => {
+            try {
+                const res = await apiClient.get(`/customer/${user?.userId}`, { withCredentials: true });
+                const customer = res.data.users;
+                // console.log(customer);
+                setCustomerData(customer);
+                setUpdatedData(customer); 
+            } catch (err) {
+                console.error('Error fetching customer data:', err);
+            }
+        };
+
+        if (user?.userId) {
+            fetchCustomerData();
         }
-    }, [user]);
+    }, []);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setUpdatedData((prev) => ({ ...prev, [name]: value }));
+    };
 
     const handleSave = async () => {
         try {
-            const res = await apiClient.put(`/customer/${user?.userId}`, updatedData)
+            const res = await apiClient.put(`/customer/${user?.userId}`, updatedData, {
+                withCredentials: true,
+            });
 
-            const data = await res.json();
-            if (data.success) {
+            if (res.data.success) {
                 alert('User updated successfully');
                 setIsEditing(false);
+                setCustomerData(updatedData);
             } else {
                 alert('Failed to update user');
             }
         } catch (err) {
-            console.error(err);
+            console.error('Update error:', err);
             alert('An error occurred while updating');
         }
     };
 
+    if (!customerData) {
+        return <LoadingComponent />;
+    }
+
     return (
-        <div className="flex flex-col w-full lg:px-32 sm:px-20 mt-10 h-screen">
+        <div className="flex flex-col w-full lg:px-32 md:px-20 mt-10 h-screen">
             <div className="flex flex-col w-full h-full sm:flex-row md:gap-[20px] items-center sm:items-start">
-                <div className="w-full sm:w-1/2 flex h-[272px] flex-col items-center p-5 bg-gray-200 rounded-sm shadow-sm hover:shadow-md">
+                <div className="w-full sm:w-1/2 flex h-[320px] flex-col items-center p-5 bg-gray-200 rounded-sm shadow-sm hover:shadow-md">
                     <div className="w-[150px] h-[150px] rounded-full bg-gray-300 mb-2 flex items-center justify-center text-4xl text-white">
                         👤
                     </div>
-                    <h1 className="text-lg font-semibold">Customer ID: {user?.userId}</h1>
+                    <p className=" font-thin font-ougkeh"> {user?.bio || `Hi, I am ${user?.name} and I love buying new things`}</p>
                 </div>
 
                 <div className="w-full sm:w-1/2 flex flex-col mt-5 sm:mt-0 gap-5 bg-gray-200 p-5 rounded-sm shadow-sm hover:shadow-md">
@@ -68,54 +83,67 @@ export default function CustomerDashboard() {
                             Name:{' '}
                             {isEditing ? (
                                 <input
+                                    name="name"
                                     className="p-1 border border-gray-300 rounded w-full"
-                                    value={updatedData.name}
-                                    onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}
+                                    value={updatedData.name || ''}
+                                    onChange={handleChange}
                                 />
                             ) : (
-                                user?.name
+                                customerData.name
                             )}
                         </label>
                         <label className="text-gray-600">
                             Email:{' '}
                             {isEditing ? (
                                 <input
+                                    name="email"
                                     className="p-1 border border-gray-300 rounded w-full"
-                                    value={updatedData.email}
-                                    onChange={(e) => setUpdatedData({ ...updatedData, email: e.target.value })}
+                                    value={updatedData.email || ''}
+                                    onChange={handleChange}
                                 />
                             ) : (
-                                user?.email
+                                customerData.email
                             )}
                         </label>
                         <label className="text-gray-600">
-                            Phone:{' '}
+                            Phone:{''}
                             {isEditing ? (
                                 <input
+                                    name="contact"
                                     className="p-1 border border-gray-300 rounded w-full"
-                                    value={updatedData.phone}
-                                    onChange={(e) => setUpdatedData({ ...updatedData, phone: e.target.value })}
+                                    value={updatedData.contact }
+                                    onChange={handleChange}
                                 />
                             ) : (
-                                user?.phone
+                                customerData?.contact
                             )}
                         </label>
                         <label className="text-gray-600">
                             Address:{' '}
                             {isEditing ? (
                                 <input
+                                    name="shortAddress"
                                     className="p-1 border border-gray-300 rounded w-full"
-                                    value={updatedData.address}
-                                    onChange={(e) => setUpdatedData({ ...updatedData, address: e.target.value })}
+                                    value={updatedData.shortAddress }
+                                    onChange={handleChange}
                                 />
                             ) : (
-                                user?.address
+                                customerData?.shortAddress
                             )}
                         </label>
                         <p className="text-gray-600">
-                            Created At: {user?.iat ? new Date(user.iat * 1000).toLocaleDateString() : ''}
+                            Created At:{' '}
+                            {customerData.createdAt
+                                ? new Date(customerData.createdAt).toLocaleDateString()
+                                : ''}
                         </p>
-                        <p className="text-gray-600">Role: {user?.role}</p>
+                        <p className="text-gray-600">
+                            Last Updated At:{' '}
+                            {customerData.createdAt
+                                ? new Date(customerData.updatedAt).toLocaleDateString()
+                                : ''}
+                        </p>
+                        <p className="text-gray-600">Role: {customerData.role}</p>
                     </div>
                 </div>
             </div>

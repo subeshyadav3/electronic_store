@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
             'Please enter a valid email address',
         ],
     },
-
+    
     password: {
         type: String,
         required: true,
@@ -46,6 +46,10 @@ const userSchema = new mongoose.Schema({
         postalCode: { type: String, required: true },
         country: { type: String, required: true },
     }],
+    shortAddress:{
+        type: String,
+        default: ''
+    },
     role:{
         type:String,
         enum:['customer','admin','dealer'],

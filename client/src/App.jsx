@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import { Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './components/auth/login';
 import Store from './components/products/store';
@@ -27,6 +26,8 @@ import Logout from './components/auth/logout';
 import CreateProductForm from './pages/admin/createProducts';
 import CustomerDashboard from './pages/client/dashboard';
 import CustomerLayout from './pages/client/customerLayout';
+import CustomerOrder from './pages/client/customerOrder';
+
 
 function App() {
   return (
@@ -51,7 +52,7 @@ function App() {
                     element={
                       <ProtectedRoute
                         allowedRoles={['admin']}
-                        redirectTo="/dashboard/customer" 
+                        redirectTo="/dashboard/admin" 
                       />
                     }
                   >
@@ -73,12 +74,15 @@ function App() {
                     element={
                       <ProtectedRoute
                         allowedRoles={['customer']}
-                        redirectTo="/dashboard/admin"
+                        redirectTo="/dashboard/customer"
                       />
                     }
                   >
                     <Route element={<CustomerLayout />}>
                       <Route index element={<CustomerDashboard />} />
+                      <Route path='cart' element={<CartPage /> } />
+                      <Route path='orders' element={<CustomerOrder /> } />
+           
                     </Route>
                   </Route>
                 </Route>

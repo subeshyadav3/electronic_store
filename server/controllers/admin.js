@@ -33,16 +33,6 @@ const getAdminUsersUpdate = async (req, res) => {
 }
 
 
-const getCustomerUserUpdate = async (req, res) => {
-    try {
-
-        const result = await User.findOneAndUpdate({ _id: req.params.id }, { ...req.body }, { new: true });
-
-        res.status(200).json({ users: result, success: true, message: 'User updated successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error })
-    }
-}
 
 
 const getAdminUsersDelete = async (req, res) => {
@@ -130,5 +120,5 @@ module.exports = {
     getAdminOrders,
     getAdminOrdersById,
     getAdminOrdersUpdate,
-    getCustomerUserUpdate
+  
 }

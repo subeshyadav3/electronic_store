@@ -12,7 +12,7 @@ export default function Nav() {
 
     useEffect(() => {
         setIsMobileMenuOpen(false);
-        console.log("User",user)
+        // console.log("User",user)
 
     }, [isAuthenticated]);
 

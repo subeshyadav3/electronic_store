@@ -5,7 +5,7 @@ import { FaCartArrowDown } from "react-icons/fa";
 import { MdDashboardCustomize } from "react-icons/md";
 import Breadcrumb from "../../components/helper/breadcrumbs";
 import { MdManageHistory } from "react-icons/md";
-import { FaComments } from "react-icons/fa";
+
 
 function CustomerLayout() {
   const [isFixed, setIsFixed] = useState(true);
@@ -37,9 +37,8 @@ function CustomerLayout() {
   return (
     <div className="flex min-h-screen">
       <div
-        className={`text-black p-5 border-r-2 transition-all duration-300 ${
-          isSidebarOpen ? "w-64" : "w-16"
-        } ${isFixed ? "fixed h-full" : "absolute"}`}
+        className={`text-black p-5 border-r-2 transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-16"
+          } ${isFixed ? "fixed h-full" : "absolute"}`}
       >
         <button
           className="flex justify-end w-full mb-5"
@@ -90,23 +89,13 @@ function CustomerLayout() {
               {!isSidebarOpen ? <MdManageHistory /> : "Orders"}
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="/dashboard/admin/comments"
-              className={({ isActive }) =>
-                isActive ? "text-blue-500" : "text-black"
-              }
-            >
-              {!isSidebarOpen ? <FaComments /> : "Comments"}
-            </NavLink>
-          </li>
+
         </ul>
       </div>
 
       <div
-        className={`flex-1 p-5 transition-all duration-300 ${
-          isSidebarOpen ? "ml-64" : "ml-16"
-        }`}
+        className={`flex-1 p-5 transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-16"
+          }`}
       >
         <Breadcrumb />
         <Outlet />
