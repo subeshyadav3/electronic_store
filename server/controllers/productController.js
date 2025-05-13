@@ -4,10 +4,10 @@ const User = require('../models/customers/user');
 
 const getProducts = async (req, res) => {
   try {
-    const { title, price, category, discount, tags, brands ,page, limit} = req.query;
-    const limitPerPage = limit ? parseInt(limit) : 100;
-    const pageNumber = page ? parseInt(page) : 1;
-    const skip = (pageNumber - 1) * limitPerPage;
+    const { title, price, category, discount, tags, brands } = req.query;
+    // const limitPerPage = limit ? parseInt(limit) : 100;
+    // const pageNumber = page ? parseInt(page) : 1;
+    // const skip = (pageNumber - 1) * limitPerPage;
 
 
     const filter = {};
@@ -38,7 +38,7 @@ const getProducts = async (req, res) => {
     if (brands) {
       filter.brand = brands;
     }
-    const products = await Product.find(filter).limit(limitPerPage).skip(skip);
+    const products = await Product.find(filter);
 
     res.status(200).json(products);
   } catch (err) {

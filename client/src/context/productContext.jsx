@@ -13,8 +13,8 @@ const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const limit = 100;
+  // const [page, setPage] = useState(1);
+  // const limit = 12;
   const [filters, setFilters] = useState({
     title:'',
     price:'',
@@ -22,8 +22,7 @@ const ProductProvider = ({ children }) => {
     discount:null,
     tags:'',
     brands:'',
-    page,
-    limit,    
+   
   });
 
   useEffect(() => {
@@ -182,6 +181,7 @@ const ProductProvider = ({ children }) => {
         // setDiscountFilter,
         // setBrandsFilter,
         // setTagsFilter,
+
         addComment,
         homeFilterProduct,
         getAdminAllProducts,

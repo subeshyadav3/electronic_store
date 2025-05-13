@@ -6,10 +6,13 @@ import LoadingComponent from '../helper/loadingComponent';
 import ProductSkeleton from '../skeleton/product-skeleton';
 
 const Store = () => {
-  const { products, setFilter, setPriceRangeFilter, loading, page, setPage, totalPages } = useProducts();
+  const { products, setFilter, setPriceRangeFilter, loading } = useProducts();
 
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000000);
+  const [page, setPage] = useState(1);
+
+  console.log(products);
 
   useEffect(() => {
     setPriceRangeFilter(`${minPrice}-${maxPrice}`);
@@ -21,8 +24,9 @@ const Store = () => {
     if (name === 'max') setMaxPrice(value);
   };
 
+
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
+    if (newPage >= 1 && newPage <= products.length / 12) {
       setPage(newPage);
     }
   };
@@ -58,22 +62,23 @@ const Store = () => {
           </button>
         </div>
 
-        
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {loading && (
-              Array.from({ length: 4 }).map((_, idx) => <ProductSkeleton key={idx} />)
-            )}
-           
-            
-            {!products || products.length === 0 ? (
-              <h1 className="text-2xl text-red-500">No products found</h1>
-            ) : (
-              products.map((product) => (
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {loading && (
+            Array.from({ length: 4 }).map((_, idx) => <ProductSkeleton key={idx} />)
+          )}
+
+
+          {!products || products.length === 0 ? (
+            <h1 className="text-2xl text-red-500">No products found</h1>
+          ) : (
+            products.slice((page - 1) * 12, page * 12)
+              .map((product) => (
                 <ProductCard key={product._id} products={product} />
               ))
-            )}
-          </div>
-      
+          )}
+        </div>
+
 
         {/* Pagination Controls */}
         <div className="mt-6 flex justify-center space-x-4">
@@ -84,10 +89,10 @@ const Store = () => {
           >
             Prev
           </button>
-          <span className="text-lg font-bold">{page} / {totalPages}</span>
+          <span className="text-lg font-bold">{page} / {parseInt(products.length / 12)}</span>
           <button
             onClick={() => handlePageChange(page + 1)}
-            disabled={page === totalPages}
+            disabled={page === 5}
             className="px-4 py-2 bg-gray-300 text-gray-600 rounded-md hover:bg-gray-400 disabled:opacity-50"
           >
             Next
