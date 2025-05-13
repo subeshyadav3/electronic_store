@@ -1,5 +1,52 @@
-#ecommerce store with funtinality of admin and customer dashboard. more features to be added after basic functionality is added. don't know when will it complete.
+# 🛒 MERN Electronics Store
 
-#backend
-#frontend
-ui
+A full-featured eCommerce web application built using the **MERN Stack** (MongoDB, Express.js, React.js, and Node.js). This app includes **Admin and Customer Dashboards**, **User Authentication**, **Product Management**, **Shopping Cart**, **Checkout**, and much more.
+
+---
+
+## 🚀 Features
+
+### 👤 Authentication & Authorization
+- User registration and login
+- Secure authentication with JWT
+- Role-based access (Admin & Customer)
+
+### 🛍️ Customer Dashboard
+- Browse electronics products by category
+- Product search and filter
+- Add/remove items to/from cart
+- View product details
+- Checkout and order confirmation
+- View past orders
+
+### 🧑‍💼 Admin Dashboard
+- Admin login
+- Manage products (Add, Edit, Delete)
+- View all orders
+- Manage users
+- Dashboard stats & analytics (optional)
+
+### 💳 Shopping Cart & Checkout
+- Add items to cart (local storage + DB sync)
+- Update quantity or remove items
+- Checkout with shipping details
+- Simulated payment (can be extended with Stripe/PayPal)
+
+---
+
+## 🛠️ Technologies Used
+
+| Tech         | Description                     |
+|--------------|---------------------------------|
+| MongoDB      | NoSQL database for data storage |
+| Express.js   | Backend framework for Node.js   |
+| React.js     | Frontend library                |
+| Node.js      | Backend runtime environment     |
+| JWT          | Authentication                  |
+| Redux        | State management (optional)     |
+| TailwindCSS / Bootstrap | Styling             |
+| Mongoose     | MongoDB ODM                     |
+| dotenv       | Manage environment variables    |
+
+
+
