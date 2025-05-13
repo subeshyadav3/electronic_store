@@ -44,7 +44,7 @@ const Login = () => {
       console.log(response)
       if(response.data.success){
         showToast(response.data.message, 'success');
-        navigate('/store');
+        navigate('/dashboard');
       }
       
       
