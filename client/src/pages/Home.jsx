@@ -120,12 +120,15 @@ const Home = () => {
               : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
           }
         >
+          {loading &&
+            Array.from({ length: 4 }).map((_, idx) => (
+              <ProductSkeleton key={idx} />
+            ))}
+
           {error && <p className="text-red-500 text-center">Some Error Occurred!</p>}
-          {loading ? (
-            <LoadingComponent />
-          ) : (
+          {!loading && !error &&
             products.slice(0, 4).map((product) => <ProductCard key={product._id} products={product} />)
-          )}
+          }
         </div>
       </div>
 
