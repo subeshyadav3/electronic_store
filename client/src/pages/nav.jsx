@@ -7,18 +7,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Nav() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated,user } = useAuth();
     const location = useLocation();
 
     useEffect(() => {
         setIsMobileMenuOpen(false);
+        console.log("User",user)
 
-
-    }, []);
+    }, [isAuthenticated]);
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
-        
+
     };
 
     const navItems = [
@@ -27,25 +27,23 @@ export default function Nav() {
         { name: 'Contact', path: '/contact' },
     ];
 
-   
+
 
     if (isAuthenticated) {
         navItems.push({ name: 'Cart', path: '/cart' });
     }
-    
-    if(location.pathname.includes("/dashboard")){
-        console.log("here")
 
+    if (location.pathname.includes("/dashboard")) {
         navItems.push({ name: 'Logout', path: '/logout' });
     }
-    
+
 
     const navClass = "text-gray-700 hover:text-purple-600 transition-colors duration-300 transform -translate-x-2 hover:translate-x-0";
 
     const navLinkVariants = {
         hidden: { opacity: 0, y: -20 },
-        visible: { 
-            opacity: 1, 
+        visible: {
+            opacity: 1,
             y: 0,
             transition: { duration: 0.5, ease: 'easeOut' }
         },
@@ -57,7 +55,7 @@ export default function Nav() {
     };
 
     return (
-        <motion.nav 
+        <motion.nav
             className="bg-white shadow-md sticky top-0 z-50"
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -67,7 +65,7 @@ export default function Nav() {
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
                         <NavLink to="/" className="flex-shrink-0 flex items-center">
-                            <motion.span 
+                            <motion.span
                                 className="text-2xl font-bold text-purple-600"
                                 initial={{ opacity: 0, scale: 0.5 }}
                                 animate={{ opacity: 1, scale: 1 }}
@@ -88,7 +86,7 @@ export default function Nav() {
                             >
                                 <NavLink
                                     to={item.path}
-                                    className={({ isActive }) => 
+                                    className={({ isActive }) =>
                                         `${navClass}  ${isActive ? 'text-purple-600' : ''}  mx-3`
                                     }
                                 >
@@ -103,15 +101,25 @@ export default function Nav() {
                             transition={{ delay: navItems.length * 0.1 }}
                         >
                             {isAuthenticated ? (
-                                <NavLink to="/dashboard" className={navClass + " flex items-center mx-3"}>
+                                <NavLink to={user.role=='admin'? '/dashboard/admin':'/dashboard/customer'} className={navClass + " flex items-center mx-3"}>
                                     <User className="w-5 h-5 mr-1" />
                                     Dashboard
                                 </NavLink>
                             ) : (
-                                <NavLink to="/login" className={navClass + " flex items-center mx-3"}>
-                                    <User className="w-5 h-5 mr-1" />
-                                    Login
-                                </NavLink>
+                                <div className='flex '>
+
+
+                                    <NavLink to="/login" className={navClass + " flex items-center mx-3"}>
+                                        <User className="w-5 h-5 mr-1" />
+                                        Login
+                                    </NavLink>
+                                    <NavLink to="/register" className={navClass + " flex items-center mx-2"}>
+                                        <User className="w-5 h-5 mr-1" />
+                                        Register
+                                    </NavLink>
+                                </div>
+
+
                             )}
                         </motion.div>
                     </div>
@@ -133,7 +141,7 @@ export default function Nav() {
 
             <AnimatePresence>
                 {isMobileMenuOpen && (
-                    <motion.div 
+                    <motion.div
                         className="sm:hidden"
                         initial="closed"
                         animate="open"
@@ -152,9 +160,9 @@ export default function Nav() {
                                 >
                                     <NavLink
                                         to={item.path}
-                                        
-                                        className={({ isActive }) => 
-                                            `${navClass} ${isActive ? 'text-purple-600' : ''} -translate-x-2 hover:-translate-x-0 block px-3 py-2 text-base font-medium`
+
+                                        className={({ isActive }) =>
+                                            `${navClass} ${isActive ? 'text-purple-600' : ''}   -translate-x-2 hover:-translate-x-0 block px-3 py-2 text-base font-medium`
                                         }
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
@@ -169,21 +177,21 @@ export default function Nav() {
                                 transition={{ delay: navItems.length * 0.1 }}
                             >
                                 {isAuthenticated ? (
-                                    <NavLink 
-                                        to="/dashboard" 
-                                        className={`${navClass} -translate-x-2 hover:-translate-x-0 block px-3 py-2 text-base font-medium`}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
+                                    <NavLink to={user.role=='admin'? '/dashboard/admin':'/dashboard/customer'} className={navClass + " flex items-center "}>
+                                        <User className="w-5 h-5 mr-1" />
                                         Dashboard
                                     </NavLink>
                                 ) : (
-                                    <NavLink 
-                                        to="/login" 
-                                        className={`${navClass} -translate-x-2 hover:-translate-x-0 block px-3 py-2 text-base font-medium`}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        Login
-                                    </NavLink>
+                                    <div className='flex flex-col gap-3 '>
+                                        <NavLink to="/login" className={navClass + " flex items-center "}>
+                                            <User className="w-5 h-5 mr-1" />
+                                            Login
+                                        </NavLink>
+                                        <NavLink to="/register" className={navClass + " flex items-center "}>
+                                            <User className="w-5 h-5 mr-1" />
+                                            Register
+                                        </NavLink>
+                                    </div>
                                 )}
                             </motion.div>
                         </div>

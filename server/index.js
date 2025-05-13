@@ -47,7 +47,7 @@ app.use('/api/cart',checkAuth, require('./routes/cartRoute.js'));
 
 app.use('/api/admin',checkAuth,checkAuthAdmin, require('./routes/admin.js'));
 app.use('/api/order',checkAuth, require('./routes/order.js'));
-
+app.use('/api/customer',checkAuth, require('./routes/customer.js'));
 
 
 
