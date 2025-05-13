@@ -6,9 +6,10 @@ import { ShoppingBag, Zap, Truck } from "lucide-react"
 import { useEffect, useState } from "react"
 import apiClient from "../components/helper/axios"
 import { Link } from "react-router-dom"
+import ProductSkeleton from "../components/skeleton/product-skeleton"
 
 const Home = () => {
-  const { products, getHomeProducts, loading, setLoading, error,setFilter } = useProducts()
+  const { products, getHomeProducts, loading, setLoading, error, setFilter } = useProducts()
 
 
   const [allCategories, setAllCategories] = useState({
@@ -128,29 +129,46 @@ const Home = () => {
         </div>
       </div>
 
-      {loading ? (
-        <LoadingComponent />
-      ) : (
-        Object.keys(allCategories).map((category) => (
-          <div key={category} className="bg-gray-100 py-12">
-            <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-center mb-8">{category.charAt(0).toUpperCase() + category.slice(1)}</h2>
-              <div
-                className={
-                  error
-                    ? "flex justify-center items-center"
-                    : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-                }
-              >
-                {error && <p className="text-red-500 text-center">Some Error Occurred!</p>}
-                {(allCategories[category] || []).slice(0, 4).map((product) => (
-                  <ProductCard key={product._id} products={product} />
+      {Object.keys(allCategories).map((category) => (
+        <div key={category} className="bg-gray-100 py-12">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-8">
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </h2>
+
+            <div
+              className={
+                error
+                  ? "flex justify-center items-center"
+                  : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+              }
+            >
+
+              {error && (
+                <p className="text-red-500 text-center col-span-full">
+                  Some Error Occurred!
+                </p>
+              )}
+
+
+              {loading &&
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <ProductSkeleton key={idx} />
                 ))}
-              </div>
+
+
+              {!loading &&
+                !error &&
+                (allCategories[category] || [])
+                  .slice(0, 4)
+                  .map((product) => (
+                    <ProductCard key={product._id} products={product} />
+                  ))}
             </div>
           </div>
-        ))
-      )}
+        </div>
+      ))}
+
 
 
 

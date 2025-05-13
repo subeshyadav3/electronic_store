@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import LoadingComponent from "../../components/helper/loadingComponent";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
+import ManageUserSkeleton from "../../components/skeleton/manage-user-skeleton";
 
 function ManageUsers() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,20 +9,29 @@ function ManageUsers() {
   const [timer, setTimer] = useState(null);
   const [adminUsers, setAdminUsers] = useState([]);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { getAdminAllUsers, isLoading } = useAuth();
+  const { getAdminAllUsers } = useAuth();
 
-  if (isLoading) return <LoadingComponent />;
+  // if (!isLoading) return <ManageUserSkeleton />;
 
   useEffect(() => {
+
     const fetchUsers = async () => {
       const users = await getAdminAllUsers();
-      setAdminUsers(users);
+
+
+      const delay = 100;
+      setTimeout(() => {
+        setAdminUsers(users);
+        setIsLoading(false);
+      }, delay);
     };
     fetchUsers();
   }, []);
 
   const handleSearchTerm = (e) => {
+
     setSearchTerm(e.target.value);
     if (timer) {
       clearTimeout(timer);
@@ -63,7 +72,10 @@ function ManageUsers() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {adminUsers
+            {isLoading && Array.from({ length: 5 }).map((_, idx) => <ManageUserSkeleton key={idx} />)}
+
+
+            {!isLoading && adminUsers
               .filter((user) => user.name.toLowerCase().includes(searchTerm.toLowerCase()))
               .map((user) => (
                 <tr key={user._id}>
@@ -130,7 +142,7 @@ function ManageUsers() {
                   </button>
                 </div>
               </div>
-            ))}
+            ))} 
         </div>
       </div>
     </div>

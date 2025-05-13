@@ -3,6 +3,7 @@ import { useProducts } from '../../context/productContext';
 import ProductCard from './productCard';
 import SidebarComponent from './sideBarComponent';
 import LoadingComponent from '../helper/loadingComponent';
+import ProductSkeleton from '../skeleton/product-skeleton';
 
 const Store = () => {
   const { products, setFilter, setPriceRangeFilter, loading, page, setPage, totalPages } = useProducts();
@@ -57,10 +58,13 @@ const Store = () => {
           </button>
         </div>
 
-        {loading ? (
-          <LoadingComponent />
-        ) : (
+        
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {loading && (
+              Array.from({ length: 4 }).map((_, idx) => <ProductSkeleton key={idx} />)
+            )}
+           
+            
             {!products || products.length === 0 ? (
               <h1 className="text-2xl text-red-500">No products found</h1>
             ) : (
@@ -69,7 +73,7 @@ const Store = () => {
               ))
             )}
           </div>
-        )}
+      
 
         {/* Pagination Controls */}
         <div className="mt-6 flex justify-center space-x-4">

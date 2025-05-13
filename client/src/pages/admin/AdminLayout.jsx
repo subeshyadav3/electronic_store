@@ -4,6 +4,9 @@ import { MdAdminPanelSettings } from "react-icons/md";
 import { FaUsersCog } from "react-icons/fa";
 import { MdDashboardCustomize } from "react-icons/md";
 import Breadcrumb from "../../components/helper/breadcrumbs";
+import { MdManageHistory } from "react-icons/md";
+import { MdOutlineProductionQuantityLimits } from "react-icons/md";
+
 
 function AdminLayout() {
   const [isFixed, setIsFixed] = useState(true);
@@ -78,7 +81,8 @@ function AdminLayout() {
               className={({ isActive }) => (isActive ? "text-blue-500" : "text-black")}
             >
               {!isSidebarOpen ? (
-                <img src="/public/admin/product.png" className="w-5 h-5" />
+                // <img src="/public/admin/product.png" className="w-5 h-5" />
+                <MdOutlineProductionQuantityLimits />
               ) : (
                 "Manage Products"
               )}
@@ -102,7 +106,9 @@ function AdminLayout() {
               className={({ isActive }) => (isActive ? "text-blue-500" : "text-black")}
             >
               {!isSidebarOpen ? (
-                <img src="/public/admin/order.png" className="w-5 h-5" />
+                // <img src="/public/admin/order.png" className="w-5 h-5" />
+                <MdManageHistory />
+                
               ) : (
                 "Manage Orders"
               )}

@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
 import { useProducts } from "../../context/productContext";
-import LoadingComponent from "../../components/helper/loadingComponent";
-import { Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import ManageProductsSkeleton from "../../components/skeleton/manage-product-skeleton";
 
 
 function ManageProducts() {
-  const { getAdminAllProducts, loading, error, adminProducts, setFilter ,adminProductDelete,adminProductUpdate,getProductById} = useProducts();
+  const { getAdminAllProducts, error, adminProducts, setFilter ,adminProductDelete,adminProductUpdate,getProductById} = useProducts();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [timer, setTimer] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate=useNavigate();
   
 
   useEffect(() => {
     getAdminAllProducts();
+    const delay = 100;
+    setTimeout(() => {
+      setLoading(false);
+    }
+    , delay);
     
   }, [adminProducts]);
   
@@ -37,7 +42,7 @@ function ManageProducts() {
   
   }
 
-  if (loading) return <LoadingComponent />;
+  if (loading) return <ManageProductsSkeleton />;
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
   const handleProductEdit = (id) => {

@@ -4,6 +4,7 @@ import apiClient from "../../helper/axios";
 import LoadingComponent from "../../helper/loadingComponent";
 import { useProducts } from "../../../context/productContext";
 import { useNavigate } from "react-router-dom";
+import CartSkeleton from "../../skeleton/cart-skeleton";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -84,7 +85,7 @@ const CartPage = () => {
           <ShoppingCart className="mr-2" /> Your Cart
         </div>
         <div className="m-10">
-          {loading && <LoadingComponent />}
+          {loading && Array.from({ length: 5 }).map((_, idx) => <CartSkeleton key={idx} />)}
           {error && <p className="text-red-500 text-center">{error}</p>}
           {cartItems.length === 0 ? (
             <p className="text-center text-gray-500">Loading Your Cart..</p>
