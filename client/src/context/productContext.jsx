@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import apiClient from '../components/helper/axios';
-
+import { use } from 'react';
+import { useToast } from './toastContext';
 
 const ProductContext = createContext();
 
@@ -13,8 +14,8 @@ const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [page, setPage] = useState(1);
-  // const limit = 12;
+  const { showToast } = useToast();
+  
   const [filters, setFilters] = useState({
     title:'',
     price:'',
@@ -24,6 +25,18 @@ const ProductProvider = ({ children }) => {
     brands:'',
    
   });
+
+  useEffect(() => {
+    setFilters({
+      title:'',
+      price:'',
+      category:'',
+      discount:null,
+      tags:'',
+      brands:'',
+    });
+
+  }, [window.location.pathname]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -102,11 +115,14 @@ const ProductProvider = ({ children }) => {
     setFilters({ ...filters, [name]: value });
   };
 
-  const addComment = async (id, comment,user) => {
+  const addComment = async (id, comment,user,reply,parentId) => {
     try {
-      const response = await apiClient.post(`/product/comment/${id}`, { comment,user });
+      const response = await apiClient.post(`/product/comment/${id}`, { comment,user,reply,parentId });
+      showToast('Comment added successfully', 'success');
       console.log(response);  
+      console.log(parentId,reply);
     } catch (err) {
+      showToast('Error adding comment', 'error');
       setError('Error adding comment');
     }
   };
@@ -175,13 +191,7 @@ const ProductProvider = ({ children }) => {
         loading,
         error,
         setLoading,
-        // setCategoryFilter,
         setPriceRangeFilter,
-        // setSearchFilter,
-        // setDiscountFilter,
-        // setBrandsFilter,
-        // setTagsFilter,
-
         addComment,
         homeFilterProduct,
         getAdminAllProducts,

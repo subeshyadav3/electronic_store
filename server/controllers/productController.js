@@ -5,10 +5,6 @@ const User = require('../models/customers/user');
 const getProducts = async (req, res) => {
   try {
     const { title, price, category, discount, tags, brands } = req.query;
-    // const limitPerPage = limit ? parseInt(limit) : 100;
-    // const pageNumber = page ? parseInt(page) : 1;
-    // const skip = (pageNumber - 1) * limitPerPage;
-
 
     const filter = {};
     if (title) {
@@ -16,13 +12,13 @@ const getProducts = async (req, res) => {
     }
     if (price) {
       const priceRange = price.split('-').map(Number)
-      
+
       if (priceRange.length === 2) {
         filter.price = { $gte: priceRange[0], $lte: priceRange[1] }
-      } 
+      }
 
       else {
-        filter.price = { $gte: priceRange[0]}
+        filter.price = { $gte: priceRange[0] }
       }
     }
 
@@ -61,63 +57,63 @@ const getProductById = async (req, res) => {
 
 const addProduct = async (req, res) => {
   try {
-      const {
-          title,
-          description,
-          price,
-          category,
-          discountPercentage,
-          stock,
-          brand,
-          sku,
-          weight,
-          dimensions,
-          tags,
-          warrantyInformation,
-          returnPolicy,
-          shippingInformation,
-          availabilityStatus,
-          minimumOrderQuantity,
-          meta,
-          images,
-          thumbnail,
-      } = req.body;
+    const {
+      title,
+      description,
+      price,
+      category,
+      discountPercentage,
+      stock,
+      brand,
+      sku,
+      weight,
+      dimensions,
+      tags,
+      warrantyInformation,
+      returnPolicy,
+      shippingInformation,
+      availabilityStatus,
+      minimumOrderQuantity,
+      meta,
+      images,
+      thumbnail,
+    } = req.body;
 
-      if (!title || !description || !price || !category || stock === undefined) {
-          return res.status(400).json({ message: "All required fields must be provided" });
-      }
+    if (!title || !description || !price || !category || stock === undefined) {
+      return res.status(400).json({ message: "All required fields must be provided" });
+    }
 
-      const newProduct = new Product({
-          title,
-          description,
-          price,
-          category,
-          discount: discountPercentage || 0,
-          stock,
-          brand: brand || "Others",
-          sku,
-          weight,
-          dimensions,
-          tags: tags || [],
-          warrantyInformation: warrantyInformation || "No Warranty",
-          returnPolicy: returnPolicy || "No Returns",
-          shippingInformation: shippingInformation || "Ships in 1 week",
-          availabilityStatus: availabilityStatus || "In Stock",
-          minimumOrderQuantity: minimumOrderQuantity || 1,
-          meta,
-          images: images || [],
-          thumbnail,
-      });
+    const newProduct = new Product({
+      title,
+      description,
+      price,
+      category,
+      discount: discountPercentage || 0,
+      stock,
+      brand: brand || "Others",
+      sku,
+      weight,
+      dimensions,
+      tags: tags || [],
+      warrantyInformation: warrantyInformation || "No Warranty",
+      returnPolicy: returnPolicy || "No Returns",
+      shippingInformation: shippingInformation || "Ships in 1 week",
+      availabilityStatus: availabilityStatus || "In Stock",
+      minimumOrderQuantity: minimumOrderQuantity || 1,
+      meta,
+      images: images || [],
+      thumbnail,
+    });
 
-      const savedProduct = await newProduct.save();
+    const savedProduct = await newProduct.save();
 
-      await User.findByIdAndUpdate(req.user.userId, {
-          $push: { productsCreated: savedProduct._id },
-      });
+    await User.findByIdAndUpdate(req.user.userId, {
+      $push: { productsCreated: savedProduct._id },
+    });
 
-      res.status(201).json({ message: 'Product Created Successfully!', product: savedProduct, success: true });
+    res.status(201).json({ message: 'Product Created Successfully!', product: savedProduct, success: true });
   } catch (err) {
-      res.status(400).json({ message: "Error creating product", error: err });
+    res.status(400).json({ message: "Error creating product", error: err });
   }
 };
 
@@ -142,43 +138,63 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-    // console.log(req.params.id);
-    // const deletedProduct = await Product.findByIdAndDelete(req.params.id);
-    // if (!deletedProduct) {
-    //   return res.status(404).json({ message: 'Product not found' });
-    // }
+
     res.status(200).json({ message: 'Product deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Error deleting product', error: err });
   }
 };
+
 const addComment = async (req, res) => {
   try {
     const { id } = req.params;
-    const { comment, user } = req.body;
-
-   
+    const { comment, user, reply, parentId } = req.body;
 
     const product = await Product.findById(id);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    const newComment = {
-      user: user,
-      comment: comment,
-    };
- 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      id,
-      { $push: { comments: newComment } },
-      { new: true }
-    );
+    let newComment = null;
+    let updatedProduct = null;
+    if (!reply) {
 
-    res.status(201).json({ 
-      message: 'Comment added successfully', 
-      updatedProduct, 
-      success: true 
+      newComment = {
+        user: user,
+        comment: comment,
+        reply: []
+      };
+
+
+       updatedProduct = await Product.findByIdAndUpdate(
+        id,
+        { $push: { comments: newComment } },
+        { new: true }
+      );
+
+    } else {
+
+      const newReply = {
+        user: user,
+        comment: comment
+      };
+
+
+       updatedProduct = await Product.findByIdAndUpdate(
+        id,
+        { $push: { "comments.$[comment].reply": newReply } },
+        {
+          new: true,
+          arrayFilters: [{ "comment._id": parentId }]
+        }
+      );
+
+    }
+
+    res.status(201).json({
+      message: 'Comment added successfully',
+      updatedProduct,
+      success: true
     });
 
   } catch (err) {
@@ -188,4 +204,4 @@ const addComment = async (req, res) => {
 };
 
 
-module.exports = { getProducts, getProductById, addProduct, updateProduct, deleteProduct,addComment };
+module.exports = { getProducts, getProductById, addProduct, updateProduct, deleteProduct, addComment };

@@ -55,7 +55,7 @@ useEffect(() => {
   const register= async (name,email,password,contact)=>{
     try{
       const res=await apiClient.post('/auth/register',{name,email,password,contact},{withCredentials:true});
-      console.log(res)  
+      // console.log(res)  
       if(res.data.success){
             console.log("Register", res)
             setUser({

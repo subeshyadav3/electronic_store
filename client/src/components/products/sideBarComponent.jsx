@@ -69,6 +69,7 @@ const SidebarComponent = ({ setFilter, handlePriceRangeChange, minPrice, maxPric
                 <h1 className='text-2xl' onClick={give} >Brands:</h1>
                 <div className='flex flex-wrap gap-2 flex-row w-full mt-5' ref={ref}>
                     <button name="brands" className={`${buttonDesign}`} value="Asus" onClick={setFilter}>Asus</button>
+                    <button name="brands" className={`${buttonDesign}`} value="Apple" onClick={setFilter}>Apple</button>
                     <button name="brands" className={`${buttonDesign}`} value="Huawei" onClick={setFilter}>Huawei</button>
                     <button name="brands" className={`${buttonDesign}`} value="Lenovo" onClick={setFilter}>Lenovo</button>
                     <button name="brands" className={`${buttonDesign}`} value="Dell" onClick={setFilter}>Dell</button>

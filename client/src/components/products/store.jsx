@@ -12,7 +12,10 @@ const Store = () => {
   const [maxPrice, setMaxPrice] = useState(1000000);
   const [page, setPage] = useState(1);
 
-  console.log(products);
+  useEffect(() => {
+    setPage(1);
+    console.log(products)
+  }, [products]);
 
   useEffect(() => {
     setPriceRangeFilter(`${minPrice}-${maxPrice}`);
@@ -89,7 +92,7 @@ const Store = () => {
           >
             Prev
           </button>
-          <span className="text-lg font-bold">{page} / {parseInt(products.length / 12)}</span>
+          <span className="text-lg font-bold">{page} / {Math.max(1, parseInt(products.length / 12))}</span>
           <button
             onClick={() => handlePageChange(page + 1)}
             disabled={page === 5}
