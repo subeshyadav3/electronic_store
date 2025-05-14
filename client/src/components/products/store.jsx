@@ -29,7 +29,7 @@ const Store = () => {
 
 
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= products.length / 12) {
+    if (newPage >= 1 && newPage <= Math.ceil(products.length / 12) ) {
       setPage(newPage);
     }
   };
