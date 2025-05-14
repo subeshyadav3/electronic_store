@@ -83,7 +83,7 @@ const Store = () => {
         </div>
 
 
-        {/* Pagination Controls */}
+        
         <div className="mt-6 flex justify-center space-x-4">
           <button
             onClick={() => handlePageChange(page - 1)}
@@ -92,7 +92,7 @@ const Store = () => {
           >
             Prev
           </button>
-          <span className="text-lg font-bold">{page} / {Math.max(1, parseInt(products.length / 12))}</span>
+          <span className="text-lg font-bold">{page} / {Math.max(1, Math.ceil(products.length / 12))}</span>
           <button
             onClick={() => handlePageChange(page + 1)}
             disabled={page === 5}
