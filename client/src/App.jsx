@@ -73,7 +73,7 @@ function App() {
                     path="customer"
                     element={
                       <ProtectedRoute
-                        allowedRoles={['customer']}
+                        allowedRoles={['user']}
                         redirectTo="/dashboard/customer"
                       />
                     }
