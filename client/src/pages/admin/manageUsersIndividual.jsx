@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../../context/authContext'
 import LoadingComponent from '../../components/helper/loadingComponent'
+import { useToast } from '../../context/toastContext'
 
 function ManageUserIndividual() {
   const { id } = useParams()
   const [user, setUser] = useState(null)
+  const {showToast}=useToast();
 
   const { getAdminUsersById,adminUserUpdate } = useAuth()
   const [loading, setLoading] = useState(true)
@@ -35,10 +37,11 @@ function ManageUserIndividual() {
     e.preventDefault()
     try {
       const response = await adminUserUpdate(id, user)
-      alert('User updated successfully!')
+      showToast("User Updated Successfully!", 'success')
+    
     } catch (error) {
-      console.error('Error updating user:', error)
-      alert('Failed to update user. Please try again.')
+   
+      showToast("Some Error Occured While Updating!", 'error')
     }
   }
 
@@ -115,6 +118,7 @@ function ManageUserIndividual() {
           >
             <option value="user">User</option>
             <option value="admin">Admin</option>
+            <option value="customer">Customer</option>
           </select>
         </div>
 
