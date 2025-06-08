@@ -43,8 +43,8 @@ const userRegister = async (req, res) => {
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     try {
-        // const checkUserExist = await User.findOne({ email });
-        // if (checkUserExist) return res.status(409).json({ message: "User Already Exists!", success: false });
+        const checkUserExist = await User.findOne({ email });
+        if (checkUserExist) return res.status(409).json({ message: "User Already Exists!", success: false });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ name, email, password: hashedPassword, contact, role });
@@ -229,6 +229,12 @@ const initiateOTP = async (req, res) => {
     try {
         const otp = generateOTP();
         //add otp to db
+        const otpExist=await OTP.findOne({ email });
+        if (otpExist) {
+            otpExist.otp = otp; 
+            await otpExist.save();
+        }
+
         const newOTP = new OTP({ otp, email })
         await newOTP.save();
 
@@ -242,9 +248,12 @@ const initiateOTP = async (req, res) => {
 
 const userVerifyOTP = async (req, res) => {
     const { email, otp } = req.body;
+    console.log("Verifying OTP for email:", email);
+    console.log("Received OTP:", otp);
     if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
 
     try {
+       
         const getOPTFromDB = await OTP.findOne({ email })
         if (!getOPTFromDB) return res.status(400).json({ message: "OTP not found" });
         if (getOPTFromDB.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });

@@ -19,10 +19,10 @@ const Register = () => {
   const { showToast } = useToast()
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-  // Track completed steps
+
   const [completedSteps, setCompletedSteps] = useState([])
 
-  // Define steps
+
   const steps = [
     { id: 1, title: "Personal Info" },
     { id: 2, title: "Verification" },
@@ -51,19 +51,27 @@ const Register = () => {
     setIsLoading(true)
     try {
       const res = await register(name, email, password, contact)
-
+      if(res.data.status==409){
+        setErrors({ general: res.data.message })
+        showToast(res.data.message, "error")
+        return
+      }
+      
+        
       console.log("Registration successful", res.data.success)
       if (res.data.success) {
         showToast(res.data.message, "success")
         getOtp(email)
-        setCompletedSteps([...completedSteps, 1]) // Mark step 1 as completed
+        setCompletedSteps([...completedSteps, 1]) 
         setStep(2)
       }
     } catch (err) {
-      console.error("Error: ", err.response.data.errors.msg)
+      showToast(err.response.data.message, "error")
+      console.error("Error: ", err.response.data.message )
       err.response.data.errors.forEach((error) => {
         setErrors({ general: error.msg })
       })
+     
     } finally {
       setIsLoading(false)
     }
@@ -88,11 +96,12 @@ const Register = () => {
   const handleOtpVerification = async (e) => {
     e.preventDefault()
     setIsLoading(true)
+ 
     try {
       const res = await otpVerify(user.email, otp)
       console.log(res)
       if (res.success) {
-        setCompletedSteps([...completedSteps, 2]) // Mark step 2 as completed
+        setCompletedSteps([...completedSteps, 2]) 
         window.location.href = "/login"
       }
       console.log("OTP verification successful", res.data.message)
@@ -113,7 +122,7 @@ const Register = () => {
   return (
     <div className="min-h-screen flex justify-center items-center">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-2xl transform transition-all hover:scale-105">
-        {/* Step Indicator */}
+   
         <div className="mb-6">
           <div className="flex items-center justify-center">
             {steps.map((s, index) => (
@@ -148,7 +157,7 @@ const Register = () => {
         </h2>
 
         {step === 1 ? (
-          // Registration Form
+        
           <form onSubmit={handleRegistration} noValidate>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="name">
