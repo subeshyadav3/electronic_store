@@ -4,6 +4,18 @@ A full-featured eCommerce web application built using the **MERN Stack** (MongoD
 
 ---
 
+## 📸 Screenshots
+
+| Admin Panel                   | Customer Panel                 | Homepage                     |
+|------------------------------|-------------------------------|------------------------------|
+| ![Admin Panel](docs/images/admin.png) | ![Customer Panel](docs/images/customer.png) | ![Homepage](docs/images/home.png) |
+
+| Product Details Page          | Store Page (Products & Search)|
+|------------------------------|-------------------------------|
+| ![Product Details](docs/images/product.png) | ![Store Page](docs/images/store.png) |
+
+---
+
 ## 🚀 Features
 
 ### 👤 Authentication & Authorization
@@ -36,17 +48,14 @@ A full-featured eCommerce web application built using the **MERN Stack** (MongoD
 
 ## 🛠️ Technologies Used
 
-| Tech         | Description                     |
-|--------------|---------------------------------|
-| MongoDB      | NoSQL database for data storage |
-| Express.js   | Backend framework for Node.js   |
-| React.js     | Frontend library                |
-| Node.js      | Backend runtime environment     |
-| JWT          | Authentication                  |
-| Redux        | State management (optional)     |
-| TailwindCSS / Bootstrap | Styling             |
-| Mongoose     | MongoDB ODM                     |
-| dotenv       | Manage environment variables    |
-
-
-
+| Tech                 | Description                     |
+|----------------------|---------------------------------|
+| MongoDB              | NoSQL database for data storage |
+| Express.js           | Backend framework for Node.js   |
+| React.js             | Frontend library                |
+| Node.js              | Backend runtime environment     |
+| JWT                  | Authentication                  |
+| Redux                | State management (optional)     |
+| TailwindCSS / Bootstrap | Styling                      |
+| Mongoose             | MongoDB ODM                     |
+| dotenv               | Manage environment variables    |
