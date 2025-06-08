@@ -2,9 +2,10 @@ import { useEffect, useState } from "react"
 
 const ImageGallery = ({ images }) => {
   const [selectedImage, setSelectedImage] = useState(0)
+  console.log("images", images)
   return (
-    <div className="flex  flex-col  md:flex-row  items-center h-auto mt-2">
-       <div className="flex gap-2  w-full  justify-center items-center sm:items-start mt-5 md:flex-col">
+    <div className="flex  flex-col   md:flex-row  items-center h-auto mt-2">
+       <div className="flex gap-2  mx-auto justify-center items-center sm:items-start mt-5 md:flex-col">
         {images.map((image, index) => (
           <button
             key={index}
