@@ -1,189 +1,254 @@
-import { useState } from "react"
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import apiClient from "../../helper/axios";
+
+
+const submitEsewaForm = (url, data) => {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = url;
+
+  form.target = "_self";
+
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      const hiddenField = document.createElement("input");
+      hiddenField.type = "hidden";
+      hiddenField.name = key;
+      hiddenField.value = data[key]; 
+      form.appendChild(hiddenField);
+    }
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+
+};
 
 const CheckoutPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { cartItems = [], totalPrice = 0 } = location.state || {};
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     address: "",
     city: "",
     zipCode: "",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-  })
+  });
+
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState(null); // null | "success" | "failed"
+  const [paymentMessage, setPaymentMessage] = useState("");
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Here you would typically send the form data to your server
-    console.log("Form submitted:", formData)
-    // Call the onPlaceOrder function passed as a prop
-    onPlaceOrder(formData)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (cartItems.length === 0) {
+      alert("Cart is empty!");
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+
+
+      const response = await apiClient.post("/payment/create", {
+        userInfo: formData,
+        items: cartItems,
+        totalAmount: totalPrice,
+        paymentGateway: "esewa",
+      });
+      console.log("Payment creation response:", response.data);
+      const { esewaUrl, esewaFormData } = response.data;
+
+      submitEsewaForm(esewaUrl, esewaFormData);
+
+
+    } catch (error) {
+      console.error("Payment initiation failed:", error);
+      alert("Payment initiation failed. Please check console for details.");
+      setIsProcessing(false);
+    }
+  };
+
+
+  useEffect(() => {
+    const query = window.location.search;
+    const cleanedQuery = query.replace(/\?data=/, "&data="); 
+    const params = new URLSearchParams(cleanedQuery);
+    const esewaCallback = params.get("esewa_callback");
+    const responseData = params.get("data");
+
+
+    if (esewaCallback) {
+      setIsProcessing(true);
+
+      if (esewaCallback === "success" && responseData) {
+        apiClient.post("/payment/verify-esewa", { responseData })
+          .then((res) => {
+            setPaymentStatus("success");
+            setPaymentMessage(
+              "Payment successful! Transaction ID: " + res.data.payment.paymentId
+            );
+          })
+          .catch((err) => {
+            setPaymentStatus("failed");
+            setPaymentMessage(
+              err.response?.data?.message || "Payment verification failed"
+            );
+          })
+          .finally(() => {
+            setIsProcessing(false);
+
+            window.history.replaceState({}, document.title, "/checkout");
+          });
+      } else if (esewaCallback === "failed") {
+        setPaymentStatus("failed");
+        setPaymentMessage("Payment failed or cancelled.");
+        setIsProcessing(false);
+        window.history.replaceState({}, document.title, "/checkout");
+      }
+    }
+  }, []);
+
+  if (isProcessing) {
+    return (
+      <div className="container mx-auto md:mx-[100px] px-4 py-8 min-h-screen text-center">
+        <h1 className="text-3xl font-bold mb-6">Processing...</h1>
+        <p>Verifying payment status or redirecting to eSewa. Please wait.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto md:mx-[100px] px-4 py-8 ">
+    <div className="container mx-auto md:mx-[100px] px-4 py-8 min-h-screen">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="fullName" className="block mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                id="fullName"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="email" className="block mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="address" className="block mb-2">
-                Address
-              </label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="mb-4 flex gap-4">
-              <div className="flex-1">
-                <label htmlFor="city" className="block mb-2">
-                  City
-                </label>
-                <input
-                  type="text"
-                  id="city"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="flex-1">
-                <label htmlFor="zipCode" className="block mb-2">
-                  ZIP Code
-                </label>
-                <input
-                  type="text"
-                  id="zipCode"
-                  name="zipCode"
-                  value={formData.zipCode}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-            <h2 className="text-xl font-semibold mb-4 mt-8">Payment Information</h2>
-            <div className="mb-4">
-              <label htmlFor="cardNumber" className="block mb-2">
-                Card Number
-              </label>
-              <input
-                type="text"
-                id="cardNumber"
-                name="cardNumber"
-                value={formData.cardNumber}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="mb-4 flex gap-4">
-              <div className="flex-1">
-                <label htmlFor="expiryDate" className="block mb-2">
-                  Expiry Date
-                </label>
-                <input
-                  type="text"
-                  id="expiryDate"
-                  name="expiryDate"
-                  value={formData.expiryDate}
-                  onChange={handleInputChange}
-                  placeholder="MM/YY"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              <div className="flex-1">
-                <label htmlFor="cvv" className="block mb-2">
-                  CVV
-                </label>
-                <input
-                  type="text"
-                  id="cvv"
-                  name="cvv"
-                  value={formData.cvv}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
-            >
-              Place Order
-            </button>
-          </form>
+
+      {paymentStatus ? (
+        <div className="max-w-md mx-auto mt-10 p-6 rounded-lg shadow-lg text-center">
+
+          <div className="flex justify-center mb-4">
+            {paymentStatus === "success" ? (
+              <svg
+                className="w-16 h-16 text-green-500 animate-bounce"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+            ) : (
+              <svg
+                className="w-16 h-16 text-red-500 animate-shake"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            )}
+          </div>
+
+          {/* Status text */}
+          <h2
+            className={`text-2xl font-bold mb-2 ${paymentStatus === "success" ? "text-green-600" : "text-red-600"
+              }`}
+          >
+            {paymentStatus === "success" ? "Payment Successful!" : "Payment Failed!"}
+          </h2>
+
+          {/* Message */}
+          <p className="mb-6 text-gray-700">{paymentMessage}</p>
+
+          {/* Action button */}
+          <button
+            onClick={() => navigate("/")}
+            className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md ${paymentStatus === "success"
+                ? "bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white"
+                : "bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white"
+              }`}
+          >
+            {paymentStatus === "success" ? "Go to Home" : "Try Again"}
+          </button>
         </div>
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-          {/* <div className="bg-gray-100 p-4 rounded-md">
-            {cartItems.map((item) => (
-              <div key={item.productId} className="flex justify-between mb-2">
-                <span>
-                  {item.title} x {item.quantity}
-                </span>
-                <span>${(item.price * item.quantity).toFixed(2)}</span>
+
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Shipping Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
+
+            {["fullName", "email", "address", "city", "zipCode"].map((field) => (
+              <div key={field} className="mb-4">
+                <label htmlFor={field} className="block mb-2 capitalize">
+                  {field.replace(/([A-Z])/g, " $1")}
+                </label>
+                <input
+                  type={field === "email" ? "email" : "text"}
+                  id={field}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
               </div>
             ))}
-            <div className="border-t border-gray-300 mt-4 pt-4 font-semibold">
-              <div className="flex justify-between">
-                <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+
+            <button
+              type="submit"
+              disabled={isProcessing || cartItems.length === 0}
+              className={`mt-6 w-full py-2 px-4 rounded-md text-white transition duration-300 ${isProcessing ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+                }`}
+            >
+              {isProcessing ? "Redirecting to eSewa..." : `Pay $${totalPrice.toFixed(2)}`}
+            </button>
+          </form>
+
+          {/* Order Summary */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+            {cartItems.length > 0 ? (
+              <div className="bg-gray-100 p-4 rounded-md space-y-2">
+                {cartItems.map((item) => (
+                  <div key={item.productId} className="flex justify-between">
+                    <span>
+                      {item.title} x {item.quantity}
+                    </span>
+                    <span>${(item.price * item.quantity).toFixed(2)}</span>
+                  </div>
+                ))}
+                <div className="border-t border-gray-300 pt-4 font-semibold flex justify-between">
+                  <span>Total</span>
+                  <span>${totalPrice.toFixed(2)}</span>
+                </div>
               </div>
-            </div>
-          </div> */}
+            ) : (
+              <p>No items in cart</p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default CheckoutPage
-
+export default CheckoutPage;

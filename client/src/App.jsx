@@ -27,7 +27,7 @@ import CreateProductForm from './pages/admin/createProducts';
 import CustomerDashboard from './pages/client/dashboard';
 import CustomerLayout from './pages/client/customerLayout';
 import CustomerOrder from './pages/client/customerOrder';
-
+import PaymentCheck from './components/products/productDetailsIndividual/paymentCheck';
 
 function App() {
   return (
@@ -44,7 +44,7 @@ function App() {
                 <Route path="/contact" element={<ContactForm />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
-                
+                <Route path="/payment-check" element={<PaymentCheck />} />
                 <Route path="/dashboard">
 
                   <Route
