@@ -15,7 +15,7 @@ const submitEsewaForm = (url, data) => {
       const hiddenField = document.createElement("input");
       hiddenField.type = "hidden";
       hiddenField.name = key;
-      hiddenField.value = data[key]; 
+      hiddenField.value = data[key];
       form.appendChild(hiddenField);
     }
   }
@@ -80,7 +80,7 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     const query = window.location.search;
-    const cleanedQuery = query.replace(/\?data=/, "&data="); 
+    const cleanedQuery = query.replace(/\?data=/, "&data=");
     const params = new URLSearchParams(cleanedQuery);
     const esewaCallback = params.get("esewa_callback");
     const responseData = params.get("data");
@@ -182,8 +182,8 @@ const CheckoutPage = () => {
           <button
             onClick={() => navigate("/")}
             className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md ${paymentStatus === "success"
-                ? "bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white"
-                : "bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white"
+              ? "bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white"
+              : "bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white"
               }`}
           >
             {paymentStatus === "success" ? "Go to Home" : "Try Again"}
@@ -224,27 +224,26 @@ const CheckoutPage = () => {
           </form>
 
           {/* Order Summary */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-            {cartItems.length > 0 ? (
-              <div className="bg-gray-100 p-4 rounded-md space-y-2">
-                {cartItems.map((item) => (
-                  <div key={item.productId} className="flex justify-between">
-                    <span>
-                      {item.title} x {item.quantity}
-                    </span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
-                  </div>
-                ))}
-                <div className="border-t border-gray-300 pt-4 font-semibold flex justify-between">
-                  <span>Total</span>
-                  <span>${totalPrice.toFixed(2)}</span>
-                </div>
+          <div className="bg-gray-100 p-4 rounded-md space-y-2">
+            {cartItems.map((item) => (
+              <div key={item.productId} className="flex  justify-between items-center">
+                <span className="flex-1 truncate">
+                  {item.title} x {item.quantity}
+                </span>
+                <span className="ml-4 flex-shrink-0 text-right">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </span>
               </div>
-            ) : (
-              <p>No items in cart</p>
-            )}
+            ))}
+
+            <div className="border-t border-gray-300 pt-4 font-semibold flex justify-between items-center">
+              <span className="flex-1">Total</span>
+              <span className="ml-4 flex-shrink-0 text-right">${totalPrice.toFixed(2)}</span>
+            </div>
           </div>
+
+
+
         </div>
       )}
     </div>
