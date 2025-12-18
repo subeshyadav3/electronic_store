@@ -42,7 +42,7 @@ A full-featured eCommerce web application built using the **MERN Stack** (MongoD
 - Add items to cart (local storage + DB sync)
 - Update quantity or remove items
 - Checkout with shipping details
-- Simulated payment (can be extended with Stripe/PayPal)
+- Esewa Payment Gateway Added
 
 ---
 
