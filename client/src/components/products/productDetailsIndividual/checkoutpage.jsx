@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import apiClient from "../../helper/axios";
 
 
-const submitEsewaForm = (url, data) => {
+const submitEsewaForm = (url, data,items) => {
   const form = document.createElement("form");
   form.method = "POST";
   form.action = url;
@@ -28,14 +28,13 @@ const submitEsewaForm = (url, data) => {
 const CheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { cartItems = [], totalPrice = 0 } = location.state || {};
+  const { itemsToCheckout = [], totalPrice = 0 } = location.state || {};
 
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     address: "",
     city: "",
-    zipCode: "",
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -49,18 +48,20 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (cartItems.length === 0) {
+    if (itemsToCheckout.length === 0) {
       alert("Cart is empty!");
       return;
     }
 
     try {
       setIsProcessing(true);
-
+      // Save selected items to localStorage
+      console.log("Saving items to checkout:", itemsToCheckout);
+      localStorage.setItem("checkout_items", JSON.stringify(itemsToCheckout));
 
       const response = await apiClient.post("/payment/create", {
         userInfo: formData,
-        items: cartItems,
+        items: itemsToCheckout,
         totalAmount: totalPrice,
         paymentGateway: "esewa",
       });
@@ -79,6 +80,8 @@ const CheckoutPage = () => {
 
 
   useEffect(() => {
+    const items = (localStorage.getItem("checkout_items") || "[]");
+    console.log("Verifying eSewa payment with items:", items);
     const query = window.location.search;
     const cleanedQuery = query.replace(/\?data=/, "&data=");
     const params = new URLSearchParams(cleanedQuery);
@@ -90,7 +93,7 @@ const CheckoutPage = () => {
       setIsProcessing(true);
 
       if (esewaCallback === "success" && responseData) {
-        apiClient.post("/payment/verify-esewa", { responseData })
+        apiClient.post("/payment/verify-esewa", { responseData,items })
           .then((res) => {
             setPaymentStatus("success");
             setPaymentMessage(
@@ -110,7 +113,7 @@ const CheckoutPage = () => {
           });
       } else if (esewaCallback === "failed") {
         setPaymentStatus("failed");
-        setPaymentMessage("Payment failed or cancelled.");
+        setPaymentMessage("Payment failed or cancelled. Please try again.");
         setIsProcessing(false);
         window.history.replaceState({}, document.title, "/checkout");
       }
@@ -127,8 +130,8 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="container mx-auto md:mx-[100px] px-4 py-8 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+    <div className="container mx-auto  px-4 py-8 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6 text-center">Checkout</h1>
 
       {paymentStatus ? (
         <div className="max-w-md mx-auto mt-10 p-6 rounded-lg shadow-lg text-center">
@@ -180,7 +183,7 @@ const CheckoutPage = () => {
 
           {/* Action button */}
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/cart")}
             className={`px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md ${paymentStatus === "success"
               ? "bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white"
               : "bg-gradient-to-r from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white"
@@ -196,7 +199,7 @@ const CheckoutPage = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
 
-            {["fullName", "email", "address", "city", "zipCode"].map((field) => (
+            {["fullName", "email", "address", "city"].map((field) => (
               <div key={field} className="mb-4">
                 <label htmlFor={field} className="block mb-2 capitalize">
                   {field.replace(/([A-Z])/g, " $1")}
@@ -215,7 +218,7 @@ const CheckoutPage = () => {
 
             <button
               type="submit"
-              disabled={isProcessing || cartItems.length === 0}
+              disabled={isProcessing || itemsToCheckout.length === 0}
               className={`mt-6 w-full py-2 px-4 rounded-md text-white transition duration-300 ${isProcessing ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
                 }`}
             >
@@ -225,7 +228,7 @@ const CheckoutPage = () => {
 
           {/* Order Summary */}
           <div className="bg-gray-100 p-4 rounded-md space-y-2">
-            {cartItems.map((item) => (
+            {itemsToCheckout.map((item) => (
               <div key={item.productId} className="flex  justify-between items-center">
                 <span className="flex-1 truncate">
                   {item.title} x {item.quantity}

@@ -5,6 +5,7 @@ import LoadingComponent from "../../helper/loadingComponent";
 import { useProducts } from "../../../context/productContext";
 import { useNavigate } from "react-router-dom";
 import CartSkeleton from "../../skeleton/cart-skeleton";
+import { useToast } from "../../../context/toastContext";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -12,6 +13,8 @@ const CartPage = () => {
   const { getProductById } = useProducts();
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [selectedItems, setSelectedItems] = useState([]);
+  const {showToast}=useToast();
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -70,10 +73,15 @@ const CartPage = () => {
       }
   };
 
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
+  const totalPrice = cartItems.reduce((sum, item) => selectedItems.includes(item.productId)? sum + item.price * item.quantity: sum, 0);
+  
   const handleCheckout = () => {
-    navigate("/checkout", { state: { cartItems, totalPrice } });
+    if(selectedItems.length===0) {
+      showToast("Please select at least one item to checkout","error");
+      return;
+    }
+    const itemsToCheckout= cartItems.filter(item => selectedItems.includes(item.productId));
+    navigate("/checkout", { state: { itemsToCheckout, totalPrice } });
   }
   
 
@@ -88,11 +96,26 @@ const CartPage = () => {
           {loading && Array.from({ length: 5 }).map((_, idx) => <CartSkeleton key={idx} />)}
           {error && <p className="text-red-500 text-center">{error}</p>}
           {cartItems.length === 0 ? (
-            <p className="text-center text-gray-500">Loading Your Cart..</p>
+            <p className="text-center text-gray-500">No Items in Your Cart.. Buy Something..</p>
           ) : (
             <ul className="divide-y divide-gray-200">
               {cartItems.map((item) => (
                 <li key={item.productId} className="py-4 flex items-center  flex-col sm:flex-row gap-5">
+                  <input
+                  type='checkbox'
+                  className="w-4 h-4"
+                  checked={selectedItems.includes(item.productId)}
+                  onChange={(e) => {
+                    console.log(selectedItems)
+                    if(e.target.checked){
+                      setSelectedItems([...selectedItems,item.productId])
+
+                    }
+                    else{
+                      setSelectedItems(selectedItems.filter(id=>id!==item.productId))
+                    }
+                  }}
+                  />
                   <img
                     src={item.image || "/placeholder.svg"}
                     alt={item.title}

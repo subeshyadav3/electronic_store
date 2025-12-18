@@ -2,20 +2,26 @@ import { useState } from "react"
 import { ShoppingCart, Plus, Minus } from "lucide-react"
 import apiClient from "../../helper/axios"
 import { useToast } from "../../../context/toastContext"
+import { useAuth } from "../../../context/authContext"
 
 const AddToCartButton = ({ productId, onAddToCart }) => {
   const [isAdding, setIsAdding] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const { showToast } = useToast()
+  const {isAuthenticated}=useAuth();
 
   const incrementQuantity = () => setQuantity((prev) => Math.min(prev + 1, 99))
   const decrementQuantity = () => setQuantity((prev) => Math.max(prev - 1, 1))
 
   const handleAddToCart = async () => {
+    if(!isAuthenticated){
+      return showToast("Please login to add items to cart", "error")
+    }
+    
     setIsAdding(true)
     try {
       
-     console.log("productId",productId)
+    //  console.log("productId",productId)
       const response=await apiClient.post('/cart',{productId, quantity})
       console.log(response.data)
       // alert(response.data.message)
