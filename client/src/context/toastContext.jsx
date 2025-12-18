@@ -14,7 +14,7 @@ export const ToastProvider = ({ children }) => {
       ...prev,
       { id, message, type }
     ]);
-    console.log(notifications);
+    // console.log(notifications);
     setTimeout(() => {
       removeNotification(id);
     },3000); 

@@ -56,7 +56,7 @@ const CheckoutPage = () => {
     try {
       setIsProcessing(true);
       // Save selected items to localStorage
-      console.log("Saving items to checkout:", itemsToCheckout);
+      // console.log("Saving items to checkout:", itemsToCheckout);
       localStorage.setItem("checkout_items", JSON.stringify(itemsToCheckout));
 
       const response = await apiClient.post("/payment/create", {
@@ -65,7 +65,7 @@ const CheckoutPage = () => {
         totalAmount: totalPrice,
         paymentGateway: "esewa",
       });
-      console.log("Payment creation response:", response.data);
+      // console.log("Payment creation response:", response.data);
       const { esewaUrl, esewaFormData } = response.data;
 
       submitEsewaForm(esewaUrl, esewaFormData);

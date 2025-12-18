@@ -48,9 +48,9 @@ const CartPage = () => {
   const updateQuantity = async(productId, quantity) => {
     
     try {
-        console.log("productId",productId)
+        // console.log("productId",productId)
         const response = await apiClient.post('/cart', {productId, quantity });
-        console.log(response.data);
+        // console.log(response.data);
     
         setCartItems((prevCartItems) =>
           prevCartItems.map((item) =>
@@ -106,7 +106,7 @@ const CartPage = () => {
                   className="w-4 h-4"
                   checked={selectedItems.includes(item.productId)}
                   onChange={(e) => {
-                    console.log(selectedItems)
+                    // console.log(selectedItems)
                     if(e.target.checked){
                       setSelectedItems([...selectedItems,item.productId])
 

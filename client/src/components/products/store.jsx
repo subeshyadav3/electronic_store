@@ -16,7 +16,7 @@ const Store = () => {
 
   useEffect(() => {
     setPage(1)
-    console.log(products)
+    // console.log(products)
   }, [products])
 
   useEffect(() => {

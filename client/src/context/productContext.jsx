@@ -100,8 +100,8 @@ const ProductProvider = ({ children }) => {
   const setFilter = (e) => {
    
     const { name, value } = e.target;
-    console.log("Name: ", e.target.name);
-    console.log("Value: ", value);
+    // console.log("Name: ", e.target.name);
+    // console.log("Value: ", value);
     //remove on double tap
     if(isSelected.includes(value)){
       setIsSelected(isSelected.filter((item)=> item!=value));
@@ -111,7 +111,7 @@ const ProductProvider = ({ children }) => {
     else{
       setIsSelected([...isSelected, value]);
     }
-    console.log("Is selected value: ", isSelected);
+    // console.log("Is selected value: ", isSelected);
     setFilters({ ...filters, [name]: value });
   };
 
@@ -119,8 +119,8 @@ const ProductProvider = ({ children }) => {
     try {
       const response = await apiClient.post(`/product/comment/${id}`, { comment,user,reply,parentId });
       showToast('Comment added successfully', 'success');
-      console.log(response);  
-      console.log(parentId,reply);
+      // console.log(response);  
+      // console.log(parentId,reply);
     } catch (err) {
       showToast('Error adding comment', 'error');
       setError('Error adding comment');
@@ -154,7 +154,7 @@ const ProductProvider = ({ children }) => {
   const adminProductUpdate= async (id, data) => {
     try{
         const response=await apiClient.put(`/product/${id}`,data);
-        console.log(response);
+        // console.log(response);
 
     }
     catch(err){
@@ -176,7 +176,7 @@ const ProductProvider = ({ children }) => {
   const adminCreateProduct = async (data) => {
     try{
       const response = await apiClient.post(`/product`,data);
-      console.log(response);
+      // console.log(response);
     }
     catch(err){
       setError('Error creating product');

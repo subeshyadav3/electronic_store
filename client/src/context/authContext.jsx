@@ -57,7 +57,7 @@ useEffect(() => {
       const res=await apiClient.post('/auth/register',{name,email,password,contact},{withCredentials:true});
       // console.log(res)  
       if(res.data.success){
-            console.log("Register", res)
+            // console.log("Register", res)
             setUser({
                 name: name,
                 email: email,
@@ -76,7 +76,7 @@ useEffect(() => {
   const getOtp= async (email)=>{
     try{
       const res=await apiClient.post('/auth/otp',{email},{withCredentials:true});
-      console.log("Verify Otp", res)
+      // console.log("Verify Otp", res)
       return res
     }catch(err){
       console.error('OTP error:', err);
@@ -101,7 +101,7 @@ useEffect(() => {
         { email, password },
         { withCredentials: true }
       );
-      console.log(res)
+      // console.log(res)
       if(res.data.success){
         setUser({
           name: res.data.user?.name,
@@ -150,7 +150,7 @@ useEffect(() => {
   const getAdminUsersById =async(id)=>{
     try{
         const res=await apiClient.get(`/admin/users/${id}`,{withCredentials:true});
-        console.log("Get user by id", res.data)
+        // console.log("Get user by id", res.data)
         return res.data
     }
     catch(err){
@@ -162,7 +162,7 @@ useEffect(() => {
   const adminUserUpdate=async(id,user)=>{
     try{
         const res=await apiClient.put(`/admin/users/${id}`,user,{withCredentials:true});
-        console.log("Update user by id", res.data)
+        // console.log("Update user by id", res.data)
         return res.data
     }
     catch(err){
