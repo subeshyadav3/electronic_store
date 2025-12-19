@@ -1,6 +1,7 @@
 const Product = require('../models/common/product');
 const User = require('../models/customers/user');
-
+const Order = require('../models/customers/order');
+const mongoose = require('mongoose');
 
 const getProducts = async (req, res) => {
   try {
@@ -204,4 +205,54 @@ const addComment = async (req, res) => {
 };
 
 
-module.exports = { getProducts, getProductById, addProduct, updateProduct, deleteProduct, addComment };
+const addOrders=async(userId,items,shippingAddress)=>{
+  try{
+    if (!userId) throw new Error("User ID is required");
+  if (!items || items.length === 0) throw new Error("Order must have at least one product");
+  if (!shippingAddress.email || !shippingAddress.fullName || !shippingAddress.address || !shippingAddress.city) {
+    throw new Error("Valid shipping address is required");
+  }
+  
+
+  const products = items.map((item) => ({
+    productId: new mongoose.Types.ObjectId(item.productId),
+    quantity: item.quantity || 1,
+    priceAtPurchase: item.price
+  }));
+
+  //calc total amount
+  const totalAmount = products.reduce((total, item) => total + item.priceAtPurchase * item.quantity, 0);
+
+  //create order
+  const order = await Order.create({
+    userId: new mongoose.Types.ObjectId(userId),
+    products,
+    totalAmount,
+    shippingAddress: {
+      street: shippingAddress.address,
+      city: shippingAddress.city,
+      postalCode: shippingAddress.postalCode || "",
+      country: shippingAddress.country || "Nepal",
+      fullName: shippingAddress.fullName,
+      email: shippingAddress.email
+    },
+    discount: 0,
+    status: 'paid'
+  });
+
+  
+  await User.findByIdAndUpdate(userId, {
+    $push: { orders: order._id }
+  });
+
+  return order;
+  }
+
+  catch(err){
+    throw new Error("Error creating order: "+err.message);
+      
+}
+}
+
+
+module.exports = { getProducts, getProductById, addProduct, updateProduct, deleteProduct, addComment ,addOrders};

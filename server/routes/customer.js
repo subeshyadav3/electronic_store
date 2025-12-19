@@ -3,18 +3,19 @@ const router=express.Router();
 const {
     getCustomerUserUpdate,
     getCustomerUserById,
-    getCustomerOrders
+    getCustomerOrders,
+    getCustomerOrderById
 
 }=require('../controllers/customer')
 
 
 
+// Orders routes first
+router.get('/orders/:orderId', getCustomerOrderById);
+router.get('/orders', getCustomerOrders);
 
-router.put('/:id',getCustomerUserUpdate);
-
-router.get('/:id',getCustomerUserById);
-
-router.get('/orders/:id',getCustomerOrders);
-
+// Then user routes
+router.put('/:id', getCustomerUserUpdate);
+router.get('/:id', getCustomerUserById);
 
 module.exports = router;

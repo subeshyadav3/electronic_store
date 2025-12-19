@@ -3,6 +3,8 @@ const crypto = require("crypto");
 const axios = require("axios");
 const User = require("../models/customers/user");
 const mongoose = require('mongoose');
+const {addOrders} = require("./productController");
+
 // Generate HMAC-SHA256 signature in Base64
 // Signature generation
 const generateSignature = (data, signed_field_names) => {
@@ -81,10 +83,10 @@ exports.createPayment = async (req, res) => {
 // Verify Payment (Base64 response from eSewa)
 exports.verifyEsewaPayment = async (req, res) => {
   try {
-    const { responseData,items } = req.body;
+    const { responseData,items,shippingAddress  } = req.body;
     if (!responseData) return res.status(400).json({ message: "Missing eSewa response" });
-    console.log("Items in verification:", items);
-    console.log("eSewa Response Data:", responseData);
+    // console.log("Items in verification:", items);
+    // console.log("eSewa Response Data:", responseData);
     const decoded = Buffer.from(responseData, "base64").toString("utf8");
     const parsed = JSON.parse(decoded);
 
@@ -117,11 +119,17 @@ exports.verifyEsewaPayment = async (req, res) => {
       const productIds = parsedItems.map(
       i => new mongoose.Types.ObjectId(i.productId)
       );
+        //create orders
+        console.log("Shipping Address:", shippingAddress);
+      const order = await addOrders(req.user.userId, JSON.parse(items), JSON.parse(shippingAddress));
 
       const result=await User.updateOne(
         { _id: userId },
         { $pull: { cart: { productId: { $in: productIds } } } }
       );
+
+    
+
       // console.log("Cart cleared:", result);
       return res.status(200).json({ message: "Payment verified", payment });
     } else {

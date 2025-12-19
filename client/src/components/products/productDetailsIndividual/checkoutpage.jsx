@@ -58,6 +58,7 @@ const CheckoutPage = () => {
       // Save selected items to localStorage
       // console.log("Saving items to checkout:", itemsToCheckout);
       localStorage.setItem("checkout_items", JSON.stringify(itemsToCheckout));
+      localStorage.setItem("shippingAddress", JSON.stringify(formData));
 
       const response = await apiClient.post("/payment/create", {
         userInfo: formData,
@@ -81,7 +82,8 @@ const CheckoutPage = () => {
 
   useEffect(() => {
     const items = (localStorage.getItem("checkout_items") || "[]");
-    console.log("Verifying eSewa payment with items:", items);
+    // console.log("Verifying eSewa payment with items:", items);
+    const shippingAddress = (localStorage.getItem("shippingAddress") || "{}");
     const query = window.location.search;
     const cleanedQuery = query.replace(/\?data=/, "&data=");
     const params = new URLSearchParams(cleanedQuery);
@@ -93,7 +95,9 @@ const CheckoutPage = () => {
       setIsProcessing(true);
 
       if (esewaCallback === "success" && responseData) {
-        apiClient.post("/payment/verify-esewa", { responseData,items })
+        apiClient.post("/payment/verify-esewa", {
+          shippingAddress,
+           responseData,items })
           .then((res) => {
             setPaymentStatus("success");
             setPaymentMessage(

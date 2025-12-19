@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"; 
 import apiClient from "../../components/helper/axios";
 import { useAuth } from "../../context/authContext";
 import ManageOrderSkeleton from "../../components/skeleton/manage-order-skeleton";
@@ -11,9 +11,10 @@ export default function CustomerOrder() {
   useEffect(() => {
     const fetchCustomerOrders = async () => {
       try {
-        const res = await apiClient.get(`/customer/${user?.userId}`, { withCredentials: true });
-        setOrders(res.data.users.orders || []);
-        // console.log(res);
+        // Call api
+        const res = await apiClient.get(`/customer/orders`, { withCredentials: true });
+        setOrders(res.data.orders || []);
+        console.log("Fetched orders:", res.data.orders);
       } catch (err) {
         console.error("Error fetching customer orders:", err);
       } finally {
@@ -21,9 +22,7 @@ export default function CustomerOrder() {
       }
     };
 
-    if (user?.userId) {
-      fetchCustomerOrders();
-    }
+    if (user?.userId) fetchCustomerOrders();
   }, [user?.userId]);
 
   return (
@@ -35,33 +34,53 @@ export default function CustomerOrder() {
       ) : orders.length === 0 ? (
         <p className="text-center text-gray-500">No orders found.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-2 px-3 text-left text-xs md:text-sm text-gray-700">Order ID</th>
-                <th className="py-2 px-3 text-left text-xs md:text-sm text-gray-700">Total</th>
-                <th className="py-2 px-3 text-left text-xs md:text-sm text-gray-700 hidden md:table-cell">Discount</th>
-                <th className="py-2 px-3 text-left text-xs md:text-sm text-gray-700">Status</th>
-                <th className="py-2 px-3 text-left text-xs md:text-sm text-gray-700 hidden md:table-cell">Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr key={order._id} className="border-b hover:bg-gray-50">
-                  <td className="py-2 px-3 text-xs md:text-sm text-gray-600">{order._id.slice(-6)}</td>
-                  <td className="py-2 px-3 text-xs md:text-sm text-gray-600">${order.totalAmount.toFixed(2)}</td>
-                  <td className="py-2 px-3 text-xs md:text-sm text-gray-600 hidden md:table-cell">
-                    ${order.discount.toFixed(2)}
-                  </td>
-                  <td className="py-2 px-3 text-xs md:text-sm text-gray-600">{order.status}</td>
-                  <td className="py-2 px-3 text-xs md:text-sm text-gray-600 hidden md:table-cell">
-                    {order.shippingAddress?.city}, {order.shippingAddress?.country}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-6">
+          {orders.map((order) => (
+            <div key={order._id} className="bg-white shadow-md rounded-lg p-4">
+              <div className="flex justify-between mb-3">
+                <span className="font-semibold">Order ID: {order._id.slice(-6)}</span>
+                <span className="font-semibold">
+                  Product Name: {order.products.map((item) => item.productId.title).join(", ")}
+                </span>
+                <span>Status: {order.status}</span>
+              </div>
+
+              <div className="mb-3">
+                <span className="font-semibold">Shipping:</span>{" "}
+                {order.shippingAddress?.street}, {order.shippingAddress?.city},{" "}
+                {order.shippingAddress?.country}
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="min-w-full table-auto border-collapse bg-gray-50 rounded-md">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="py-2 px-3 text-left text-sm text-gray-700">Product</th>
+                      <th className="py-2 px-3 text-left text-sm text-gray-700">Quantity</th>
+                      <th className="py-2 px-3 text-left text-sm text-gray-700">Price</th>
+                      <th className="py-2 px-3 text-left text-sm text-gray-700">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {order.products.map((item) => (
+                      <tr key={item.productId._id} className="border-b">
+                        <td className="py-2 px-3 text-gray-600">{item.productId.title}</td>
+                        <td className="py-2 px-3 text-gray-600">{item.quantity}</td>
+                        <td className="py-2 px-3 text-gray-600">${item.priceAtPurchase.toFixed(2)}</td>
+                        <td className="py-2 px-3 text-gray-600">
+                          ${(item.quantity * item.priceAtPurchase).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex justify-end mt-3 font-semibold">
+                Total: ${order.totalAmount.toFixed(2)} (Discount: ${order.discount.toFixed(2)})
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
