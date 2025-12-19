@@ -1,7 +1,7 @@
 const express=require('express')
 const router=express.Router();
 
-const {getAdminUsers,getAdminUsersById,getAdminUsersUpdate,getAdminUsersDelete,getAdminOrders,getAdminOrdersById,getAdminOrdersUpdate}=require('../controllers/admin')
+const {getAdminUsers,orderStatusUpdate,getAdminUsersById,getAdminUsersUpdate,getAdminUsersDelete,getAdminOrders,getAdminOrdersById,getAdminOrdersUpdate}=require('../controllers/admin')
 
 
 router.get('/users',getAdminUsers);
@@ -12,6 +12,6 @@ router.delete('/users/:id',getAdminUsersDelete);
 
 router.get('/orders',getAdminOrders);
 router.get('/orders/:id',getAdminOrdersById);
-router.post('/orders/:id',getAdminOrdersUpdate);
+router.post('/orders/:id',orderStatusUpdate);
 
 module.exports = router;

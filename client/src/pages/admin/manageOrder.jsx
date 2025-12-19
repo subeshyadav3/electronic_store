@@ -4,13 +4,15 @@ import apiClient from "../../components/helper/axios"
 import { useNavigate } from "react-router-dom"
 import LoadingComponent from "../../components/helper/loadingComponent"
 import ManageOrderSkeleton from "../../components/skeleton/manage-order-skeleton"
+import { useToast } from "../../context/toastContext"
 
 const ManageOrder = () => {
   const [orders, setOrders] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const navigate = useNavigate()
-
+  const { showToast } = useToast();
+  
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -28,8 +30,19 @@ const ManageOrder = () => {
 
   const handleStatusChange = async (orderId, status) => {
     try {
-      const response = await apiClient.put(`/admin/orders/${orderId}`, { status })
-      setOrders(orders.map((order) => (order._id === orderId ? { ...order, status: response.data.status } : order)))
+      const response = await apiClient.post(`/admin/orders/${orderId}`, { status })
+
+      const updatedOrder = response.data.order;
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderId
+            ? { ...order, status: updatedOrder.status }
+            : order
+        )
+      );
+      showToast(`Order status updated to ${status}`,"success");
+
     } catch (err) {
       console.error("Error updating status:", err.message)
     }
@@ -69,45 +82,45 @@ const ManageOrder = () => {
             <tbody>
               {loading && (Array.from({ length: 1 }).map((_, idx) => <ManageOrderSkeleton key={idx} />))}
               {!loading &&
-              (
-                orders.map((order) => (
-                  <tr key={order._id} className="border-b hover:bg-gray-50">
-                    <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600">{order._id.slice(-6)}</td>
-                    <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600">
-                      ${order.totalAmount.toFixed(2)}
-                    </td>
-                    <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600 hidden md:table-cell">
-                      ${order.discount.toFixed(2)}
-                    </td>
-                    <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600">{order.status}</td>
-                    <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600 hidden md:table-cell">
-                      {order.shippingAddress.city}, {order.shippingAddress.country}
-                    </td>
-                    <td className="py-2 px-3 md:py-3 md:px-4 text-center">
-                      <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-2">
-                        <button
-                          className="bg-blue-500 text-white px-2 py-1 md:px-3 md:py-2 text-xs md:text-sm rounded-md hover:bg-blue-600 focus:outline-none w-full md:w-auto"
-                          onClick={() => handleStatusChange(order._id, "shipped")}
-                        >
-                          Ship
-                        </button>
-                        <button
-                          className="bg-green-500 text-white px-2 py-1 md:px-3 md:py-2 text-xs md:text-sm rounded-md hover:bg-green-600 focus:outline-none w-full md:w-auto"
-                          onClick={() => handleStatusChange(order._id, "delivered")}
-                        >
-                          Deliver
-                        </button>
-                        <button
-                          className="bg-indigo-500 text-white px-2 py-1 md:px-3 md:py-2 text-xs md:text-sm rounded-md hover:bg-indigo-600 focus:outline-none w-full md:w-auto"
-                          onClick={() => handleProductEdit(order._id)}
-                        >
-                          Edit
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
+                (
+                  orders.map((order) => (
+                    <tr key={order._id} className="border-b hover:bg-gray-50">
+                      <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600">{order._id.slice(-6)}</td>
+                      <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600">
+                        ${order.totalAmount.toFixed(2)}
+                      </td>
+                      <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600 hidden md:table-cell">
+                        ${order.discount.toFixed(2)}
+                      </td>
+                      <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600">{order.status}</td>
+                      <td className="py-2 px-3 md:py-3 md:px-4 text-xs md:text-sm text-gray-600 hidden md:table-cell">
+                        {order.shippingAddress.city}, {order.shippingAddress.country}
+                      </td>
+                      <td className="py-2 px-3 md:py-3 md:px-4 text-center">
+                        <div className="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-2">
+                          <button
+                            className="bg-blue-500 text-white px-2 py-1 md:px-3 md:py-2 text-xs md:text-sm rounded-md hover:bg-blue-600 focus:outline-none w-full md:w-auto"
+                            onClick={() => handleStatusChange(order._id, "shipped")}
+                          >
+                            Ship
+                          </button>
+                          <button
+                            className="bg-green-500 text-white px-2 py-1 md:px-3 md:py-2 text-xs md:text-sm rounded-md hover:bg-green-600 focus:outline-none w-full md:w-auto"
+                            onClick={() => handleStatusChange(order._id, "delivered")}
+                          >
+                            Deliver
+                          </button>
+                          <button
+                            className="bg-indigo-500 text-white px-2 py-1 md:px-3 md:py-2 text-xs md:text-sm rounded-md hover:bg-indigo-600 focus:outline-none w-full md:w-auto"
+                            onClick={() => handleProductEdit(order._id)}
+                          >
+                            Edit
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
             </tbody>
           </table>
         </div>

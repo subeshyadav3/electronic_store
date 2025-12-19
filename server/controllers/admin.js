@@ -72,6 +72,19 @@ const getAdminOrdersById = async (req, res) => {
     }
 }
 
+const orderStatusUpdate=async(req,res)=>{
+    const {status}=req.body;
+    const orderId=req.params.id;
+
+    // console.log("order",orderId,status);
+    if(!orderId) return res.status(400).json({message:'Order ID is required'});
+    if(!status) return res.status(400).json({message:'Status is required'});
+    const updateStaus=await Order.findOneAndUpdate({_id:orderId},{status},{new:true});
+    console.log(updateStaus);
+    res.status(200).json({order:updateStaus,success:true,message:'Order status updated successfully'});
+}
+
+
 const getAdminOrdersUpdate = async (req, res) => {
     try {
         const { totalAmount, discount, priceAtPurchase, street, city, state=null, postalCode=null,status='pending',country='Nepal' } = req.body;
@@ -114,6 +127,7 @@ const getAdminOrdersUpdate = async (req, res) => {
 
 module.exports = {
     getAdminUsers,
+    orderStatusUpdate,
     getAdminUsersById,
     getAdminUsersUpdate,
     getAdminUsersDelete,
