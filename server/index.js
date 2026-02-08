@@ -11,7 +11,7 @@ const authRouter = require('./routes/auth.js');
 const checkAuthAdmin=require('./middlewares/checkAdmin.js');
 const { checkAuth } = require('./middlewares/checkAuthCustomer.js'); 
 const orderRouter=require('./routes/order.js');
-
+const connectDB = require('./utils/db');
 
 // Middleware
 const corsOptions = {
@@ -52,13 +52,15 @@ app.use('/api/payment',checkAuth, require('./routes/paymentRoute.js'));
 
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URL)
-    .then(() => {
-        console.log('MongoDB Connected');
-        app.listen(process.env.PORT || 8000, () => {
-            console.log(`Server is running on port ${process.env.PORT || 3000}`);
-        });
-    })
-    .catch(err => {
-        console.error('MongoDB Connection Failed', err);
+
+
+connectDB()
+  .then(() => {
+    console.log('MongoDB Connected');
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`Server is running on port ${process.env.PORT || 3000}`);
     });
+  })
+  .catch(err => {
+    console.error('MongoDB Connection Failed', err);
+  });

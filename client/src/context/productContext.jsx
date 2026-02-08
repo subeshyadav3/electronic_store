@@ -165,7 +165,9 @@ const ProductProvider = ({ children }) => {
   const adminProductDelete = async (id) => {
       try{
         const response = await apiClient.delete(`/product/${id}`);
-        return alert("Product deleted successfully"); //testing
+        console.log("resonse",response)
+        showToast('Product deleted successfully', 'success');
+        // return alert("Product deleted successfully"); //testing
       }
       catch(err){
         setError('Error deleting product');
