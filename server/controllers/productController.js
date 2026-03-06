@@ -12,8 +12,9 @@ const getProducts = async (req, res) => {
     }, {});
     const cacheKey = `products:${JSON.stringify(sortedQuery)}`;
 
+    // Check cache first
     const cachedProducts = await redis.get(cacheKey);
-    if (cachedProducts) return res.status(200).json(JSON.parse(cachedProducts));
+    if (cachedProducts) return res.status(200).json(JSON.parse(cachedProducts)); // parse JSON
 
     const { title, price, category, discount, tags, brands } = req.query;
 
@@ -30,11 +31,12 @@ const getProducts = async (req, res) => {
 
     const products = await Product.find(filter).lean();
 
-    await redis.set(cacheKey, JSON.stringify(products), { ex: 60 });
+    // Set cache with JSON string
+    await redis.set(cacheKey, JSON.stringify(products), 'EX', 60); // expire in 60 sec
 
     res.status(200).json(products);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(500).json({ message: 'Server error', error: err });
   }
 };
 
@@ -42,21 +44,21 @@ const getProductById = async (req, res) => {
   try {
     const cacheKey = `product:${req.params.id}`;
     const cachedProduct = await redis.get(cacheKey);
-    if (cachedProduct) return res.status(200).json(JSON.parse(cachedProduct));
+    if (cachedProduct) return res.status(200).json(JSON.parse(cachedProduct)); // parse JSON
 
     const product = await Product.findById(req.params.id).lean();
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    await redis.set(cacheKey, JSON.stringify(product), { ex: 120 });
-
+    await redis.set(cacheKey, JSON.stringify(product), 'EX', 120); // expire in 2 min
     res.status(200).json(product);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    res.status(500).json({ message: 'Server error', error: err });
   }
 };
 
 const addProduct = async (req, res) => {
   try {
+    // Clear relevant caches
     const keys = await redis.keys('products:*');
     if (keys.length) await redis.del(keys);
 
@@ -88,12 +90,13 @@ const addProduct = async (req, res) => {
 
     res.status(201).json({ message: 'Product Created Successfully!', product: savedProduct, success: true });
   } catch (err) {
-    res.status(400).json({ message: "Error creating product", error: err.message });
+    res.status(400).json({ message: "Error creating product", error: err });
   }
 };
 
 const updateProduct = async (req, res) => {
   try {
+    // Clear caches
     await redis.del(`product:${req.params.id}`);
     const keys = await redis.keys('products:*');
     if (keys.length) await redis.del(keys);
@@ -105,7 +108,7 @@ const updateProduct = async (req, res) => {
 
     res.status(200).json(updatedProduct);
   } catch (err) {
-    res.status(400).json({ message: 'Error updating product', error: err.message });
+    res.status(400).json({ message: 'Error updating product', error: err });
   }
 };
 
@@ -113,25 +116,28 @@ const deleteProduct = async (req, res) => {
   try {
     const productId = req.params.id;
 
+ 
     const deletedProduct = await Product.findByIdAndDelete(productId);
+    console.log(deletedProduct);
     if (!deletedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
+    // Clear caches
     await redis.del(`product:${productId}`);
     const keys = await redis.keys('products:*');
     if (keys.length) await redis.del(keys);
 
     res.status(200).json({ message: 'Product deleted successfully', success: true });
   } catch (err) {
-    res.status(500).json({ message: 'Error deleting product', error: err.message });
+    res.status(500).json({ message: 'Error deleting product', error: err });
   }
 };
 
 const addComment = async (req, res) => {
   try {
     const { id } = req.params;
-    await redis.del(`product:${id}`);
+    await redis.del(`product:${id}`); // clear cache
 
     const { comment, user, reply, parentId } = req.body;
 
