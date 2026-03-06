@@ -1,18 +1,16 @@
-const Redis = require('ioredis');
+const { Redis } = require("@upstash/redis");
 
-let redisClient;
+let redis;
 
-
-if (!global.redisClient) {
-  global.redisClient = new Redis(process.env.REDIS_URL, {
-    tls: { rejectUnauthorized: false } 
+if (!global.redis) {
+  global.redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
   });
+
+  console.log("Redis client initialized");
 }
 
-redisClient = global.redisClient;
+redis = global.redis;
 
-redisClient.on('connect', () => console.log('Redis connected'));
-redisClient.on('error', (err) => console.log('Redis error:', err));
-
-module.exports = redisClient;
-
+module.exports = redis;
