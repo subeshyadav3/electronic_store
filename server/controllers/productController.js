@@ -2,9 +2,10 @@ const Product = require('../models/common/product');
 const User = require('../models/customers/user');
 const Order = require('../models/customers/order');
 const mongoose = require('mongoose');
-const redis = require('../utils/redis'); 
+// const redis = require('../utils/redis'); 
 
 // Utility to safely set Redis without blocking response
+/*
 async function setCacheAsync(key, value, expireSeconds = 3600) {
   try {
     redis.set(key, JSON.stringify(value), 'EX', expireSeconds); 
@@ -12,6 +13,7 @@ async function setCacheAsync(key, value, expireSeconds = 3600) {
     console.error("Redis set error:", err.message);
   }
 }
+*/
 
 
 const getProducts = async (req, res) => {
@@ -23,10 +25,12 @@ const getProducts = async (req, res) => {
     const cacheKey = `products:${JSON.stringify(sortedQuery)}`;
 
     // Try Redis first
+    /*
     const cachedProducts = await redis.get(cacheKey);
     if (cachedProducts) {
       return res.status(200).json(JSON.parse(cachedProducts));
     }
+    */
 
     // Mongo query
     const { title, price, category, discount, tags, brands } = req.query;
@@ -47,7 +51,9 @@ const getProducts = async (req, res) => {
     res.status(200).json(products);
 
     // Update Redis in background
+    /*
     setCacheAsync(cacheKey, products, 3600);
+    */
 
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });
@@ -58,8 +64,11 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   try {
     const cacheKey = `product:${req.params.id}`;
+
+    /*
     const cachedProduct = await redis.get(cacheKey);
     if (cachedProduct) return res.status(200).json(JSON.parse(cachedProduct));
+    */
 
     const product = await Product.findById(req.params.id).lean();
     if (!product) return res.status(404).json({ message: 'Product not found' });
@@ -68,7 +77,9 @@ const getProductById = async (req, res) => {
     res.status(200).json(product);
 
     // Update Redis in background
+    /*
     setCacheAsync(cacheKey, product, 3600);
+    */
 
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });
@@ -134,7 +145,7 @@ const updateProduct = async (req, res) => {
   try {
 
     /*
-    // Clear Redis caches (Disabled)
+    // Clear Redis caches
     await redis.del(`product:${req.params.id}`);
     const keys = await redis.keys('products:*');
     if (keys.length) await redis.del(keys);
@@ -169,7 +180,7 @@ const deleteProduct = async (req, res) => {
     }
 
     /*
-    // Clear Redis caches (Disabled)
+    // Clear Redis caches
     await redis.del(`product:${productId}`);
     const keys = await redis.keys('products:*');
     if (keys.length) await redis.del(keys);
@@ -191,7 +202,7 @@ const addComment = async (req, res) => {
     const { id } = req.params;
 
     /*
-    // Clear Redis cache (Disabled)
+    // Clear Redis cache
     await redis.del(`product:${id}`);
     */
 
