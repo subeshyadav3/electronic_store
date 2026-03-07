@@ -33,22 +33,24 @@
 // module.exports = connectDB;
 
 
-const mongoose = require('mongoose');
+let cached = global.mongoose;
+
+if (!cached) cached = global.mongoose = { conn: null, promise: null };
 
 async function connectDB() {
-  try {
-    await mongoose.connect(process.env.MONGO_URL, {
-      maxPoolSize: 20,                 // connection pool
-      serverSelectionTimeoutMS: 5000,  // fail fast if MongoDB unreachable
-      socketTimeoutMS: 45000,          // close idle sockets
-      family: 4                        // use IPv4
-    });
+  if (cached.conn) return cached.conn;
 
-    console.log("MongoDB Connected");
-  } catch (error) {
-    console.error("MongoDB Connection Error:", error);
-    process.exit(1);
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URL, {
+      maxPoolSize: 20,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      family: 4,
+    });
   }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
 
 module.exports = connectDB;
