@@ -13,7 +13,7 @@ const ImageGallery = ({ images }) => {
             className={`flex-shrink-0 ${selectedImage === index ? "ring-2 ring-blue-300 w-fit" : ""}`}
           >
             <img
-              src={image || "/placeholder.png"}
+              src={image || "/placeholder.svg"}
               alt={`Product thumbnail ${index + 1}`}
               className=" w-12 h-12  sm:w-12 md:h-15 object-cover rounded-md"
             />
@@ -22,7 +22,7 @@ const ImageGallery = ({ images }) => {
       </div>
       <div className="">
         <img
-          src={images[selectedImage] || "/example.svg"}
+          src={images[selectedImage] || "/placeholder.svg"}
           alt="Product"
           className=" min-w-[300px]  max-w-[500px] w-full object-cover rounded-lg"
         /> 

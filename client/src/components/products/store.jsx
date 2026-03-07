@@ -1,189 +1,171 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { useProducts } from "../../context/productContext"
 import ProductCard from "./productCard"
 import SidebarComponent from "./sideBarComponent"
 import ProductSkeleton from "../skeleton/product-skeleton"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Search, Filter, ShoppingBag } from "lucide-react"
 
 const Store = () => {
   const { products, setFilter, setPriceRangeFilter, loading } = useProducts()
-
+  const [displayedProducts, setDisplayedProducts] = useState([]) // stable products
   const [minPrice, setMinPrice] = useState(0)
   const [maxPrice, setMaxPrice] = useState(1000000)
   const [page, setPage] = useState(1)
 
-  useEffect(() => {
-    setPage(1)
-    // console.log(products)
-  }, [products])
 
   useEffect(() => {
-    setPriceRangeFilter(`${minPrice}-${maxPrice}`)
+    if (!loading && products.length > 0) {
+      setDisplayedProducts(products)
+      setPage(1) 
+    }
+  }, [products, loading])
+
+  
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setPriceRangeFilter(`${minPrice}-${maxPrice}`)
+    }, 400)
+    return () => clearTimeout(handler)
   }, [minPrice, maxPrice])
 
-  const handlePriceRangeChange = (e) => {
-    const { name, value } = e.target
-    if (name === "min") setMinPrice(value)
-    if (name === "max") setMaxPrice(value)
-  }
+  const ITEMS_PER_PAGE = 12
+  const totalPages = Math.max(1, Math.ceil(displayedProducts.length / ITEMS_PER_PAGE))
 
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= Math.ceil(products.length / 12)) {
+    if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
-  const totalPages = Math.max(1, Math.ceil(products.length / 12))
+  const paginatedProducts = useMemo(() => {
+    return displayedProducts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+  }, [displayedProducts, page])
 
   const getPageNumbers = () => {
     const pageNumbers = []
-    const maxVisiblePages = 5
-
-    if (totalPages <= maxVisiblePages) {
-
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i)
-      }
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pageNumbers.push(i)
     } else {
-
-      if (page <= 3) {
-  
-        pageNumbers.push(1, 2, 3, "...", totalPages)
-      } else if (page >= totalPages - 2) {
- 
-        pageNumbers.push(1, "...", totalPages - 2, totalPages - 1, totalPages)
-      } else {
- 
-        pageNumbers.push(1, "...", page - 1, page, page + 1, "...", totalPages)
-      }
+      if (page <= 3) pageNumbers.push(1, 2, 3, "...", totalPages)
+      else if (page >= totalPages - 2) pageNumbers.push(1, "...", totalPages - 2, totalPages - 1, totalPages)
+      else pageNumbers.push(1, "...", page - 1, page, page + 1, "...", totalPages)
     }
-
     return pageNumbers
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6 min-h-screen">
-      <div className="lg:w-[250px] bg-slate-100 p-4">
-        <SidebarComponent
-          setFilter={setFilter}
-          setPriceRangeFilter={setPriceRangeFilter}
-          handlePriceRangeChange={handlePriceRangeChange}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-        />
-      </div>
+    <div className="min-h-screen bg-[#f8fafc]">
+      <div className="max-w-[1440px] mx-auto px-4 py-8 md:px-8">
+        <div className="flex flex-col lg:flex-row gap-8">
 
-      <div className="flex flex-col items-center p-5">
-        <div className="mb-5 w-full max-w-[500px] flex-col flex gap-2 sm:flex-row">
-          <input
-            type="text"
-            name="title"
-            placeholder="Search"
-            className="p-2 mb-3 w-full border border-gray-300 rounded-md"
-            onChange={setFilter}
-          />
-          <button
-            name="search"
-            value="search"
-            onClick={setFilter}
-            className="w-fit bg-blue-500 text-white px-4 py-2 h-fit rounded-md hover:bg-blue-600 transition-colors duration-300"
-          >
-            Search
-          </button>
-        </div>
+          <aside className="lg:w-[280px] shrink-0">
+            <div className="sticky top-24 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+              <div className="flex items-center gap-2 mb-6 font-semibold text-slate-800">
+                <Filter className="w-4 h-4" />
+                <span>Refine Selection</span>
+              </div>
+              <SidebarComponent
+                setFilter={setFilter}
+                setPriceRangeFilter={setPriceRangeFilter}
+                handlePriceRangeChange={(e) => {
+                  const { name, value } = e.target
+                  if (name === "min") setMinPrice(value)
+                  if (name === "max") setMaxPrice(value)
+                }}
+                minPrice={minPrice}
+                maxPrice={maxPrice}
+              />
+            </div>
+          </aside>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {loading && Array.from({ length: 4 }).map((_, idx) => <ProductSkeleton key={idx} />)}
+          <div className="flex-1">
 
-          {!products || products.length === 0 ? (
-            <h1 className="text-2xl text-red-500">No products found</h1>
-          ) : (
-            products
-              .slice((page - 1) * 12, page * 12)
-              .map((product) => <ProductCard key={product._id} products={product} />)
-          )}
-        </div>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+              <div className="relative w-full max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Search for products..."
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none"
+                  onChange={setFilter}
+                />
+              </div>
+              <div className="text-sm font-medium text-slate-500 bg-white px-4 py-2 rounded-lg border border-slate-100 shadow-sm">
+                Showing <span className="text-slate-900">{displayedProducts.length}</span> Results
+              </div>
+            </div>
 
-    
-        {products && products.length > 12 && (
-          <div className="mt-8 flex flex-col items-center space-y-4">
-         
-            <div className="text-sm text-gray-600">
-              Showing {(page - 1) * 12 + 1} to {Math.min(page * 12, products.length)} of {products.length} products
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {loading ? (
+                Array.from({ length: 6 }).map((_, idx) => <ProductSkeleton key={idx} />)
+              ) : displayedProducts.length === 0 ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
+                  <ShoppingBag className="w-12 h-12 text-slate-300 mb-4" />
+                  <h2 className="text-xl font-semibold text-slate-900">No products found</h2>
+                  <p className="text-slate-500 mt-1">Try adjusting your filters or search query.</p>
+                </div>
+              ) : (
+                paginatedProducts.map((product) => (
+                  <div key={product._id} className="transition-transform duration-300 hover:-translate-y-1">
+                    <ProductCard products={product} />
+                  </div>
+                ))
+              )}
             </div>
 
         
-            <div className="flex items-center space-x-2">
+            {!loading && totalPages > 1 && (
+              <div className="mt-12 flex flex-col items-center gap-6">
+                <div className="flex items-center bg-white p-1 rounded-2xl border border-slate-200 shadow-sm">
+                  <button
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 1}
+                    className="p-2 rounded-xl hover:bg-slate-50 disabled:opacity-30 transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
 
-              <button
-                onClick={() => handlePageChange(page - 1)}
-                disabled={page === 1}
-                className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  page === 1
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-sm"
-                }`}
-              >
-                <ChevronLeft className="w-4 h-4 mr-1" />
-                Previous
-              </button>
+                  <div className="flex px-2">
+                    {getPageNumbers().map((pageNum, index) => (
+                      <React.Fragment key={index}>
+                        {pageNum === "..." ? (
+                          <span className="px-3 py-2 text-slate-400">...</span>
+                        ) : (
+                          <button
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${
+                              page === pageNum
+                                ? "bg-blue-600 text-white shadow-md shadow-blue-200"
+                                : "text-slate-600 hover:bg-blue-50 hover:text-blue-600"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
 
- 
-              <div className="flex items-center space-x-1">
-                {getPageNumbers().map((pageNum, index) => (
-                  <React.Fragment key={index}>
-                    {pageNum === "..." ? (
-                      <span className="px-3 py-2 text-gray-400">...</span>
-                    ) : (
-                      <button
-                        onClick={() => handlePageChange(pageNum)}
-                        className={`w-10 h-10 rounded-lg font-medium transition-all duration-200 ${
-                          page === pageNum
-                            ? "bg-blue-600 text-white shadow-lg transform scale-105"
-                            : "bg-white text-gray-700 border border-gray-300 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    )}
-                  </React.Fragment>
-                ))}
+                  <button
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page === totalPages}
+                    className="p-2 rounded-xl hover:bg-slate-50 disabled:opacity-30 transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Page {page} of {totalPages}
+                </p>
               </div>
-
-         
-              <button
-                onClick={() => handlePageChange(page + 1)}
-                disabled={page === totalPages}
-                className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  page === totalPages
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-sm"
-                }`}
-              >
-                Next
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </button>
-            </div>
-
-          
-            <div className="flex items-center space-x-2 md:hidden">
-              <span className="text-sm text-gray-600">Go to page:</span>
-              <select
-                value={page}
-                onChange={(e) => handlePageChange(Number.parseInt(e.target.value))}
-                className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                  <option key={pageNum} value={pageNum}>
-                    {pageNum}
-                  </option>
-                ))}
-              </select>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

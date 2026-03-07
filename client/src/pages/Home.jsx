@@ -2,14 +2,13 @@
 
 import { useProducts } from "../context/productContext"
 import ProductCard from "../components/products/productCard"
-import { ShoppingBag, Zap, Star, TrendingUp, Award } from "lucide-react"
+import { ShoppingBag, Zap, Star, TrendingUp, Award, ArrowRight, Sparkles } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import ProductSkeleton from "../components/skeleton/product-skeleton"
 
 const Home = () => {
-  const { products, getHomeProducts, loading, setLoading, error, setFilter } = useProducts()
-
+  const { products, getHomePageProducts, loading, setLoading, error } = useProducts()
   const [allCategories, setAllCategories] = useState({
     smartphones: [],
     laptops: [],
@@ -18,24 +17,31 @@ const Home = () => {
   })
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchHomeProducts = async () => {
       try {
         setLoading(true)
-        const updatedCategories = {}
-        const categories = ["smartphones", "laptops", "watches", "tablets"]
-        for (const category of categories) {
-          const response = await getHomeProducts(category)
-          if (response.length > 0) {
-            updatedCategories[category] = response
-          }
+        const data = await getHomePageProducts()
+        if (data && typeof data === "object") {
+          setAllCategories({
+            smartphones: data.smartphones || [],
+            laptops: data.laptops || [],
+            watches: data.watches || [],
+            tablets: data.tablets || [],
+          })
         }
-        setAllCategories(updatedCategories)
-        setLoading(false)
       } catch (err) {
-        console.log(err)
+        console.error(err)
+        setAllCategories({
+          smartphones: [],
+          laptops: [],
+          watches: [],
+          tablets: [],
+        })
+      } finally {
+        setLoading(false)
       }
     }
-    fetchCategories()
+    fetchHomeProducts()
   }, [])
 
   const categoryIcons = {
@@ -45,119 +51,101 @@ const Home = () => {
     Tablets: "📱",
   }
 
+  const categoryKeys = ["smartphones", "laptops", "watches", "tablets"]
+
+  const getGridClasses = (count) => {
+    if (count <= 3) return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 justify-items-center"
+    return "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10"
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-[#fcfcfd] selection:bg-purple-200">
 
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-600">
+      <div className="relative overflow-hidden bg-[#0a0a0c]">
 
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23ffffff' fillOpacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        ></div>
-
-        <div className="relative container mx-auto px-4 py-20 md:py-32">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-white bg-opacity-20 rounded-full px-6 py-2 mb-6 backdrop-blur-sm">
-              <Star className="w-4 h-4 mr-2 text-yellow-300" />
-              <span className="text-white text-sm font-medium">Trusted by 10,000+ customers</span>
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/20 blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[120px] animate-pulse"></div>
+        
+        <div className="relative container mx-auto px-4 py-24 md:py-40">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center bg-white/5 border border-white/10 rounded-full px-5 py-2 mb-8 backdrop-blur-md">
+              <Sparkles className="w-4 h-4 mr-2 text-yellow-400" />
+              <span className="text-gray-300 text-xs md:text-sm font-medium tracking-wider uppercase">Next Gen Tech Hub</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent leading-tight">
-              Discover Your
+            <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter text-white">
+              Redefine Your
               <br />
-              <span className="bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text text-transparent">
-                Tech Style
+              <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Digital Life
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl mb-10 text-blue-100 max-w-2xl mx-auto leading-relaxed">
-              Shop the latest mobiles, laptops & more with unbeatable prices and premium quality
+            <p className="text-lg md:text-xl mb-12 text-gray-400 max-w-2xl mx-auto font-light leading-relaxed">
+              Experience the pinnacle of innovation with our handpicked selection of 
+              <span className="text-white font-normal"> premium gadgets</span> and lifestyle tech.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
               <Link
                 to="/store"
-                className="group bg-white text-purple-700 px-10 py-4 rounded-full text-lg font-bold hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl flex items-center"
+                className="group relative bg-white text-black px-12 py-5 rounded-2xl text-lg font-bold hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all duration-300 flex items-center overflow-hidden"
               >
-                Shop Now
-                <svg
-                  className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+                <span className="relative z-10">Start Exploring</span>
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform relative z-10" />
               </Link>
 
-              <button className="text-white border-2 border-white border-opacity-50 px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-purple-700 transition-all duration-300">
-                View Deals
+              <button className="text-gray-300 border border-white/20 px-10 py-5 rounded-2xl text-lg font-semibold hover:bg-white/5 hover:text-white transition-all duration-300 backdrop-blur-sm">
+                View Seasonal Deals
               </button>
             </div>
           </div>
 
-     
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-            <div className="group bg-white bg-opacity-10 rounded-2xl p-8 backdrop-blur-lg border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 transform hover:-translate-y-2">
-              <div className="bg-gradient-to-br from-blue-400 to-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <ShoppingBag className="w-8 h-8 text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {[
+              { icon: <ShoppingBag />, title: "Elite Curation", desc: "Top-tier brands vetted for quality.", color: "from-blue-500" },
+              { icon: <Zap />, title: "Flash Delivery", desc: "Priority shipping on all orders.", color: "from-orange-500" },
+              { icon: <Award />, title: "Secure Warranty", desc: "2-year protection on every device.", color: "from-purple-500" }
+            ].map((feature, i) => (
+              <div key={i} className="group p-8 rounded-3xl border border-white/5 bg-white/[0.03] backdrop-blur-xl hover:bg-white/[0.07] transition-all duration-500">
+                <div className={`bg-gradient-to-br ${feature.color} to-transparent w-12 h-12 rounded-xl flex items-center justify-center mb-6 shadow-lg`}>
+                  <div className="text-white w-6 h-6">{feature.icon}</div>
+                </div>
+                <h3 className="font-bold text-xl mb-2 text-white">{feature.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
               </div>
-              <h3 className="font-bold text-xl mb-3 text-white">Wide Selection</h3>
-              <p className="text-blue-100 leading-relaxed">
-                Discover thousands of premium tech products from top brands worldwide
-              </p>
-            </div>
-
-            <div className="group bg-white bg-opacity-10 rounded-2xl p-8 backdrop-blur-lg border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 transform hover:-translate-y-2">
-              <div className="bg-gradient-to-br from-green-400 to-green-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Zap className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="font-bold text-xl mb-3 text-white">Lightning Fast</h3>
-              <p className="text-blue-100 leading-relaxed">
-                Express delivery within 24 hours to your doorstep with premium packaging
-              </p>
-            </div>
-
-            <div className="group bg-white bg-opacity-10 rounded-2xl p-8 backdrop-blur-lg border border-white border-opacity-20 hover:bg-opacity-20 transition-all duration-300 transform hover:-translate-y-2">
-              <div className="bg-gradient-to-br from-purple-400 to-purple-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Award className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="font-bold text-xl mb-3 text-white">Premium Support</h3>
-              <p className="text-blue-100 leading-relaxed">
-                30-day hassle-free returns with 24/7 customer support and warranty
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
-  
-      <div className="bg-white py-20">
+
+      <div className="bg-white py-24 border-b border-gray-100">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-gradient-to-r from-purple-100 to-pink-100 rounded-full px-6 py-2 mb-4">
-              <TrendingUp className="w-4 h-4 mr-2 text-purple-600" />
-              <span className="text-purple-700 text-sm font-semibold">Popular Categories</span>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div className="text-left">
+              <div className="flex items-center gap-2 mb-3 text-indigo-600 font-bold tracking-widest text-xs uppercase">
+                <div className="h-px w-8 bg-indigo-600"></div> Browse Universe
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">Shop by Category</h2>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Shop by Category</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Explore our curated collection of premium tech products
-            </p>
+            <p className="text-gray-500 max-w-md italic">Finding the perfect tech shouldn't be hard. We've organized everything for your convenience.</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {["Smartphones", "Laptops", "Watches", "Tablets"].map((category, index) => (
-              <Link to={`/store`} key={category} className="group">
-                <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl shadow-lg p-8 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-gray-100 hover:border-purple-200">
-                  <div className="text-6xl mb-6 group-hover:scale-110 transition-transform">
-                    {categoryIcons[category]}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {categoryKeys.map((category) => (
+              <Link to={`/store?category=${category}`} key={category} className="group">
+                <div className="relative bg-gray-50 rounded-[2.5rem] p-10 text-center transition-all duration-500 group-hover:bg-white group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-transparent group-hover:border-indigo-100 overflow-hidden">
+                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 scale-50 group-hover:scale-100"></div>
+                  <div className="text-7xl mb-6 relative z-10 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+                    {categoryIcons[category.charAt(0).toUpperCase() + category.slice(1)]}
                   </div>
-                  <h3 className="font-bold text-xl text-gray-800 mb-2">{category}</h3>
-                  <p className="text-gray-500 text-sm">Explore Collection</p>
-                  <div className="mt-4 w-12 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mx-auto opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <h3 className="font-black text-lg text-gray-800 uppercase tracking-wider relative z-10">
+                    {category}
+                  </h3>
+                  <div className="flex items-center justify-center mt-4 text-indigo-500 font-bold text-xs opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all">
+                    VIEW ALL <ArrowRight className="w-3 h-3 ml-1" />
+                  </div>
                 </div>
               </Link>
             ))}
@@ -166,112 +154,84 @@ const Home = () => {
       </div>
 
 
-      <div className="bg-gradient-to-br from-gray-50 to-white py-20">
+      <div className="bg-[#f8f9ff] py-24">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-gradient-to-r from-yellow-100 to-orange-100 rounded-full px-6 py-2 mb-4">
-              <Star className="w-4 h-4 mr-2 text-yellow-600" />
-              <span className="text-orange-700 text-sm font-semibold">Best Sellers</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Featured Products</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Hand-picked products that our customers love the most
-            </p>
+          <div className="flex flex-col items-center text-center mb-16">
+            <span className="px-4 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold mb-4 uppercase tracking-tighter shadow-sm">Hot Picks</span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Featured Products</h2>
+            <div className="h-1.5 w-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></div>
           </div>
 
-          <div
-            className={
-              loading || error
-                ? "flex justify-center items-center min-h-[400px]"
-                : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
-            }
-          >
+          <div className={getGridClasses(products.slice(0, 4).length)}>
             {loading && Array.from({ length: 4 }).map((_, idx) => <ProductSkeleton key={idx} />)}
-
-            {error && (
-              <div className="col-span-full text-center py-16">
-                <div className="text-6xl mb-4">😞</div>
-                <p className="text-red-500 text-xl font-semibold">Oops! Something went wrong</p>
-                <p className="text-gray-500 mt-2">Please try refreshing the page</p>
-              </div>
-            )}
 
             {!loading &&
               !error &&
               products.slice(0, 4).map((product) => (
-                <div key={product._id} className="transform hover:scale-105 transition-transform duration-300">
+                <div key={product._id} className="w-full">
                   <ProductCard products={product} />
                 </div>
               ))}
+
+            {error && (
+              <div className="col-span-full text-center py-20 bg-white rounded-3xl shadow-sm">
+                <div className="text-5xl mb-4">🔧</div>
+                <p className="text-gray-800 text-xl font-bold">Something went wrong</p>
+                <button onClick={() => window.location.reload()} className="mt-4 text-indigo-600 font-semibold underline underline-offset-4">Try Refreshing</button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
 
-      {Object.keys(allCategories).map((category, index) => (
+      {categoryKeys.map((category, index) => (
         <div
           key={category}
-          className={`py-20 ${index % 2 === 0 ? "bg-white" : "bg-gradient-to-br from-gray-50 to-blue-50"}`}
+          className={`py-28 ${index % 2 === 0 ? "bg-white" : "bg-[#fafbff]"}`}
         >
           <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center bg-gradient-to-r from-blue-100 to-purple-100 rounded-full px-6 py-2 mb-4">
-                <span className="text-2xl mr-2">
-                  {categoryIcons[category.charAt(0).toUpperCase() + category.slice(1)]}
-                </span>
-                <span className="text-purple-700 text-sm font-semibold">Premium Collection</span>
+            <div className="flex flex-col md:flex-row items-center justify-between mb-16">
+              <div className="text-left mb-8 md:mb-0">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl grayscale group-hover:grayscale-0">
+                    {categoryIcons[category.charAt(0).toUpperCase() + category.slice(1)]}
+                  </span>
+                  <div className="h-px w-12 bg-gray-200"></div>
+                  <span className="text-sm font-bold text-indigo-500 uppercase tracking-[0.2em]">New Arrivals</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-gray-900 capitalize">
+                  {category}
+                </h2>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-                {category.charAt(0).toUpperCase() + category.slice(1)}
-              </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Discover the latest {category} with cutting-edge technology and premium design
-              </p>
+              
+              {!loading && !error && allCategories[category]?.length > 4 && (
+                <Link
+                  to={`/store?category=${category}`}
+                  className="flex items-center gap-2 font-bold text-gray-900 group border-b-2 border-transparent hover:border-black pb-1 transition-all"
+                >
+                  Explore the collection <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              )}
             </div>
 
-            <div
-              className={
-                error
-                  ? "flex justify-center items-center min-h-[400px]"
-                  : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
-              }
-            >
-              {error && (
-                <div className="col-span-full text-center py-16">
-                  <div className="text-6xl mb-4">😞</div>
-                  <p className="text-red-500 text-xl font-semibold">Unable to load {category}</p>
-                  <p className="text-gray-500 mt-2">Please try again later</p>
-                </div>
-              )}
-
+            <div className={getGridClasses((allCategories[category] || []).slice(0, 4).length)}>
               {loading && Array.from({ length: 4 }).map((_, idx) => <ProductSkeleton key={idx} />)}
 
               {!loading &&
                 !error &&
                 (allCategories[category] || []).slice(0, 4).map((product) => (
-                  <div key={product._id} className="transform hover:scale-105 transition-transform duration-300">
+                  <div key={product._id} className="w-full">
                     <ProductCard products={product} />
                   </div>
                 ))}
             </div>
-
-            {!loading && !error && allCategories[category]?.length > 4 && (
-              <div className="text-center mt-12">
-                <Link
-                  to="/store"
-                  className="inline-flex items-center bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                >
-                  View All {category.charAt(0).toUpperCase() + category.slice(1)}
-                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-              </div>
-            )}
           </div>
         </div>
       ))}
+      
 
+      <div className="h-20 bg-white"></div>
     </div>
   )
 }

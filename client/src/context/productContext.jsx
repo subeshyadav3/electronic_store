@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import apiClient from '../components/helper/axios';
-import { use } from 'react';
+
 import { useToast } from './toastContext';
 
 const ProductContext = createContext();
@@ -15,25 +15,25 @@ const ProductProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { showToast } = useToast();
-  
+
   const [filters, setFilters] = useState({
-    title:'',
-    price:'',
-    category:'',
-    discount:null,
-    tags:'',
-    brands:'',
-   
+    title: '',
+    price: '',
+    category: '',
+    discount: null,
+    tags: '',
+    brands: '',
+
   });
 
   useEffect(() => {
     setFilters({
-      title:'',
-      price:'',
-      category:'',
-      discount:null,
-      tags:'',
-      brands:'',
+      title: '',
+      price: '',
+      category: '',
+      discount: null,
+      tags: '',
+      brands: '',
     });
 
   }, [window.location.pathname]);
@@ -42,12 +42,12 @@ const ProductProvider = ({ children }) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-       
+
         // console.log(filters);
-        const response = await apiClient.get('/product',{params:filters});
+        const response = await apiClient.get('/product', { params: filters });
         setAdminProducts(response.data);
         setProducts(response.data);
-        
+
       } catch (err) {
         setError('Error fetching products');
       } finally {
@@ -56,68 +56,68 @@ const ProductProvider = ({ children }) => {
     };
 
     fetchProducts();
-  }, [filters]); 
+  }, [filters]);
 
   useEffect(() => {
 
-  }, [products,filters]);
+  }, [products, filters]);
 
   const setPriceRangeFilter = (price) => {
-    
-    setFilters({...filters,price:price});
+
+    setFilters({ ...filters, price: price });
   }
 
   const [isSelected, setIsSelected] = useState([]);
-  
-  const homeFilterProduct=async(productType)=>{
+
+  const homeFilterProduct = async (productType) => {
     try {
-        setFilter({
-          title:'',
-          price:'',
-          category:productType,
-          discount:null,
-          tags:'',
-          brands:'',    
-        })
-        return products
+      setFilter({
+        title: '',
+        price: '',
+        category: productType,
+        discount: null,
+        tags: '',
+        brands: '',
+      })
+      return products
     }
-     catch (error) {
+    catch (error) {
       setError(`Error: ${error}`)
     }
-  
+
   }
 
-  const getHomeProducts = async (category) => {
+  const getHomePageProducts = async () => {
     try {
-      const response=await apiClient.get('/product',{params:{category}});
-
+      const response = await apiClient.get('/product/home');
+      console.log("Home page products: ", response.data);
       return response.data;
     } catch (err) {
-      setError('Error fetching products by category');
+      setError('Error fetching home products');
     }
-  }
+  };
 
   const setFilter = (e) => {
-   
+
     const { name, value } = e.target;
     // console.log("Name: ", e.target.name);
     // console.log("Value: ", value);
     //remove on double tap
-    if(isSelected.includes(value)){
-      setIsSelected(isSelected.filter((item)=> item!=value));
-      setFilters({...filters,[name]:''});
+    if (isSelected.includes(value)) {
+      setIsSelected(isSelected.filter((item) => item != value));
+      setFilters({ ...filters, [name]: '' });
       return;
     }
-    else{
+    else {
       setIsSelected([...isSelected, value]);
     }
     // console.log("Is selected value: ", isSelected);
     setFilters({ ...filters, [name]: value });
   };
 
-  const addComment = async (id, comment,user,reply,parentId) => {
+  const addComment = async (id, comment, user, reply, parentId) => {
     try {
-      const response = await apiClient.post(`/product/comment/${id}`, { comment,user,reply,parentId });
+      const response = await apiClient.post(`/product/comment/${id}`, { comment, user, reply, parentId });
       showToast('Comment added successfully', 'success');
       // console.log(response);  
       // console.log(parentId,reply);
@@ -143,44 +143,44 @@ const ProductProvider = ({ children }) => {
   const getAdminAllProducts = async () => {
     try {
       const response = await apiClient.get('/product');
-      
+
       setAdminProducts(response.data);
-      
+
     } catch (err) {
       setError('Error fetching products');
     }
   }
-  
-  const adminProductUpdate= async (id, data) => {
-    try{
-        const response=await apiClient.put(`/product/${id}`,data);
-        // console.log(response);
+
+  const adminProductUpdate = async (id, data) => {
+    try {
+      const response = await apiClient.put(`/product/${id}`, data);
+      // console.log(response);
 
     }
-    catch(err){
+    catch (err) {
       setError('Error updating product');
     }
   }
 
   const adminProductDelete = async (id) => {
-      try{
-        const response = await apiClient.delete(`/product/${id}`);
-        console.log("resonse",response)
-        showToast('Product deleted successfully', 'success');
-        // return alert("Product deleted successfully"); //testing
-      }
-      catch(err){
-        setError('Error deleting product');
-      }
+    try {
+      const response = await apiClient.delete(`/product/${id}`);
+      console.log("resonse", response)
+      showToast('Product deleted successfully', 'success');
+      // return alert("Product deleted successfully"); //testing
+    }
+    catch (err) {
+      setError('Error deleting product');
+    }
 
   }
 
   const adminCreateProduct = async (data) => {
-    try{
-      const response = await apiClient.post(`/product`,data);
+    try {
+      const response = await apiClient.post(`/product`, data);
       // console.log(response);
     }
-    catch(err){
+    catch (err) {
       setError('Error creating product');
     }
   }
@@ -202,7 +202,7 @@ const ProductProvider = ({ children }) => {
         adminProductUpdate,
         setFilter,
         getProductById,
-        getHomeProducts,
+        getHomePageProducts,
         adminCreateProduct,
       }}
     >

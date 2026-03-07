@@ -79,7 +79,7 @@ export default function Footer() {
                 </div>
 
                 <div className="text-center text-sm text-gray-400">
-                    <p>© 2025 Developed By Subesh Yadav</p>
+                    <p>© 2026 Developed By Subesh Yadav</p>
                 </div>
             </div>
             <div className="right-5 top-[80%] sm:top-1/2 sm:right-10 absolute">

@@ -124,6 +124,13 @@ productSchema.pre('save', function (next) {
     next();
 });
 
+productSchema.index({ category: 1 });
+productSchema.index({ brand: 1 });
+productSchema.index({ price: 1 });
+productSchema.index({ tags: 1 });
+productSchema.index({ category: 1, price: 1 });
+productSchema.index({ title: "text", description: "text" });
+
 const Product = mongoose.model('Product', productSchema);
 
 module.exports = Product;
