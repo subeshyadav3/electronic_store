@@ -54,13 +54,13 @@ app.use('/api/payment',checkAuth, require('./routes/paymentRoute.js'));
 // Connect to MongoDB
 
 
-connectDB()
-  .then(() => {
-    console.log('MongoDB Connected');
-    app.listen(process.env.PORT || 8000, () => {
-      console.log(`Server is running on port ${process.env.PORT || 3000}`);
+mongoose.connect(process.env.MONGO_URL)
+    .then(() => {
+        console.log('MongoDB Connected');
+        app.listen(process.env.PORT || 8000, () => {
+            console.log(`Server is running on port ${process.env.PORT || 3000}`);
+        });
+    })
+    .catch(err => {
+        console.error('MongoDB Connection Failed', err);
     });
-  })
-  .catch(err => {
-    console.error('MongoDB Connection Failed', err);
-  });

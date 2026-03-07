@@ -97,6 +97,16 @@ const ProductProvider = ({ children }) => {
     }
   };
 
+  const getHomeProducts = async (category) => {
+    try {
+      const response=await apiClient.get('/product',{params:{category}});
+
+      return response.data;
+    } catch (err) {
+      setError('Error fetching products by category');
+    }
+  }
+
   const setFilter = (e) => {
 
     const { name, value } = e.target;
@@ -204,6 +214,7 @@ const ProductProvider = ({ children }) => {
         getProductById,
         getHomePageProducts,
         adminCreateProduct,
+        getHomeProducts
       }}
     >
       {children}
