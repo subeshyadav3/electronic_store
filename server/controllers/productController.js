@@ -256,39 +256,15 @@ const addComment = async (req, res) => {
 
 const getHomeProducts = async (req, res) => {
   try {
+    const [featured, smartphones, laptops, watches, tablets] = await Promise.all([
+      Product.find().select("title price thumbnail category description").limit(5).lean(),
+      Product.find({ category: "smartphones" }).select("title price thumbnail category description").limit(5).lean(),
+      Product.find({ category: "laptops" }).select("title price thumbnail category description").limit(5).lean(),
+      Product.find({ category: "mens-watches" }).select("title price thumbnail category description").limit(5).lean(),
+      Product.find({ category: "tablets" }).select("title price thumbnail category description").limit(5).lean()
+    ]);
 
-    const featured = await Product.find()
-      .select("title price thumbnail category description")
-      .limit(5)
-      .lean();
-
-    const smartphones = await Product.find({ category: "smartphones" })
-      .select("title price thumbnail category description")
-      .limit(5)
-      .lean();
-
-    const laptops = await Product.find({ category: "laptops" })
-      .select("title price thumbnail category description")
-      .limit(5)
-      .lean();
-
-    const watches = await Product.find({ category: "mens-watches" })
-      .select("title price thumbnail category description")
-      .limit(5)
-      .lean();
-
-    const tablets = await Product.find({ category: "tablets" })
-      .select("title price thumbnail category description")
-      .limit(5)
-      .lean();
-
-    res.json({
-      featured,
-      smartphones,
-      laptops,
-      watches,
-      tablets
-    });
+    res.json({ featured, smartphones, laptops, watches, tablets });
 
   } catch (error) {
     res.status(500).json({ message: "Error loading home products" });
