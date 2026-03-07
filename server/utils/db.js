@@ -32,10 +32,13 @@
 
 // module.exports = connectDB;
 
+const mongoose = require("mongoose");
 
 let cached = global.mongoose;
 
-if (!cached) cached = global.mongoose = { conn: null, promise: null };
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 async function connectDB() {
   if (cached.conn) return cached.conn;
@@ -45,11 +48,17 @@ async function connectDB() {
       maxPoolSize: 20,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
-      family: 4,
-    });
+      family: 4
+    }).then((mongoose) => mongoose);
   }
 
-  cached.conn = await cached.promise;
+  try {
+    cached.conn = await cached.promise;
+  } catch (err) {
+    cached.promise = null;  
+    throw err;
+  }
+
   return cached.conn;
 }
 
