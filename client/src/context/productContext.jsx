@@ -90,7 +90,7 @@ const ProductProvider = ({ children }) => {
   const getHomePageProducts = async () => {
     try {
       const response = await apiClient.get('/product/home');
-      console.log("Home page products: ", response.data);
+      // console.log("Home page products: ", response.data);
       return response.data;
     } catch (err) {
       setError('Error fetching home products');
