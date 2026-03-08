@@ -45,17 +45,20 @@ async function connectDB() {
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(process.env.MONGO_URL, {
-      maxPoolSize: 20,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-      family: 4
-    }).then((mongoose) => mongoose);
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000
+    }).then((mongoose) => {
+      console.log("MongoDB Connected");
+      return mongoose;
+    });
   }
 
   try {
     cached.conn = await cached.promise;
   } catch (err) {
-    cached.promise = null;  
+    cached.promise = null;
+    console.error("MongoDB connection error:", err);
     throw err;
   }
 
