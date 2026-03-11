@@ -1,60 +1,70 @@
 "use client"
 
-import React, { useState, useEffect, useMemo } from "react"
+import React, { useState, useEffect } from "react"
 import { useProducts } from "../../context/productContext"
 import ProductCard from "./productCard"
 import SidebarComponent from "./sideBarComponent"
 import ProductSkeleton from "../skeleton/product-skeleton"
 import { ChevronLeft, ChevronRight, Search, Filter, ShoppingBag } from "lucide-react"
+import { useSearchParams } from "react-router-dom";
 
 const Store = () => {
-  const { products, setFilter, setPriceRangeFilter, loading } = useProducts()
-  const [displayedProducts, setDisplayedProducts] = useState([]) // stable products
-  const [minPrice, setMinPrice] = useState(0)
-  const [maxPrice, setMaxPrice] = useState(1000000)
-  const [page, setPage] = useState(1)
+  const { products, setFilter, setPriceRangeFilter, loading } = useProducts();
+  const [displayedProducts, setDisplayedProducts] = useState([]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000000);
+  const [page, setPage] = useState(1);
 
 
   useEffect(() => {
     if (!loading && products.length > 0) {
-      setDisplayedProducts(products)
-      setPage(1) 
-    }
-  }, [products, loading])
 
-  
+      const categoryFromUrl = new URLSearchParams(window.location.search).get("category");
+
+      if (categoryFromUrl) {
+        const filtered = products.filter(
+          (p) => p.category === categoryFromUrl
+        );
+        setDisplayedProducts(filtered);
+      } else {
+        setDisplayedProducts(products);
+      }
+
+      setPage(1);
+    }
+  }, [products, loading]);
+
+
   useEffect(() => {
     const handler = setTimeout(() => {
-      setPriceRangeFilter(`${minPrice}-${maxPrice}`)
-    }, 400)
-    return () => clearTimeout(handler)
-  }, [minPrice, maxPrice])
+      setPriceRangeFilter(`${minPrice}-${maxPrice}`);
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [minPrice, maxPrice]);
 
-  const ITEMS_PER_PAGE = 12
-  const totalPages = Math.max(1, Math.ceil(displayedProducts.length / ITEMS_PER_PAGE))
+  const ITEMS_PER_PAGE = 12;
+  const totalPages = Math.max(1, Math.ceil(displayedProducts.length / ITEMS_PER_PAGE));
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      setPage(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }
+  };
 
-  const paginatedProducts = useMemo(() => {
-    return displayedProducts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
-  }, [displayedProducts, page])
+  const paginatedProducts = displayedProducts.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   const getPageNumbers = () => {
-    const pageNumbers = []
+    const pageNumbers = [];
     if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pageNumbers.push(i)
+      for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
     } else {
-      if (page <= 3) pageNumbers.push(1, 2, 3, "...", totalPages)
-      else if (page >= totalPages - 2) pageNumbers.push(1, "...", totalPages - 2, totalPages - 1, totalPages)
-      else pageNumbers.push(1, "...", page - 1, page, page + 1, "...", totalPages)
+      if (page <= 3) pageNumbers.push(1, 2, 3, "...", totalPages);
+      else if (page >= totalPages - 2) pageNumbers.push(1, "...", totalPages - 2, totalPages - 1, totalPages);
+      else pageNumbers.push(1, "...", page - 1, page, page + 1, "...", totalPages);
     }
-    return pageNumbers
-  }
+    return pageNumbers;
+  };
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
@@ -117,7 +127,7 @@ const Store = () => {
               )}
             </div>
 
-        
+
             {!loading && totalPages > 1 && (
               <div className="mt-12 flex flex-col items-center gap-6">
                 <div className="flex items-center bg-white p-1 rounded-2xl border border-slate-200 shadow-sm">
@@ -137,11 +147,10 @@ const Store = () => {
                         ) : (
                           <button
                             onClick={() => handlePageChange(pageNum)}
-                            className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${
-                              page === pageNum
+                            className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${page === pageNum
                                 ? "bg-blue-600 text-white shadow-md shadow-blue-200"
                                 : "text-slate-600 hover:bg-blue-50 hover:text-blue-600"
-                            }`}
+                              }`}
                           >
                             {pageNum}
                           </button>

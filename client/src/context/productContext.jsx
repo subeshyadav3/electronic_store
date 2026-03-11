@@ -87,25 +87,24 @@ const ProductProvider = ({ children }) => {
 
   }
 
-  const getHomePageProducts = async () => {
-    try {
-      const response = await apiClient.get('/product/home');
-      // console.log("Home page products: ", response.data);
-      return response.data;
-    } catch (err) {
-      setError('Error fetching home products');
-    }
-  };
-
-  const getHomeProducts = async (category) => {
-    try {
-      const response=await apiClient.get('/product',{params:{category}});
-
-      return response.data;
-    } catch (err) {
-      setError('Error fetching products by category');
-    }
+  
+ const getHomeProducts = async () => {
+  try {
+    const response = await apiClient.get('/product/home');
+    console.log("Home page products: ", response.data);
+    return response.data; 
+  } catch (err) {
+    console.error("Error fetching home products:", err);
+    setError('Error fetching home products');
+    return {
+      featured: [],
+      smartphones: [],
+      laptops: [],
+      watches: [],
+      tablets: []
+    }; 
   }
+};
 
   const setFilter = (e) => {
 
@@ -212,7 +211,6 @@ const ProductProvider = ({ children }) => {
         adminProductUpdate,
         setFilter,
         getProductById,
-        getHomePageProducts,
         adminCreateProduct,
         getHomeProducts
       }}

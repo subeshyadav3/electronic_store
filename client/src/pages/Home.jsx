@@ -20,32 +20,43 @@ const Home = () => {
   })
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true)
-        const updatedCategories = {}
-        const categories = ["smartphones", "laptops", "mens-watches", "tablets"]
+  const fetchHomeProducts = async () => {
+    try {
+      setLoading(true);
 
-        for (const category of categories) {
-          const response = await getHomeProducts(category)
-          updatedCategories[category] = response || []
-        }
-
-        setAllCategories(updatedCategories)
-      } catch {
+      
+      const data = await getHomeProducts(); 
+      if (data && typeof data === "object") {
+        setAllCategories({
+          smartphones: data.smartphones || [],
+          laptops: data.laptops || [],
+          watches: data.watches || [],
+          tablets: data.tablets || [],
+        });
+      } else {
+       
         setAllCategories({
           smartphones: [],
           laptops: [],
           watches: [],
           tablets: [],
-        })
-      } finally {
-        setLoading(false)
+        });
       }
+    } catch (err) {
+      console.error("Error fetching home products:", err);
+      setAllCategories({
+        smartphones: [],
+        laptops: [],
+        watches: [],
+        tablets: [],
+      });
+    } finally {
+      setLoading(false);
     }
+  };
 
-    fetchCategories()
-  }, [])
+  fetchHomeProducts();
+}, []);
 
   const categoryIcons = {
     Smartphones: "📱",
