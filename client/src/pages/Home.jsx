@@ -26,7 +26,7 @@ const Home = () => {
 
       
       const data = await getHomeProducts(); 
-      console.log("Home page products: ", data);
+      // console.log("Home page products: ", data);
       if (data && typeof data === "object") {
         setAllCategories({
           smartphones: data.smartphones || [],
