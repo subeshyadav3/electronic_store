@@ -26,6 +26,7 @@ const Home = () => {
 
       
       const data = await getHomeProducts(); 
+      console.log("Home page products: ", data);
       if (data && typeof data === "object") {
         setAllCategories({
           smartphones: data.smartphones || [],
@@ -65,7 +66,7 @@ const Home = () => {
     Tablets: "📱",
   }
 
-  const categoryKeys = ["smartphones", "laptops", "mens-watches", "tablets"]
+  const categoryKeys = ["smartphones", "laptops", "watches", "tablets"]
 
   const getGridClasses = (count) =>
     count <= 3
@@ -141,7 +142,7 @@ const Home = () => {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {categoryKeys.map((category) => (
-              <Link to={`/store?category=${category}`} key={category} className="group">
+              <Link to={`/store?category=${category=='watches'?'mens-watches':category}`} key={category} className="group">
                 <div className="relative bg-gray-50 rounded-[2.5rem] p-10 text-center transition-all duration-500 group-hover:bg-white group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-transparent group-hover:border-indigo-100 overflow-hidden">
                   <div className="text-7xl mb-6 relative z-10 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
                     {categoryIcons[category.charAt(0).toUpperCase() + category.slice(1)]}
