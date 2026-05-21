@@ -20,30 +20,32 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-          const res = await apiClient.get('/auth/verifyme', { withCredentials: true });
-          // console.log("Verify me", res)
-          if(res.data.success){
-            setUser({
-              name: res.data.user?.name,
-              email: res.data.user?.email,
-              role: res.data.user?.role,
-              userId: res.data.user?.userId,
-              exp: res.data.user?.exp,
-              iat: res.data.user?.iat,
-
+        const res = await apiClient.get('/auth/verifyme', { withCredentials: true });
+        if (res.data.success) {
+          setUser({
+            name: res.data.user?.name,
+            email: res.data.user?.email,
+            role: res.data.user?.role,
+            userId: res.data.user?.userId,
+            exp: res.data.user?.exp,
+            iat: res.data.user?.iat,
           });
           setIsAuthenticated(true);
-        
-          }
-      } catch (error) {
+        } else {
           setIsAuthenticated(false);
           setUser(null);
+        }
+      } catch (error) {
+        setIsAuthenticated(false);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-  };
+    };
 
-  checkAuth();
-}, [isAuthenticated]);
+    // Run auth check once on mount
+    checkAuth();
+  }, []);
 
 
 useEffect(() => {
@@ -126,10 +128,11 @@ useEffect(() => {
 
   // Logout function
   const logout = async () => {
+    // Optimistically clear client state so UI updates immediately
+    setUser(null);
+    setIsAuthenticated(false);
     try {
       await apiClient.post('/auth/logout');
-      setUser(null);
-      setIsAuthenticated(false);
     } catch (err) {
       console.error('Logout error:', err);
     }

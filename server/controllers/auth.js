@@ -210,9 +210,14 @@ const userLogout = async (req, res) => {
     if (!refreshToken) return res.status(400).json({ message: "Refresh token required" });
 
     try {
-        
-        res.clearCookie('token');
-        res.clearCookie('refreshToken');
+        // Clear cookies using the same options used when they were set so the browser will remove them
+        const cookieOptions = { httpOnly: true, secure: process.env.ISPROD, sameSite: process.env.ISPROD ? 'None' : 'Lax', path: '/' };
+        res.clearCookie('token', cookieOptions);
+        res.clearCookie('refreshToken', cookieOptions);
+
+        // Fallback: overwrite cookies with empty value and immediate expiration to ensure removal in some browsers
+        res.cookie('token', '', { ...cookieOptions, maxAge: 0 });
+        res.cookie('refreshToken', '', { ...cookieOptions, maxAge: 0 });
         await Blacklist.create({ token: refreshToken });
         await removeRefreshTokenFromDB(refreshToken);
         return res.status(200).json({ success: true, message: "Logout successful" });
