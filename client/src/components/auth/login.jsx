@@ -41,7 +41,7 @@ const Login = () => {
     // setIsLoading(true);
     try {
       const response = await login(email, password);
-      console.log(response)
+      // console.log(response)
       if(response.data.success){
         showToast(response.data.message, 'success');
         navigate('/');
