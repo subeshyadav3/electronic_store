@@ -14,10 +14,10 @@ export default function CustomerDashboard() {
   const { showToast } = useToast();
   const [customerData, setCustomerData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [updatedData, setUpdatedData] = useState({});
   const [loading, setLoading] = useState(true);
   
-  // Modal tracking states for modular popups instead of nested broken layouts
+  // Initialize with an empty object instead of null to prevent spread crashes
+  const [updatedData, setUpdatedData] = useState({});
   const [activeModal, setActiveModal] = useState(null); // 'password' | 'verify' | null
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function CustomerDashboard() {
         const res = await apiClient.get(`/customer/${user.userId}`, { withCredentials: true });
         const customer = res.data.users;
         setCustomerData(customer);
-        setUpdatedData(customer);
+        setUpdatedData(customer || {});
       } catch (err) {
         console.error(err);
         showToast("Failed to load profile details.", "error");
@@ -47,16 +47,26 @@ export default function CustomerDashboard() {
 
   const handleSave = async () => {
     try {
-      const res = await apiClient.put(`/customer/${user?.userId}`, updatedData, {
+      const profilePayload = {
+        name: updatedData?.name || "",
+        email: updatedData?.email || "",
+        contact: updatedData?.contact || "",
+        shortAddress: updatedData?.shortAddress || "",
+        bio: updatedData?.bio || "",
+      };
+
+      const res = await apiClient.put(`/customer/${user?.userId}`, profilePayload, {
         withCredentials: true,
       });
 
       if (res.data.success) {
-        showToast("Profile updated successfully", "success");
+        showToast("Profile updated successfully.", "success");
         setIsEditing(false);
-        setCustomerData(updatedData);
+        const updatedUser = res.data.users || updatedData;
+        setCustomerData(updatedUser);
+        setUpdatedData(updatedUser);
       } else {
-        showToast("Failed to update profile updates", "error");
+        showToast("Failed to save changes.", "error");
       }
     } catch (err) {
       console.error("Update error:", err);
@@ -66,7 +76,7 @@ export default function CustomerDashboard() {
 
   const handleCancel = () => {
     setIsEditing(false);
-    setUpdatedData(customerData);
+    setUpdatedData(customerData || {});
   };
 
   if (loading) {
@@ -137,7 +147,7 @@ export default function CustomerDashboard() {
               </span>
 
               <div className="mt-5 text-sm text-slate-600 bg-slate-50 rounded-xl p-4 border border-slate-100 italic">
-                "{user?.bio || `Hi, I am ${user?.name || 'there'} and I love buying new things`}"
+                "{customerData?.bio || `Hi, I am ${customerData?.name || 'there'} and I love buying new things`}"
               </div>
 
               <div className="grid grid-cols-2 gap-3 mt-6">
@@ -186,7 +196,7 @@ export default function CustomerDashboard() {
 
                 {/* Email Address block */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between">
                     <span>Email Workspace</span>
                     {!isEditing && (
                       <button 
@@ -251,6 +261,24 @@ export default function CustomerDashboard() {
                     </div>
                   )}
                 </div>
+
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">Description</label>
+                  {isEditing ? (
+                    <textarea
+                      name="bio"
+                      rows={4}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 bg-slate-50/50 focus:bg-white transition resize-none"
+                      value={updatedData.bio || ""}
+                      onChange={handleChange}
+                      placeholder="Write a short description about yourself"
+                    />
+                  ) : (
+                    <div className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-slate-800 font-medium">
+                      {customerData?.bio || <span className="text-slate-400 italic font-normal text-sm">No description added</span>}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Timestamp Logs Details Sub-tier */}
@@ -312,7 +340,7 @@ export default function CustomerDashboard() {
           </div>
         </div>
 
-        {/* Modal Window Sheet wrapper handles conditional rendering neatly for internal subviews */}
+        {/* Modal Window Sheet wrapper */}
         {activeModal && (
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
             <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full relative overflow-hidden">

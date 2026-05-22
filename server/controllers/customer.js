@@ -9,8 +9,31 @@ const router=express.Router();
 
 const getCustomerUserUpdate = async (req, res) => {
     try {
+    const authUserId = req.user?.userId;
+    const targetUserId = req.params.id;
 
-        const result = await User.findOneAndUpdate({ _id: req.params.id }, { ...req.body }, { new: true });
+    if (!authUserId) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
+
+    if (String(authUserId) !== String(targetUserId)) {
+      return res.status(403).json({ success: false, message: 'You can only update your own profile' });
+    }
+
+    const allowedFields = ['name', 'email', 'contact', 'shortAddress', 'bio', 'profilePic'];
+    const payload = {};
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        payload[field] = req.body[field];
+      }
+    });
+
+    const result = await User.findOneAndUpdate({ _id: targetUserId }, payload, { new: true });
+
+    if (!result) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
 
         res.status(200).json({ users: result, success: true, message: 'User updated successfully' });
     } catch (error) {
