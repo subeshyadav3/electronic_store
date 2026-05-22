@@ -46,8 +46,21 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/contact" element={<ContactForm />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/payment-check" element={<PaymentCheck />} />
+                <Route
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={['customer']}
+                      redirectRoles={{
+                        admin: '/dashboard/admin',
+                        customer: '/dashboard/customer',
+                      }}
+                    />
+                  }
+                >
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/checkout" element={<CheckoutPage />} />
+                  <Route path="/payment-check" element={<PaymentCheck />} />
+                </Route>
                 <Route
                   path="/dashboard"
                   element={
@@ -114,9 +127,6 @@ function App() {
 
                 <Route element={<ProtectedRoute allowedRoles={['admin', 'customer']} />}>
                   <Route path="/logout" element={<Logout />} />
-
-                  <Route path='/cart' element={<CartPage />} />
-                  <Route path='/checkout' element={<CheckoutPage />} />
                 </Route>
 
 

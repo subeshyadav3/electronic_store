@@ -8,14 +8,19 @@ const AddToCartButton = ({ productId, onAddToCart }) => {
   const [isAdding, setIsAdding] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const { showToast } = useToast()
-  const {isAuthenticated}=useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const isCustomer = isAuthenticated && user?.role === 'customer';
 
   const incrementQuantity = () => setQuantity((prev) => Math.min(prev + 1, 99))
   const decrementQuantity = () => setQuantity((prev) => Math.max(prev - 1, 1))
 
   const handleAddToCart = async () => {
-    if(!isAuthenticated){
+    if (!isAuthenticated) {
       return showToast("Please login to add items to cart", "error")
+    }
+
+    if (!isCustomer) {
+      return showToast("Only customers can add products to cart", "error")
     }
     
     setIsAdding(true)
@@ -61,10 +66,10 @@ const AddToCartButton = ({ productId, onAddToCart }) => {
       <button
         className="flex items-center  justify-center md:text-sm text-base  rounded-r-full px-6 h-10 bg-blue-600 hover:bg-blue-700 text-white transition-colors disabled:opacity-50"
         onClick={handleAddToCart}
-        disabled={isAdding}
+        disabled={isAdding || !isCustomer}
       >
         <ShoppingCart className="h-4 w-4 mr-2 "  />
-        {isAdding ? "Adding..." : "Add"}
+        {!isCustomer ? "Customers only" : isAdding ? "Adding..." : "Add"}
       </button>
     </div>
   )

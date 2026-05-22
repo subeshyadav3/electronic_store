@@ -10,6 +10,7 @@ const productRouter = require('./routes/productRoute.js');
 const authRouter = require('./routes/auth.js');
 const checkAuthAdmin=require('./middlewares/checkAdmin.js');
 const { checkAuth } = require('./middlewares/checkAuthCustomer.js'); 
+const checkCustomer = require('./middlewares/checkCustomer.js');
 const orderRouter=require('./routes/order.js');
 const connectDB = require('./utils/db');
 
@@ -43,12 +44,12 @@ app.get('/register', (req, res) => res.render('register'));
 
 app.use('/api/auth', authRouter);
 app.use('/api/product', productRouter);
-app.use('/api/cart',checkAuth, require('./routes/cartRoute.js'));
+app.use('/api/cart',checkCustomer, require('./routes/cartRoute.js'));
 
 app.use('/api/admin',checkAuth,checkAuthAdmin, require('./routes/admin.js'));
-app.use('/api/order',checkAuth, require('./routes/order.js'));
-app.use('/api/customer',checkAuth, require('./routes/customer.js'));
-app.use('/api/payment',checkAuth, require('./routes/paymentRoute.js'));
+app.use('/api/order',checkCustomer, require('./routes/order.js'));
+app.use('/api/customer',checkCustomer, require('./routes/customer.js'));
+app.use('/api/payment',checkCustomer, require('./routes/paymentRoute.js'));
 
 
 

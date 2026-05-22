@@ -28,7 +28,7 @@ export default function Nav() {
         { name: 'Contact', path: '/contact' },
     ];
 
-    if (isAuthenticated) {
+    if (isAuthenticated && user?.role === 'customer') {
         navItems.push({ name: 'Cart', path: '/cart' });
     }
 

@@ -18,7 +18,8 @@ const ProtectedRoute = ({ allowedRoles, redirectRoles, redirectTo }) => {
   }
 
   if (!allowedRoles.includes(user?.role)) {
-    return <Navigate to="/" replace />;
+    const fallbackRedirect = (redirectRoles && user?.role ? redirectRoles[user.role] : null) || redirectTo || "/";
+    return <Navigate to={fallbackRedirect} replace />;
   }
 
   
