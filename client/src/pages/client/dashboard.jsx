@@ -1,33 +1,50 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/authContext"
 import apiClient from "../../components/helper/axios"
 import LoadingComponent from "../../components/helper/loadingComponent"
 import { User, Mail, Phone, MapPin, Calendar, Shield, Edit3, Save, X } from "lucide-react"
 
 export default function CustomerDashboard() {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [customerData, setCustomerData] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
   const [updatedData, setUpdatedData] = useState({})
-
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
+
+  if (!user?.userId) return;  
     const fetchCustomerData = async () => {
       try {
-        const res = await apiClient.get(`/customer/${user?.userId}`, { withCredentials: true })
-        const customer = res.data.users
-        setCustomerData(customer)
-        setUpdatedData(customer)
-      } catch (err) {
-        console.error("Error fetching customer data:", err)
-      }
-    }
+        // console.log("Fetching customer data for userId:", user);
+        setLoading(true);
 
-    if (user?.userId) {
-      fetchCustomerData()
-    }
-  }, [])
+        const res = await apiClient.get(
+          `/customer/${user.userId}`,
+          { withCredentials: true }
+        );
+
+        const customer = res.data.users;
+
+        setCustomerData(customer);
+        setUpdatedData(customer);
+
+      } catch (err) {
+
+        console.error(err);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+    };
+
+   
+    fetchCustomerData();    
+
+  }, [user?.userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -58,25 +75,26 @@ export default function CustomerDashboard() {
     setUpdatedData(customerData)
   }
 
-  if (!customerData) {
-    return <LoadingComponent />
-  }
+  if (loading) {
+  return <LoadingComponent />
+}
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 py-8">
-    
+
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">My Dashboard</h1>
           <p className="text-gray-600 text-lg">Manage your profile and account settings</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
- 
+
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-all duration-300">
               <div className="text-center">
-     
+
                 <div className="relative inline-block mb-6">
                   <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-5xl text-white shadow-lg">
                     👤
@@ -86,18 +104,18 @@ export default function CustomerDashboard() {
                   </div>
                 </div>
 
-             
+
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">{customerData.name}</h2>
                 <p className="text-gray-500 mb-4 capitalize">{customerData.role}</p>
 
-             
+
                 <div className="bg-gray-50 rounded-xl p-4 mb-6">
                   <p className="text-gray-600 italic leading-relaxed">
                     {user?.bio || `Hi, I am ${user?.name} and I love buying new things`}
                   </p>
                 </div>
 
-  
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-blue-50 rounded-xl p-4">
                     <div className="text-2xl font-bold text-blue-600">0</div>
@@ -112,10 +130,10 @@ export default function CustomerDashboard() {
             </div>
           </div>
 
-    
+
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300">
-       
+
               <div className="flex justify-between items-center p-8 border-b border-gray-100">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-800">Account Details</h3>
@@ -151,10 +169,10 @@ export default function CustomerDashboard() {
                 </div>
               </div>
 
-  
+
               <div className="p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
+
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <User className="w-4 h-4 text-blue-500" />
@@ -176,7 +194,7 @@ export default function CustomerDashboard() {
                     )}
                   </div>
 
-            
+
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <Mail className="w-4 h-4 text-green-500" />
@@ -198,7 +216,7 @@ export default function CustomerDashboard() {
                     )}
                   </div>
 
-     
+
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <Phone className="w-4 h-4 text-purple-500" />
@@ -220,7 +238,7 @@ export default function CustomerDashboard() {
                     )}
                   </div>
 
-            
+
                   <div className="space-y-2">
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                       <MapPin className="w-4 h-4 text-red-500" />
@@ -243,7 +261,7 @@ export default function CustomerDashboard() {
                   </div>
                 </div>
 
-      
+
                 <div className="mt-8 pt-8 border-t border-gray-100">
                   <h4 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
                     <Shield className="w-5 h-5 text-blue-500" />
@@ -258,10 +276,10 @@ export default function CustomerDashboard() {
                       <div className="text-gray-800 font-medium">
                         {customerData.createdAt
                           ? new Date(customerData.createdAt).toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
                           : "N/A"}
                       </div>
                     </div>
@@ -274,10 +292,10 @@ export default function CustomerDashboard() {
                       <div className="text-gray-800 font-medium">
                         {customerData.updatedAt
                           ? new Date(customerData.updatedAt).toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
                           : "N/A"}
                       </div>
                     </div>
@@ -296,7 +314,7 @@ export default function CustomerDashboard() {
           </div>
         </div>
 
-   
+
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer group">
             <div className="flex items-center gap-4">

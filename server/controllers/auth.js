@@ -30,7 +30,7 @@ const sendOTP = async (email, otp) => {
 
     try {
         await transporter.sendMail(mailOptions);
-        console.log('OTP sent to:', email);
+        // console.log('OTP sent to:', email);
     } catch (error) {
         console.log('Error sending OTP email:', error);
     }
@@ -50,7 +50,7 @@ const userRegister = async (req, res) => {
         const newUser = new User({ name, email, password: hashedPassword, contact, role });
         const savedUser = await newUser.save();
 
-        return res.status(201).json({ role: savedUser.role, message: "Account created successfully! Please login to continue.", success: true, user: { email: savedUser.email, name: savedUser.name } });
+        return res.status(201).json({ role: savedUser.role, message: "Account created successfully! Please login to continue.", success: true, user: { userId: savedUser._id, email: savedUser.email, name: savedUser.name, role: savedUser.role } });
     } catch (err) {
         console.log("Error registering user:", err);
         res.status(500).json({ message: "There was an issue processing your request. Please try again later.", success: false });
@@ -98,7 +98,7 @@ const userLogin = async (req, res) => {
         return res.status(200).json({
             message: "Login successful! Welcome back.",
             success: true,
-            user: { email: userExist.email, name: userExist.name, role: userExist.role }
+            user: { userId: userExist._id, email: userExist.email, name: userExist.name, role: userExist.role }
         });
     } catch (err) {
         console.log("Login error:", err);
@@ -253,8 +253,8 @@ const initiateOTP = async (req, res) => {
 
 const userVerifyOTP = async (req, res) => {
     const { email, otp } = req.body;
-    console.log("Verifying OTP for email:", email);
-    console.log("Received OTP:", otp);
+    // console.log("Verifying OTP for email:", email);
+    // console.log("Received OTP:", otp);
     if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
 
     try {

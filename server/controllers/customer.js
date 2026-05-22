@@ -20,15 +20,38 @@ const getCustomerUserUpdate = async (req, res) => {
 
 
 const getCustomerUserById = async (req, res) => {
-    try {
-        console.log(req.params.id);
-        const result = await User.findOne({ _id: req.params.id });
-        console.log(result);
-        res.status(200).json({ users: result, success: true, message: 'All users fetched successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error })
+  try {
+    const { id } = req.params;
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user id"
+      });
     }
-}
+
+    const result = await User.findById(id);
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    res.status(200).json({
+      users: result,
+      success: true
+    });
+
+  } catch (error) {
+    console.error("getCustomerUserById error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
 
 
 

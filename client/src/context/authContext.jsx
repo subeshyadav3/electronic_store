@@ -16,33 +16,33 @@ export const AuthProvider = ({ children }) => {
   }); // Store user details
   const [isAuthenticated, setIsAuthenticated] = useState(false); 
   const [isLoading, setIsLoading] = useState(true); 
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await apiClient.get('/auth/verifyme', { withCredentials: true });
-        if (res.data.success) {
-          setUser({
-            name: res.data.user?.name,
-            email: res.data.user?.email,
-            role: res.data.user?.role,
-            userId: res.data.user?.userId,
-            exp: res.data.user?.exp,
-            iat: res.data.user?.iat,
-          });
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-          setUser(null);
-        }
-      } catch (error) {
+  const checkAuth = async () => {
+    setIsLoading(true);
+    try {
+      const res = await apiClient.get('/auth/verifyme', { withCredentials: true });
+      if (res.data.success) {
+        setUser({
+          name: res.data.user?.name,
+          email: res.data.user?.email,
+          role: res.data.user?.role,
+          userId: res.data.user?.userId,
+          exp: res.data.user?.exp,
+          iat: res.data.user?.iat,
+        });
+        setIsAuthenticated(true);
+      } else {
         setIsAuthenticated(false);
         setUser(null);
-      } finally {
-        setIsLoading(false);
       }
-    };
+    } catch (error) {
+      setIsAuthenticated(false);
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     // Run auth check once on mount
     checkAuth();
   }, []);
@@ -105,16 +105,8 @@ useEffect(() => {
       );
       // console.log(res)
       if(res.data.success){
-        setUser({
-          name: res.data.user?.name,
-          email: res.data.user?.email,
-          role: res.data.user?.role,
-          userId: res.data.user?.userId,
-          exp: res.data.user?.exp,
-          iat: res.data.user?.iat,
-
-      });
-      setIsAuthenticated(true);
+        // refresh verified user from server (ensure userId present)
+        await checkAuth();
       }
      
 

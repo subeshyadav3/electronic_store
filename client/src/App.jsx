@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route,Outlet } from 'react-router-dom';
 import './App.css';
 import Home from './pages/Home';
 import Login from './components/auth/login';
@@ -45,7 +45,20 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/payment-check" element={<PaymentCheck />} />
-                <Route path="/dashboard">
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={['admin', 'customer']}
+                      redirectRoles={{
+                        admin: '/dashboard/admin',
+                        customer: '/dashboard/customer',
+                      }}
+                    />
+                  }
+                />
+
+                <Route path="/dashboard" element={<Outlet />}>
 
                   <Route
                     path="admin"

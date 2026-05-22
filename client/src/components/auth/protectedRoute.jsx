@@ -4,7 +4,7 @@ import { useAuth } from '../../context/authContext';
 import LoadingComponent from '../helper/loadingComponent';
 import { Outlet } from 'react-router-dom';
 
-const ProtectedRoute = ({ allowedRoles, redirectRoles }) => {
+const ProtectedRoute = ({ allowedRoles, redirectRoles, redirectTo }) => {
   const location = useLocation();
   const { isLoading, isAuthenticated, user } = useAuth();
 
@@ -17,13 +17,15 @@ const ProtectedRoute = ({ allowedRoles, redirectRoles }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
+  if (!allowedRoles.includes(user?.role)) {
+    return <Navigate to="/" replace />;
   }
 
-  if (location.pathname === "/dashboard") {
-    const userRedirectPath = redirectRoles[user.role];
-    if (userRedirectPath && userRedirectPath !== location.pathname) {
+  
+  const userRedirectPath = (redirectRoles && user?.role ? redirectRoles[user.role] : null) || redirectTo;
+
+  if (location.pathname === "/dashboard" && userRedirectPath) {
+    if (userRedirectPath !== location.pathname) {
       console.log("Redirecting to:", userRedirectPath);
       return <Navigate to={userRedirectPath} replace />;
     }
