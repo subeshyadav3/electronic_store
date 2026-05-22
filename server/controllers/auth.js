@@ -12,6 +12,14 @@ const OTP = require('../models/common/otp')
 // Helper Functions
 const generateOTP = () => crypto.randomInt(100000, 999999); // 6-digit OTP
 
+const generateResetToken = () => {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    return { resetToken, hashedToken };
+};
+
+const hashResetToken = (token) => crypto.createHash('sha256').update(token).digest('hex');
+
 const sendOTP = async (email, otp) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -111,39 +119,80 @@ const userLogin = async (req, res) => {
 //password reset
 const forgotPassword = async (req, res) => {
     const { email } = req.body;
-    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    if (!email) {
+        return res.status(400).json({
+            success: false,
+            message: "Email is required"
+        });
+    }
 
     try {
         const userExist = await User.findOne({ email });
-        if (!userExist) return res.status(400).json({ message: "User not found" });
-        console.log("here", String(email))
-        await initiateOTP(email);
 
-        return res.status(200).json({ success: true, message: "OTP sent successfully" });
+        if (!userExist) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const { resetToken, hashedToken } = generateResetToken();
+
+        userExist.resetPasswordToken = hashedToken;
+        userExist.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
+        await userExist.save();
+
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?email=${encodeURIComponent(email)}&token=${encodeURIComponent(resetToken)}`;
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.PASSWORD,
+            },
+        });
+
+        await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: email,
+            subject: 'Reset your password',
+            text: `You requested a password reset. Use this link to continue: ${resetUrl}\n\nThis link expires in 15 minutes.`,
+            html: `<p>You requested a password reset.</p><p><a href="${resetUrl}">Reset your password</a></p><p>This link expires in 15 minutes.</p>`,
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Password reset link sent to your email'
+        });
+
+    } catch (err) {
+        console.log(err);
+
+        return res.status(500).json({
+            success: false,
+            message: err.message || "Server Error"
+        });
     }
-    catch (err) {
-        console.log("Error sending OTP:", err);
-        res.status(500).json({ success: false, message: "Server Error" });
-    }
-
-
-}
+};
 
 // updateResetPassword
 
 const updateResetPassword = async (req, res) => {
-    const { email, otp, newPassword } = req.body;
-    if (!email || !otp || !newPassword) return res.status(400).json({ message: "All fields are required" });
+    const { email, token, newPassword } = req.body;
+    if (!email || !token || !newPassword) return res.status(400).json({ message: "All fields are required" });
 
     try {
         const userExist = await User.findOne({ email });
         if (!userExist) return res.status(400).json({ message: "User not found" });
 
-        const optVerify = await userVerifyOTP(email, otp);
-        if (!optVerify) return res.status(400).json({ message: "Invalid OTP" });
+        const optVerify = await verifyResetTokenForUser(userExist, token);
+        if (!optVerify) return res.status(400).json({ message: "Invalid or expired reset token" });
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         userExist.password = hashedPassword;
+        userExist.resetPasswordToken = undefined;
+        userExist.resetPasswordExpires = undefined;
         await userExist.save();
 
         return res.status(200).json({ success: true, message: "Password updated successfully" });
@@ -152,6 +201,42 @@ const updateResetPassword = async (req, res) => {
         res.status(500).json({ success: false, message: "Server Error" });
     }
 }
+
+const verifyResetTokenForUser = async (userExist, token) => {
+    if (!userExist?.resetPasswordToken || !userExist?.resetPasswordExpires) return false;
+
+    if (userExist.resetPasswordExpires.getTime() < Date.now()) return false;
+
+    const hashedToken = hashResetToken(token);
+    return userExist.resetPasswordToken === hashedToken;
+};
+
+const verifyResetToken = async (req, res) => {
+    const { email, token } = req.body;
+
+    if (!email || !token) {
+        return res.status(400).json({ success: false, message: 'Email and token are required' });
+    }
+    console.log("Verifying reset token for email:", email);
+    console.log("Received reset token:", token);
+
+    try {
+        const userExist = await User.findOne({ email });
+        if (!userExist) {
+            return res.status(400).json({ success: false, message: 'User not found' });
+        }
+
+        const isValidToken = await verifyResetTokenForUser(userExist, token);
+        if (!isValidToken) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
+        }
+
+        return res.status(200).json({ success: true, message: 'Reset token verified successfully' });
+    } catch (err) {
+        console.log('Error verifying reset token:', err);
+        return res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
 
 
 //change password
@@ -238,16 +323,51 @@ const initiateOTP = async (req, res) => {
         if (otpExist) {
             otpExist.otp = otp; 
             await otpExist.save();
+        } else {
+            const newOTP = new OTP({ otp, email })
+            await newOTP.save();
         }
-
-        const newOTP = new OTP({ otp, email })
-        await newOTP.save();
 
         sendOTP(email, otp);
         return res.status(200).json({ message: "OTP sent successfully", success: true });
     } catch (err) {
         console.log("Error sending OTP:", err);
         return res.status(500).json({ message: "Server Error" });
+    }
+};
+
+const initiateOTPFunc = async (email) => {
+    if (!email) {
+        throw new Error("Email is required");
+    }
+
+    try {
+        const otp = generateOTP();
+
+        const otpExist = await OTP.findOne({ email });
+
+        if (otpExist) {
+            otpExist.otp = otp;
+            await otpExist.save();
+        } else {
+            const newOTP = new OTP({
+                email,
+                otp
+            });
+
+            await newOTP.save();
+        }
+
+        await sendOTP(email, otp);
+
+        return {
+            success: true,
+            message: "OTP sent successfully"
+        };
+
+    } catch (err) {
+        console.log("Error sending OTP:", err);
+        throw new Error("Server Error");
     }
 };
 
@@ -313,7 +433,8 @@ module.exports = {
     validateLogin,
     changePassword,
     forgotPassword,
-    updateResetPassword
+    updateResetPassword,
+    verifyResetToken
 };
 
 

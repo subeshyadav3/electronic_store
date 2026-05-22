@@ -12,7 +12,8 @@ const {userRegister,
     validateLogin,
     changePassword,
     forgotPassword,
-    updateResetPassword
+    updateResetPassword,
+    verifyResetToken
 
 }=require('../controllers/auth')
 
@@ -23,6 +24,7 @@ authRouter.post('/otp',initiateOTP)
 authRouter.get('/refresh',getrefreshToken)
 authRouter.post('/verifyotp',userVerifyOTP)
 authRouter.post('/forgot-password', forgotPassword);
+authRouter.post('/verify-reset-token', verifyResetToken);
 authRouter.post('/reset-password', updateResetPassword);
 authRouter.post('/change-password', changePassword);
 authRouter.get('/verifyme',checkAuth,(req,res)=>{res.status(200).json({ success: true, user: req.user});})

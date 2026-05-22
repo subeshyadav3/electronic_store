@@ -27,6 +27,9 @@ import CreateProductForm from './pages/admin/createProducts';
 import CustomerDashboard from './pages/client/dashboard';
 import CustomerLayout from './pages/client/customerLayout';
 import CustomerOrder from './pages/client/customerOrder';
+import ForgotPassword from './components/auth/ForgotPassword';
+import ResetPassword from './components/auth/ResetPassword';
+import EmailVerify from './components/auth/EmailVerify';
 import PaymentCheck from './components/products/productDetailsIndividual/paymentCheck';
 
 function App() {
@@ -104,6 +107,10 @@ function App() {
 
 
                 <Route path="/store/:id" element={<ProductDetails />} />
+
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/verify-email" element={<EmailVerify />} />
 
                 <Route element={<ProtectedRoute allowedRoles={['admin', 'customer']} />}>
                   <Route path="/logout" element={<Logout />} />
