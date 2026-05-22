@@ -7,20 +7,20 @@ import { useToast } from '../../context/toastContext'
 function ManageUserIndividual() {
   const { id } = useParams()
   const [user, setUser] = useState(null)
-  const {showToast}=useToast();
+  const { showToast } = useToast()
 
-  const { getAdminUsersById,adminUserUpdate } = useAuth()
+  const { getAdminUsersById, adminUserUpdate } = useAuth()
   const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        
         const response = await getAdminUsersById(id)
         setUser(response.users)
         setLoading(false)
       } catch (error) {
         console.error('Error fetching user:', error)
-      } 
+      }
     }
     fetchUser()
   }, [id])
@@ -38,9 +38,7 @@ function ManageUserIndividual() {
     try {
       const response = await adminUserUpdate(id, user)
       showToast("User Updated Successfully!", 'success')
-    
     } catch (error) {
-   
       showToast("Some Error Occured While Updating!", 'error')
     }
   }
@@ -53,20 +51,20 @@ function ManageUserIndividual() {
       <h1 className="text-2xl font-semibold mb-6">Manage User: {user.name}</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-            <label htmlFor='account_details' className='font-semibold mb-2 '>Basic Account Details</label>
-            <div className='mb-5'>
-                <p>Created at: {user.createdAt.slice(0,10)}</p>
-                <p>Updated at: {user.updatedAt.slice(0,10)}</p>
-            </div>
+          <h2 className='font-semibold text-gray-800 mb-2'>Basic Account Details</h2>
+          <div className='mb-5 p-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 space-y-1 shadow-sm'>
+            <p><span className="font-medium text-gray-700">Created at:</span> {user.createdAt ? user.createdAt.slice(0, 10) : 'N/A'}</p>
+            <p><span className="font-medium text-gray-700">Updated at:</span> {user.updatedAt ? user.updatedAt.slice(0, 10) : 'N/A'}</p>
+          </div>
 
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
           <input
             type="text"
             id="name"
             name="name"
-            value={user.name}
+            value={user.name || ''}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition"
           />
         </div>
 
@@ -77,9 +75,9 @@ function ManageUserIndividual() {
             id="email"
             name="email"
             disabled
-            value={user.email}
+            value={user.email || ''}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-1 block w-full p-2 border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed rounded-md shadow-sm outline-none"
           />
         </div>
 
@@ -89,21 +87,21 @@ function ManageUserIndividual() {
             type="tel"
             id="contact"
             name="contact"
-            value={user.contact}
+            value={user.contact || ''}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition"
           />
         </div>
 
         <div>
           <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Self Bio</label>
-          <input
-            type="tel"
+          <textarea
             id="bio"
             name="bio"
-            value={user.bio}
+            rows={3}
+            value={user.bio || ''}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition"
           />
         </div>
 
@@ -112,9 +110,9 @@ function ManageUserIndividual() {
           <select
             id="role"
             name="role"
-            value={user.role}
+            value={user.role || 'user'}
             onChange={handleInputChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="mt-1 block w-full p-2 border border-gray-300 bg-white rounded-md shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition"
           >
             <option value="user">User</option>
             <option value="admin">Admin</option>
@@ -122,22 +120,22 @@ function ManageUserIndividual() {
           </select>
         </div>
 
-        <div>
-          <label htmlFor="isVerified" className="block text-sm font-medium text-gray-700">Verified</label>
+        <div className="flex items-center space-x-3">
           <input
             type="checkbox"
             id="isVerified"
             name="isVerified"
-            checked={user.isVerified}
+            checked={!!user.isVerified}
             onChange={(e) => setUser(prevUser => ({ ...prevUser, isVerified: e.target.checked }))}
-            className="mt-1 block h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+            className="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 accent-indigo-600 cursor-pointer"
           />
+          <label htmlFor="isVerified" className="text-sm font-medium text-gray-700 cursor-pointer">Verified Account Status</label>
         </div>
 
         <div className="flex justify-start">
           <button
             type="submit"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none"
+            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-sm transition-colors duration-150 outline-none"
           >
             Save Changes
           </button>

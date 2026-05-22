@@ -6,7 +6,7 @@ import { MdDashboardCustomize } from "react-icons/md";
 import Breadcrumb from "../../components/helper/breadcrumbs";
 import { MdManageHistory } from "react-icons/md";
 import { MdOutlineProductionQuantityLimits } from "react-icons/md";
-
+import { FiMenu, FiX } from "react-icons/fi";
 
 function AdminLayout() {
   const [isFixed, setIsFixed] = useState(true);
@@ -37,19 +37,18 @@ function AdminLayout() {
 
   return (
     <div className="grid grid-cols-[auto,1fr] min-h-screen">
-     
       <div
         className={`text-black p-5 border-r-2 transition-all duration-300 ${
           isSidebarOpen ? "w-64" : "w-16"
         } ${isFixed ? "fixed" : "absolute"}`}
       >
         <button
-          className="flex justify-end w-full mb-5"
+          className="flex justify-end w-full mb-5 text-xl p-1"
           onClick={() => {
             setIsSidebarOpen(!isSidebarOpen);
           }}
         >
-          {!isSidebarOpen ? "X" : "☰"}
+          {!isSidebarOpen ? <FiMenu /> : <FiX />}
         </button>
 
         <h2 className="text-xl font-bold mb-4">
@@ -61,7 +60,6 @@ function AdminLayout() {
         </h2>
 
         <ul className="space-y-5">
-          
           <li>
             <NavLink
               to="/dashboard/admin"
@@ -81,7 +79,6 @@ function AdminLayout() {
               className={({ isActive }) => (isActive ? "text-blue-500" : "text-black")}
             >
               {!isSidebarOpen ? (
-                // <img src="/public/admin/product.png" className="w-5 h-5" />
                 <MdOutlineProductionQuantityLimits />
               ) : (
                 "Manage Products"
@@ -106,9 +103,7 @@ function AdminLayout() {
               className={({ isActive }) => (isActive ? "text-blue-500" : "text-black")}
             >
               {!isSidebarOpen ? (
-                // <img src="/public/admin/order.png" className="w-5 h-5" />
                 <MdManageHistory />
-                
               ) : (
                 "Manage Orders"
               )}
@@ -120,7 +115,9 @@ function AdminLayout() {
       <div
         className={`p-5 transition-all duration-300 ${isSidebarOpen ? "ml-[250px]" : "ml-[80px]"}`}
       >
-        <Breadcrumb />
+        <div className="mb-4">
+          <Breadcrumb />
+        </div>
         <Outlet />
       </div>
     </div>

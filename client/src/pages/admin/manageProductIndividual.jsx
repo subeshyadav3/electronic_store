@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useProducts } from "../../context/productContext"
@@ -42,45 +41,45 @@ function ManageProductIndividual() {
   if (!product) return <div>Product not found</div>
 
   return (
-    <div className="max-w-4xl mx-auto p-6 ">
+    <div className="max-w-4xl mx-auto p-6 min-h-screen">
       <h1 className="text-2xl font-semibold mb-6">Manage Product</h1>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium">Title</label>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
             <input
               type="text"
               id="title"
               name="title"
               value={product.title}
               onChange={handleInputChange}
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+              className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
             />
           </div>
           <div>
-            <label htmlFor="brand" className="block text-sm font-medium">Brand</label>
+            <label htmlFor="brand" className="block text-sm font-medium text-gray-700">Brand</label>
             <input
               type="text"
               id="brand"
               name="brand"
               value={product.brand}
               readOnly
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md bg-gray-100"
+              className="w-full p-2 mt-1 border border-gray-200 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed shadow-sm"
             />
           </div>
           <div>
-            <label htmlFor="category" className="block text-sm font-medium">Category</label>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
             <input
               type="text"
               id="category"
               name="category"
               value={product.category}
               readOnly
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md bg-gray-100"
+              className="w-full p-2 mt-1 border border-gray-200 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed shadow-sm"
             />
           </div>
           <div>
-            <label htmlFor="price" className="block text-sm font-medium">Price</label>
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
             <input
               type="number"
               id="price"
@@ -89,11 +88,11 @@ function ManageProductIndividual() {
               onChange={handleInputChange}
               step="0.01"
               min="0"
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+              className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
             />
           </div>
           <div>
-            <label htmlFor="stock" className="block text-sm font-medium">Stock</label>
+            <label htmlFor="stock" className="block text-sm font-medium text-gray-700">Stock</label>
             <input
               type="number"
               id="stock"
@@ -101,11 +100,11 @@ function ManageProductIndividual() {
               value={product.stock}
               onChange={handleInputChange}
               min="0"
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+              className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
             />
           </div>
           <div>
-            <label htmlFor="discountPercentage" className="block text-sm font-medium">Discount Percentage</label>
+            <label htmlFor="discountPercentage" className="block text-sm font-medium text-gray-700">Discount Percentage</label>
             <input
               type="number"
               id="discountPercentage"
@@ -115,90 +114,90 @@ function ManageProductIndividual() {
               step="0.01"
               min="0"
               max="100"
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+              className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
             />
           </div>
           <div>
-            <label htmlFor="rating" className="block text-sm font-medium">Rating</label>
+            <label htmlFor="rating" className="block text-sm font-medium text-gray-700">Rating</label>
             <input
               type="number"
               id="rating"
               name="rating"
               value={product.rating}
               readOnly
-              className="w-full p-2 mt-1 border border-gray-300 rounded-md bg-gray-100"
+              className="w-full p-2 mt-1 border border-gray-200 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed shadow-sm"
             />
           </div>
         </div>
         <div className="mt-6">
-          <label htmlFor="description" className="block text-sm font-medium">Description</label>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
           <textarea
             id="description"
             name="description"
             value={product.description}
             onChange={handleInputChange}
             rows={4}
-            className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+            className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
           ></textarea>
         </div>
         <div className="mt-6">
-          <label htmlFor="thumbnail" className="block text-sm font-medium">Thumbnail URL</label>
+          <label htmlFor="thumbnail" className="block text-sm font-medium text-gray-700">Thumbnail URL</label>
           <input
             type="text"
             id="thumbnail"
             name="thumbnail"
             value={product.thumbnail}
             onChange={handleInputChange}
-            className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+            className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
           />
         </div>
         <div className="mt-6">
-          <label htmlFor="availabilityStatus" className="block text-sm font-medium">Availability Status</label>
+          <label htmlFor="availabilityStatus" className="block text-sm font-medium text-gray-700">Availability Status</label>
           <input
             type="text"
             id="availabilityStatus"
             name="availabilityStatus"
             value={product.availabilityStatus}
             onChange={handleInputChange}
-            className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+            className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
           />
         </div>
         <div className="mt-6">
-          <label htmlFor="warranty" className="block text-sm font-medium">Warranty</label>
+          <label htmlFor="warranty" className="block text-sm font-medium text-gray-700">Warranty</label>
           <input
             type="text"
             id="warranty"
             name="warranty"
             value={product.warranty}
             onChange={handleInputChange}
-            className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+            className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
           />
         </div>
         <div className="mt-6">
-          <label htmlFor="shippingInformation" className="block text-sm font-medium">Shipping Information</label>
+          <label htmlFor="shippingInformation" className="block text-sm font-medium text-gray-700">Shipping Information</label>
           <input
             type="text"
             id="shippingInformation"
             name="shippingInformation"
             value={product.shippingInformation}
             onChange={handleInputChange}
-            className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+            className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
           />
         </div>
         <div className="mt-6">
-          <label htmlFor="returnPolicy" className="block text-sm font-medium">Return Policy</label>
+          <label htmlFor="returnPolicy" className="block text-sm font-medium text-gray-700">Return Policy</label>
           <input
             type="text"
             id="returnPolicy"
             name="returnPolicy"
             value={product.returnPolicy}
             onChange={handleInputChange}
-            className="w-full p-2 mt-1 border border-gray-300 rounded-md"
+            className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition shadow-sm"
           />
         </div>
         <button
           type="submit"
-          className="mt-6 px-6 py-2 bg-green-500 text-white rounded-md"
+          className="mt-6 px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded-md shadow-sm transition-colors duration-150 outline-none"
         >
           Update Product
         </button>
